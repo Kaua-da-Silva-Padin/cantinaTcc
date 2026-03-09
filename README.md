@@ -2,7 +2,7 @@
 
 ## Node.js
 
-- To install node.js, simply go to their official website [**Node.js Website**](https://nodejs.org/pt-br/download).
+- To install Node.js, simply go to their official website: [**Node.js Website**](https://nodejs.org/pt-br/download).
 - Then click the "**Windows Installer (.msi)**" button.
 - Open the installer and follow the instructions (you can just keep clicking next to install without worry).
 
@@ -42,7 +42,9 @@
 
 > [**https://project-cantina-tcc.vercel.app**](https://project-cantina-tcc.vercel.app)
 
-# Our Project Stack:
+> **Note**: on every github commit, vercel will automatically update the website with a slight delay.
+
+# 🍔 Our Project Stack:
 ## Front-End:
 - ✔ Framework: [**React**](https://react.dev) + [**Vite**](https://vite.dev)
 - ✔ Components Library for React: [**MUI (Material UI)**](https://mui.com/material-ui/getting-started/)
@@ -53,3 +55,10 @@
 - ✔ Website Hosting: [**Vercel**](https://vercel.com)
 - ❓ PIX/Payment Api: ???
 - ❓ Database: ???
+
+# 🎬 How to run our project:
+- To run our project simply go to its root folder and in the terminal type **`npm run dev`**
+- It should give you **three** links, if on PC use the localhost, if you wanna see what it looks like on mobile, then use the second one on your mobile device.
+
+## ❌ In case of errors:
+- If you get an error, try going into Powershell and typing **`Set-ExecutionPolicy RemoteSigned`** and type a or y when the prompt is given.
