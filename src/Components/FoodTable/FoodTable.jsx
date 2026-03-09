@@ -50,24 +50,24 @@ export default function FoodTable() {
         <div
         className="d-flex justify-content-center align-items-center">
             <ImageList
-            cols={3}
+            cols={2}
             rowHeight={400}
             sx={{
                 width: '95%',
-                height: '80vh',
+                height: '60vh',
                 overflowY: 'auto',
             }}>
                 {imageData.map(item=>(
                     <ImageListItem
                     key={item.title}
-                    className='bg-orange rounded mx-1 m-2'
+                    className='bg-orange rounded'
                     >
                         <AdvancedImage
                         cldImg={item.img}
                         style={{
                             width: '100%',
                             height: '100%',
-                            objectFit: 'contain'
+                            objectFit: 'contain',
                         }}/>
                         <ImageListItemBar
                         className='rounded bg-darken px-2'
@@ -75,11 +75,11 @@ export default function FoodTable() {
                         subtitle={`R$ ${item.price}`}
                         sx={{
                             "& .MuiImageListItemBar-subtitle": {
-                                fontSize: "1.4rem",
+                                fontSize: "1.2rem",
                             },
                             "& .MuiImageListItemBar-title": {
-                                fontSize: '2rem',
-                                marginBottom: '4%'
+                                fontSize: '1.4rem',
+                                marginBottom: '4%',
                             }
                         }}
                         actionIcon={
