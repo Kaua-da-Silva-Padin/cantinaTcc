@@ -10,7 +10,7 @@ export default function App() {
       <Header/>
       <SearchField/>
       <FilterTabs/>
-      <hr />
+      <hr className="mx-4"/>
       <FoodTable/>
     </>
   )
