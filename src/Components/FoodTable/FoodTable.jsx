@@ -3,7 +3,7 @@ import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
 import { FaCartPlus } from 'react-icons/fa6';
 
-export default function FoodTable({ filterTxt, filterTab }) {
+export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
 
     const products = [
         {
@@ -40,7 +40,7 @@ export default function FoodTable({ filterTxt, filterTab }) {
             img: cld.image(formatName(foodName)),
             title: foodName,
             kind: foodKind,
-            price: formatPrice(foodPrice),
+            price: foodPrice,
             stock: foodStock
         });  
     })
@@ -54,7 +54,7 @@ export default function FoodTable({ filterTxt, filterTab }) {
     foodData.filter(item => item.kind === filterTab);
 
     filteredFoods = filteredFoods.filter(item => item.stock > 0);
-    filteredFoods = filteredFoods.filter(item => item.title.toLowerCase().includes(filterTxt.toLowerCase()));
+    filteredFoods = filteredFoods.filter(item => item.title.toLowerCase().includes(filterTxt));
 
     return(
         <div
@@ -84,7 +84,7 @@ export default function FoodTable({ filterTxt, filterTab }) {
                         <ImageListItemBar
                         className='rounded bg-darken px-2'
                         title={item.title}
-                        subtitle={`R$ ${item.price}`}
+                        subtitle={`R$ ${formatPrice(item.price)}`}
                         sx={{
                             "& .MuiImageListItemBar-subtitle": {
                                 fontSize: "1.2rem",
@@ -92,11 +92,14 @@ export default function FoodTable({ filterTxt, filterTab }) {
                             "& .MuiImageListItemBar-title": {
                                 fontSize: '1.4rem',
                                 marginBottom: '2%',
+                                fontWeight: 'bold'
                             }
                         }}
                         actionIcon={
                             <IconButton
-                            className='text-light bg-success rounded p-2 m-2'>
+                            onClick={()=>setCartPrice(cartPrice+item.price)}
+                            className='text-light bg-success rounded p-2 m-2'
+                            title={`Adicionar ${item.title} ao carrinho (${formatPrice(item.price)})`}>
                                 <FaCartPlus className='fs-1'/>
                             </IconButton>
                         }/>
