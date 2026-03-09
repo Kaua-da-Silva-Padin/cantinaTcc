@@ -79,7 +79,7 @@ export default function FoodTable() {
                             },
                             "& .MuiImageListItemBar-title": {
                                 fontSize: '1.4rem',
-                                marginBottom: '4%',
+                                marginBottom: '2%',
                             }
                         }}
                         actionIcon={
