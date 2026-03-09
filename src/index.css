@@ -1,0 +1,29 @@
+@import 'bootstrap';
+
+:root {
+    --darken: rgba(0,0,0,.2);
+}
+
+.border-darken {
+    border: solid 1px var(--darken) !important;
+}
+
+.border-darken-b {
+    border-bottom: solid 1px var(--darken) !important;
+}
+
+.bg-darken {
+    background: var(--darken) !important;
+}
+
+.round-ball {
+    border-radius: 50px !important;
+}
+
+.bg-orange {
+    background: #d65600c2 !important;
+}
+
+.space-grotesk {
+  font-family: "Space Grotesk", sans-serif !important;
+}
