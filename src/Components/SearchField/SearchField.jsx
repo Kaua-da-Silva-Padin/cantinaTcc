@@ -1,7 +1,7 @@
 import { TextField, IconButton } from '@mui/material';
 import { RiSearchLine } from 'react-icons/ri';
 
-export default function SearchField() {
+export default function SearchField({ setSearch }) {
 
     return(
         <div
@@ -12,6 +12,7 @@ export default function SearchField() {
             variant='outlined'
             className='m-3'
             fullWidth
+            onChange={e=>setSearch(e.target.value)}
             />
             <IconButton
             size='large'

@@ -5,13 +5,8 @@ import { RiUserFill, RiShoppingCart2Fill } from 'react-icons/ri';
 export default function Header() {
     const [anchorEl, setAnchorEl] = useState(null);
     
-    const handleMenu = (e)=> {
-        setAnchorEl(e.currentTarget);
-    }
-
-    const handleClose = ()=> {
-        setAnchorEl(null);
-    }
+    const handleMenu = (e)=> setAnchorEl(e.currentTarget);
+    const handleClose = ()=> setAnchorEl(null);
 
     return(
         <div

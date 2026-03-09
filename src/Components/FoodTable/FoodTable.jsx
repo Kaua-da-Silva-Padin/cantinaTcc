@@ -1,9 +1,9 @@
-import { ImageList, ImageListItem, ImageListItemBar, IconButton } from '@mui/material';
+import { ImageList, ImageListItem, ImageListItemBar, IconButton, useMediaQuery } from '@mui/material';
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
 import { FaCartPlus } from 'react-icons/fa6';
 
-export default function FoodTable() {
+export default function FoodTable({ filterTxt, filterTab }) {
 
     const products = [
         {
@@ -14,7 +14,7 @@ export default function FoodTable() {
         },
         {name: 'Poty', kind: 'bebidas', stock: 1, price: 6},
         {name: 'Coxinha', kind: 'salgados', stock: 1, price: 6},
-        {name: 'Mini Pizza', kind: 'salgados', stock: 1, price: 6}
+        {name: 'Mini Pizza', kind: 'salgados', stock: 1, price: 7}
     ]
 
     const cld = new Cloudinary({
@@ -22,12 +22,11 @@ export default function FoodTable() {
             cloudName: 'dntfculcp'
         }
     })
-    const imageData = [];
+    const foodData = [];
 
     const formatName = (name)=> {
         return name.toLowerCase().replaceAll(' ', '')
     }
-
     const formatPrice = (price)=> {
         return price.toFixed(2).replace('.', ',')
     }
@@ -37,27 +36,40 @@ export default function FoodTable() {
         let foodKind = item.kind;
         let foodPrice = item.price;
         let foodStock = item.stock;
-        imageData.push({
+        foodData.push({
             img: cld.image(formatName(foodName)),
             title: foodName,
             kind: foodKind,
             price: formatPrice(foodPrice),
             stock: foodStock
-        });
+        });  
     })
+
+    // Checks if the device being used is mobile or not
+    const isMobile = useMediaQuery("(max-width:768px)");
+
+    let filteredFoods =
+    filterTab === 'todos' ? foodData
+    :
+    foodData.filter(item => item.kind === filterTab);
+
+    filteredFoods = filteredFoods.filter(item => item.stock > 0);
+    filteredFoods = filteredFoods.filter(item => item.title.toLowerCase().includes(filterTxt.toLowerCase()));
 
     return(
         <div
         className="d-flex justify-content-center align-items-center">
+            {/*If the device is mobile only show 2 cols for the table, otherwise show 4*/}
             <ImageList
-            cols={2}
-            rowHeight={400}
+            cols={isMobile ? 2 : 4}
+            rowHeight={250}
             sx={{
-                width: '95%',
-                height: '60vh',
+                marginRight: '2%',
+                marginLeft: '2%',
+                height: '60dvh',
                 overflowY: 'auto',
             }}>
-                {imageData.map(item=>(
+                {filteredFoods.map(item=>(
                     <ImageListItem
                     key={item.title}
                     className='bg-orange rounded'
