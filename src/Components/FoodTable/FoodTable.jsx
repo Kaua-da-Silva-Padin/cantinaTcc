@@ -5,6 +5,7 @@ import { FaCartPlus } from 'react-icons/fa6';
 
 export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
 
+    // Implementar o banco de dados mais tarde no projeto, puxa as informações e dá um Array.push(info) nessa lista de objetos.
     const products = [
         {
             name: 'Coca Cola',
@@ -13,10 +14,11 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             price: 6
         },
         {name: 'Poty', kind: 'bebidas', stock: 1, price: 6},
-        {name: 'Coxinha', kind: 'salgados', stock: 1, price: 6},
+        {name: 'Coxinha', kind: 'salgados', stock: 1, price: 9.50},
         {name: 'Mini Pizza', kind: 'salgados', stock: 1, price: 7}
     ]
 
+    // Inicia a "conexão" com o Cloudinary, 'dntfculcp' é o nome do ambiente em que as imagens se encontram.
     const cld = new Cloudinary({
         cloud: {
             cloudName: 'dntfculcp'
@@ -24,13 +26,16 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
     })
     const foodData = [];
 
+    // Formata o nome do item para um nome minusculo e sem espaços (utilizado para acessar a imagem do cloudinary).
     const formatName = (name)=> {
-        return name.toLowerCase().replaceAll(' ', '')
+        return name.trim().toLowerCase().replaceAll(' ', '')
     }
+    // Utilizado para quando queremos apenas formatar o preço de um item para mostra-lo para o usuário e não fazer operações com ele.
     const formatPrice = (price)=> {
         return price.toFixed(2).replace('.', ',')
     }
 
+    // Mapeia a lista de produtos e a coloca em uma nova lista porém agora com sua imagem, tirada do Cloudinary.
     products.map(item=>{
         let foodName = item.name;
         let foodKind = item.kind;
@@ -48,12 +53,13 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
     // Checks if the device being used is mobile or not
     const isMobile = useMediaQuery("(max-width:768px)");
 
+    // Filtragem usando os filtros da barra horizontal, se o valor for igual a todos então mostre todos os items, se não, então mostre uma nova lista apenas com os items em que a chave 'kind' do item são iguais ao valor do filtro (ex: filtro => salgados e item.kind => Salgados).
     let filteredFoods =
     filterTab === 'todos' ? foodData
     :
     foodData.filter(item => item.kind === filterTab);
 
-    filteredFoods = filteredFoods.filter(item => item.stock > 0);
+    // Filtragem que procura por quaisquer items que possuam o texto da pesquisa em seu título e retorna uma nova lista.
     filteredFoods = filteredFoods.filter(item => item.title.toLowerCase().includes(filterTxt));
 
     return(
@@ -70,10 +76,13 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                 overflowY: 'auto',
             }}>
                 {filteredFoods.map(item=>(
+                    // Item da lista de imagens que muda de estilo automaticamente se perceber que o estoque do item é 0.
                     <ImageListItem
                     key={item.title}
-                    className='bg-orange rounded'
+                    className={`bg-orange rounded ${item.stock == 0 && 'grayscale-unavailable unavailable-food'}`}
+                    title={item.title}
                     >
+                        {/*Componente do cloudinary que aceita imagens em um formato "dinâmico" que muda dependendo do navegador que acessa o site, send a prioridade AVIF para navegadores suportados.*/}
                         <AdvancedImage
                         cldImg={item.img}
                         style={{
@@ -81,6 +90,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                             height: '100%',
                             objectFit: 'contain',
                         }}/>
+                        {/*Barra inferior de cada card. a propriedade sx (seria basicamente um style) desse elemento afeta o css interno do MUI, por isso parece tão estranho.*/}
                         <ImageListItemBar
                         className='rounded bg-darken px-2'
                         title={item.title}
@@ -96,6 +106,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                             }
                         }}
                         actionIcon={
+                            // Botão no canto inferior direito de cada card, ao clicar faz a soma do total atual do carrinho + o preço do item e devolve esse novo valor para o app.jsx que devolve pro Header.jsx que mostra esse valor em seu botão de carrinho.
                             <IconButton
                             onClick={()=>setCartPrice(cartPrice+item.price)}
                             className='text-light bg-success rounded p-2 m-2'

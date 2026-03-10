@@ -27,3 +27,36 @@
 .space-grotesk {
   font-family: "Space Grotesk", sans-serif !important;
 }
+
+.unavailable-food {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none !important;
+}
+
+.unavailable-food::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    backdrop-filter: grayscale(20) !important;
+}
+
+.unavailable-food::after {
+    content: 'Unavailable';
+    font-size: 1.6em;
+    padding: 2%;
+    padding-left: 8%;
+    padding-right: 8%;
+    color: rgba(118, 5, 5, 0.838);
+    border: double 6px crimson;
+    border-radius: 10px;
+    position: absolute;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+}

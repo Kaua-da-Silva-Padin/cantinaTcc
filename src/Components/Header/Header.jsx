@@ -2,18 +2,19 @@ import { IconButton, Menu, MenuItem, Avatar } from '@mui/material';
 import { useState } from 'react';
 import { RiShoppingCart2Fill, RiMoneyDollarBoxFill } from 'react-icons/ri';
 
+// This profile Color creation script was taken from the MUI official website from its Avatar component page on MUI Material.
 function stringToColor(string) {
     let hash = 0;
     /* eslint-disable no-bitwise */
-    for (let i = 0; i < string.length; i += 1) {
+    for (let i=0; i < string.length;i++) {
         hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }
 
     let color = '#';
 
-    for (let i = 0; i < 3; i += 1) {
+    for (let i=0; i < 3;i++) {
         const value = (hash >> (i * 8)) & 0xff;
-        color += `00${value.toString(16)}`.slice(-2);
+        color += value.toString(16).slice(-2);
     }
     /* eslint-enable no-bitwise */
 
@@ -32,6 +33,7 @@ function stringAvatar(name) {
         children: `${firstName}${secondName}`,
     };
 }
+// The MUI Avatar script ends here and is used later.
 
 export default function Header({ cartPrice }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -52,7 +54,8 @@ export default function Header({ cartPrice }) {
                 size="large"
                 color="inherit">
                     <Avatar
-                    {...stringAvatar('Kauã Padin')}/>
+                    {...stringAvatar('Paulo Victor')}
+                    title='Paulo Victor'/>
                 </IconButton>
                 <h1
                 className='space-grotesk'>
@@ -79,7 +82,7 @@ export default function Header({ cartPrice }) {
                 className='fw-bold text-secondary mx-2'>
                     <RiMoneyDollarBoxFill
                     className='me-2 fs-4'/>
-                    R$ {formatPrice(parseFloat(cartPrice))}
+                    R$ {formatPrice(cartPrice)}
                 </p>
                 <MenuItem
                 className='fw-bold'>

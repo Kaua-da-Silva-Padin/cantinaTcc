@@ -5,6 +5,7 @@ import { FaHotdog, FaCandyCane, FaAsterisk } from 'react-icons/fa6'
 import { GiChocolateBar } from 'react-icons/gi'
 
 export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
+    // Cada valor do filtro e seu ícone.
     const filters = [
         [<FaAsterisk className='fs-1'/>,'Todos'],
         [<FaHotdog className='fs-1'/>,'Salgados'],
