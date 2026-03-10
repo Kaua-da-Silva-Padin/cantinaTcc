@@ -1,6 +1,7 @@
 import { IconButton, Menu, MenuItem, Avatar } from '@mui/material';
 import { useState } from 'react';
 import { RiShoppingCart2Fill, RiMoneyDollarBoxFill } from 'react-icons/ri';
+import { Link } from 'react-router-dom'
 
 // This profile Color creation script was taken from the MUI official website from its Avatar component page on MUI Material.
 function stringToColor(string) {
@@ -84,12 +85,16 @@ export default function Header({ cartPrice }) {
                     className='me-2 fs-4'/>
                     R$ {formatPrice(cartPrice)}
                 </p>
-                <MenuItem
-                className='fw-bold'>
-                    <RiShoppingCart2Fill
-                    className='me-2 fs-4'/>
-                    Carrinho
-                </MenuItem>
+                <Link
+                to='/cart'
+                className='text-dark'>
+                    <MenuItem
+                    className='fw-bold'>
+                        <RiShoppingCart2Fill
+                        className='me-2 fs-4'/>
+                        Carrinho
+                    </MenuItem>
+                </Link>
             </Menu>
             {/* <IconButton
             size='large'

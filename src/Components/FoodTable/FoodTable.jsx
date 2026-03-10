@@ -1,7 +1,7 @@
 import { ImageList, ImageListItem, ImageListItemBar, IconButton, useMediaQuery } from '@mui/material';
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
-import { FaCartPlus } from 'react-icons/fa6';
+import { FaCartPlus, FaDollarSign } from 'react-icons/fa6';
 
 export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
 
@@ -34,6 +34,8 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
     const formatPrice = (price)=> {
         return price.toFixed(2).replace('.', ',')
     }
+
+    const buyItem = (price)=> setCartPrice(cartPrice+price);
 
     // Mapeia a lista de produtos e a coloca em uma nova lista porém agora com sua imagem, tirada do Cloudinary.
     products.map(item=>{
@@ -108,8 +110,16 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                         actionIcon={
                             // Botão no canto inferior direito de cada card, ao clicar faz a soma do total atual do carrinho + o preço do item e devolve esse novo valor para o app.jsx que devolve pro Header.jsx que mostra esse valor em seu botão de carrinho.
                             <IconButton
-                            onClick={()=>setCartPrice(cartPrice+item.price)}
+                            onClick={()=>buyItem(item.price)}
                             className='text-light bg-success rounded p-2 m-2'
+                            style={{
+                                transition: 'all 1s ease-out'
+                            }}
+                            sx={{
+                                ':active ': {
+                                    scale: .9
+                                }
+                            }}
                             title={`Adicionar ${item.title} ao carrinho (${formatPrice(item.price)})`}>
                                 <FaCartPlus className='fs-1'/>
                             </IconButton>
