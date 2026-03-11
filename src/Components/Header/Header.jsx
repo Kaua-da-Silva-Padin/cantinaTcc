@@ -50,14 +50,17 @@ export default function Header({ cartPrice }) {
         className='d-flex justify-content-between m-2'>
             <div
             className='d-flex align-items-center'>
-                <IconButton
-                className='border-darken m-2 rounded'
-                size="large"
-                color="inherit">
-                    <Avatar
-                    {...stringAvatar('Paulo Victor')}
-                    title='Paulo Victor'/>
-                </IconButton>
+                <Link
+                to='/profile'>
+                    <IconButton
+                    className='border-darken m-2 rounded'
+                    size="large"
+                    color="inherit">
+                        <Avatar
+                        {...stringAvatar('Paulo Victor')}
+                        title='Paulo Victor'/>
+                    </IconButton>
+                </Link>
                 <h1
                 className='space-grotesk'>
                     Paulo
@@ -87,7 +90,7 @@ export default function Header({ cartPrice }) {
                 </p>
                 <Link
                 to='/cart'
-                className='text-dark'>
+                className='text-dark text-decoration-none'>
                     <MenuItem
                     className='fw-bold'>
                         <RiShoppingCart2Fill

@@ -16,9 +16,9 @@ export default function Home() {
 
   return(
     <>
-        {/*Cabeçalho da págino com profile, username e carrinho de compras*/}
-        <Header
-        cartPrice={cartPrice}/>
+      {/*Cabeçalho da págino com profile, username e carrinho de compras*/}
+      <Header
+      cartPrice={cartPrice}/>
       {/*Input de pesquisa e botão de pesquisa (Nota: botão ainda não funcional diferente do input)*/}
       <SearchField
       setSearch={setSearch}/>
@@ -27,7 +27,6 @@ export default function Home() {
       <FilterTabs
       selectedFilterTab={filterTab.trim().toLowerCase()}
       setFilterTab={setFilterTab}/>
-      <hr className="mx-4"/>
 
       {/*Tabela de comidas que muda a quantidade de colunas dependendo do dispositivo, PC = 4 colunas enquanto Mobile = 2 colunas.*/}
       <FoodTable

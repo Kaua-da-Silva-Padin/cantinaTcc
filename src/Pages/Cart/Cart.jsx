@@ -1,11 +1,29 @@
+import FoodList from "../../Components/FoodList/FoodList"
+import { Link } from 'react-router-dom';
+import { IconButton } from '@mui/material';
+import { RiArrowLeftFill } from 'react-icons/ri';
 
 export default function Cart() {
-
     return(
         <>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error inventore ad quam nihil sit, facilis voluptas distinctio, saepe magni accusamus vel pariatur enim assumenda, architecto vitae. Cupiditate vitae exercitationem qui!
-            </p>
+            <Link
+            to='/'>
+                <IconButton
+                className='text-light bg-danger rounded p-2 m-2'
+                style={{
+                    transition: 'all 1s ease-out'
+                }}
+                sx={{
+                    ':active ': {
+                        scale: .9
+                    }
+                }}>
+                    <RiArrowLeftFill
+                    className="me-1"/>
+                    Voltar
+                </IconButton>
+            </Link>
+            <FoodList/>
         </>
     )
 }

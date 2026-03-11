@@ -15,7 +15,7 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
     ]
 
     return(
-        <div className="d-flex justify-content-center">
+        <div className="d-flex justify-content-center mb-2">
             <Tabs
             value={selectedFilterTab}
             onChange={(e,newValue)=>setFilterTab(newValue)}
