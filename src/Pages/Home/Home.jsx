@@ -16,6 +16,7 @@ export default function Home() {
 
   return(
     <>
+      
       {/*Cabeçalho da págino com profile, username e carrinho de compras*/}
       <Header
       cartPrice={cartPrice}/>
