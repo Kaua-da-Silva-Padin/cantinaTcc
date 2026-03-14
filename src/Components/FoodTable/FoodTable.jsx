@@ -12,7 +12,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             stock: 1,
             price: 6
         },
-        {name: 'Poty', kind: 'bebidas', stock: 0, price: 6},
+        {name: 'Poty', kind: 'bebidas', stock: 1, price: 6},
         {name: 'Coxinha', kind: 'salgados', stock: 1, price: 6},
         {name: 'Mini Pizza', kind: 'salgados', stock: 0, price: 7}
     ]
@@ -72,11 +72,11 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             {/*If the device is mobile only show 2 cols for the table, otherwise show 4*/}
             <ImageList
             cols={isMobile ? 2 : 4}
-            rowHeight={250}
-            className={`rounded mx-2 overflow-auto ${!isMobile && 'p-2'}`}
+            rowHeight={280}
+            className={`rounded mx-2 overflow-auto bg-dark p-2`}
             sx={{
-                height: isMobile && '60dvh',
-                background: filteredFoods.length != 0 && 'rgba(255,100,0,.4)'
+                width: '100dvw',
+                height: isMobile && '60dvh'
             }}>
                 {filteredFoods.map(item=>(
                     // Item da lista de imagens que muda de estilo automaticamente se perceber que o estoque do item é 0.
@@ -95,17 +95,18 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                         }}/>
                         {/*Barra inferior de cada card. a propriedade sx (seria basicamente um style) desse elemento afeta o css interno do MUI, por isso parece tão estranho.*/}
                         <ImageListItemBar
-                        className='rounded bg-darken px-2'
+                        className='bg-darken px-2 fw-bold'
                         title={item.title}
                         subtitle={`R$ ${formatPrice(item.price)}`}
                         sx={{
                             "& .MuiImageListItemBar-subtitle": {
-                                fontSize: "1.2rem",
+                                fontSize: "1rem",
+                                color: 'rgba(0,0,0,.6)',
                             },
                             "& .MuiImageListItemBar-title": {
                                 fontSize: '1.4rem',
                                 marginBottom: '2%',
-                                fontWeight: 'bold'
+                                color: 'rgba(255,255,255,.6)'
                             }
                         }}
                         actionIcon={
@@ -120,7 +121,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                                     item.stock
                                 )
                             }
-                            className='text-light bg-success rounded p-2 m-2'
+                            className='text-light bg-darken rounded p-2 m-2'
                             style={{
                                 transition: 'all 1s ease-out'
                             }}

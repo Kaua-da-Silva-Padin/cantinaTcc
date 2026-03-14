@@ -15,19 +15,21 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
     ]
 
     return(
-        <div className="d-flex justify-content-center mb-2">
+        <div
+        className="d-flex justify-content-center mb-4">
             <Tabs
             value={selectedFilterTab}
             onChange={(e,newValue)=>setFilterTab(newValue)}
             variant='scrollable'
-            scrollButtons='auto'>
+            scrollButtons='auto'
+            className='w-100 rounded rounded'>
                 {filters.map(([icon, filter], i)=>(
                     <Tab
                     label={filter}
                     icon={icon}
                     key={i}
                     value={filter.toLowerCase()}
-                    className='border-darken-b rounded mx-1 '/>
+                    className='border-darken-b rounded mx-1 w-25'/>
                 ))}
             </Tabs>
         </div>

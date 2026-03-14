@@ -2,6 +2,8 @@
 
 :root {
     --darken: rgba(0,0,0,.2);
+    --orange: rgba(255, 102, 0, 0.847);
+    --orangeDarker: rgba(255, 52, 52, 0.753);
 }
 
 .border-darken {
@@ -21,7 +23,7 @@
 }
 
 .bg-orange {
-    background: #d65600c2 !important;
+    background: linear-gradient(var(--orange), var(--orangeDarker)) !important;
 }
 
 .space-grotesk {
@@ -54,7 +56,8 @@
     padding-left: 8%;
     padding-right: 8%;
     color: rgba(118, 5, 5, 0.838);
-    border: double 6px crimson;
+    font-family: 'Space Grotesk', sans-serif !important;
+    border: solid 2px crimson;
     border-radius: 10px;
     position: absolute;
     z-index: 9999;

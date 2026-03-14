@@ -9,15 +9,13 @@ export default function SearchField({ setSearch }) {
             <TextField
             type='search'
             label='Pesquisar...'
-            variant='outlined'
-            className='m-3'
-            fullWidth
+            variant='standard'
+            className='m-3 rounded w-75'
             onChange={e=>setSearch(e.target.value)}
             />
             <IconButton
             size='large'
-            color='inherit'
-            className='me-3 my-3 border-darken rounded'>
+            color='inherit'>
                 <RiSearchLine
                 className='fs-1'/>
             </IconButton>
