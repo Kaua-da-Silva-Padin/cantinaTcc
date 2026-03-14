@@ -38,9 +38,9 @@
 > (**Note**: if you don't want to write this all by hand just `ctrl+c` to copy it, and on the terminal **right click** to paste it).
 - If you're not in the root folder of the project then run this first: **`cd 'name_folder_project'`**. For example: **`cd project-cantina-tcc`**, and then you run the previous "pnpm" code.
 
-# ▲ Vercel Website (Our website hoster)
+# ▲ Vercel Project
 
-> [**https://project-cantina-tcc.vercel.app**](https://project-cantina-tcc.vercel.app)
+> [https://vercel.com/os-programadores](https://vercel.com/os-programadores)
 
 > **Note**: on every github commit, vercel will automatically update the website with a slight delay.
 
