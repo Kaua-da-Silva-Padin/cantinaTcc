@@ -2,20 +2,25 @@ import { ImageList, ImageListItem, ImageListItemBar, IconButton, useMediaQuery }
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
 import { FaCartPlus } from 'react-icons/fa6';
+import { useState, useEffect } from "react";
+import supabase from '../../supabaseClient';
 
 export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
-    // Implementar o banco de dados mais tarde no projeto, puxa as informações e dá um Array.push(info) nessa lista de objetos.
-    const products = [
-        {
-            name: 'Coca Cola',
-            kind: 'bebidas',
-            stock: 1,
-            price: 6
-        },
-        {name: 'Poty', kind: 'bebidas', stock: 1, price: 6},
-        {name: 'Coxinha', kind: 'salgados', stock: 1, price: 6},
-        {name: 'Mini Pizza', kind: 'salgados', stock: 0, price: 7}
-    ]
+    const [products, setProducts] = useState([]);
+
+    useEffect(()=>{
+        async function getProducts() {
+            const {data, error} = await supabase.from('products').select('*');
+
+            if (data) {
+                setProducts(data);
+            } else if (error) {
+                console.error(`Error selecting from supabase!\n${error.message}`);
+            }
+        }
+
+        getProducts();
+    },[])
 
     // Inicia a "conexão" com o Cloudinary, 'dntfculcp' é o nome do ambiente em que as imagens se encontram.
     const cld = new Cloudinary({
@@ -76,7 +81,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             className={`rounded mx-2 overflow-auto bg-dark p-2`}
             sx={{
                 width: '100dvw',
-                height: isMobile && '60dvh'
+                height: isMobile ? '62dvh' : '65dvh'
             }}>
                 {filteredFoods.map(item=>(
                     // Item da lista de imagens que muda de estilo automaticamente se perceber que o estoque do item é 0.
@@ -95,7 +100,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                         }}/>
                         {/*Barra inferior de cada card. a propriedade sx (seria basicamente um style) desse elemento afeta o css interno do MUI, por isso parece tão estranho.*/}
                         <ImageListItemBar
-                        className='bg-darken px-2 fw-bold'
+                        className='bg-darken fw-bold'
                         title={item.title}
                         subtitle={`R$ ${formatPrice(item.price)}`}
                         sx={{
@@ -121,9 +126,9 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                                     item.stock
                                 )
                             }
-                            className='text-light bg-darken rounded p-2 m-2'
+                            className='text-light bg-darken rounded p-2 mx-2'
                             style={{
-                                transition: 'all 1s ease-out'
+                                transition: 'all 200ms ease-out'
                             }}
                             sx={{
                                 ':active ': {

@@ -4,6 +4,7 @@
     --darken: rgba(0,0,0,.2);
     --orange: rgba(255, 102, 0, 0.847);
     --orangeDarker: rgba(255, 52, 52, 0.753);
+    --ruby: rgba(118, 5, 5, 0.838);
 }
 
 .border-darken {
@@ -16,10 +17,6 @@
 
 .bg-darken {
     background: var(--darken) !important;
-}
-
-.round-ball {
-    border-radius: 50px !important;
 }
 
 .bg-orange {
@@ -36,6 +33,7 @@
     justify-content: center;
     align-items: center;
     pointer-events: none !important;
+    overflow: hidden;
 }
 
 .unavailable-food::before {
@@ -55,8 +53,11 @@
     padding: 2%;
     padding-left: 8%;
     padding-right: 8%;
-    color: rgba(118, 5, 5, 0.838);
+    text-align: center;
+    background: linear-gradient(var(--orange),var(--orangeDarker)) !important;
+    color: var(--ruby);
     font-family: 'Space Grotesk', sans-serif !important;
+    font-weight: bold;
     border: solid 2px crimson;
     border-radius: 10px;
     position: absolute;
