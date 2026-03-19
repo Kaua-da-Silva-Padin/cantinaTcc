@@ -4,8 +4,6 @@ import Profile from "./Pages/Profile/Profile";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
-import { useState, useEffect } from "react";
-import supabase from './supabaseClient';
 
 export default function App() {
   // useEffect(()=>{
