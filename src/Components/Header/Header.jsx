@@ -1,4 +1,4 @@
-import { IconButton, Menu, MenuItem, Avatar } from '@mui/material';
+import { IconButton, Button, Menu, MenuItem, Avatar } from '@mui/material';
 import { useState } from 'react';
 import { RiShoppingCart2Fill, RiMenuFill, RiHomeFill } from 'react-icons/ri';
 import { Link } from 'react-router-dom'
@@ -62,36 +62,34 @@ export default function Header({ cartPrice }) {
             onClose={handleClose}
             keepMounted
             color='inherit'>
-                <MenuItem>
-                    <Link
-                    to='/'
-                    className='text-dark text-decoration-none'>
-                        <IconButton
-                        color='inherit'>
-                            {/*Substituir este ícone pela logo do site*/}
-                            <RiHomeFill
-                            className='me-2 fs-1'/>
+                <Link
+                to='/'
+                className='text-dark text-decoration-none'>
+                    <MenuItem>
+                        {/*Substituir este ícone pela logo do site*/}
+                        <RiHomeFill
+                        className='me-2 fs-2'/>
                             Home
-                            {/* <img
-                            src=""
-                            alt="" /> */}
-                        </IconButton>
-                    </Link>
-                </MenuItem>
-                <MenuItem>
-                    <Link
-                    to='/profile'
-                    className='text-dark text-decoration-none'>
-                        <IconButton
-                        color="inherit">
-                            <Avatar
-                            {...stringAvatar('João Pedro')}
-                            title='Paulo Victor'
-                            className='me-2'/>
-                            João Pedro
-                        </IconButton>
-                    </Link>
-                </MenuItem>
+                        {/* <img
+                        src=""
+                        alt="" /> */}
+                    </MenuItem>
+                </Link>
+                <Link
+                to='/profile'
+                className='text-dark text-decoration-none'>
+                    <MenuItem>
+                        <Avatar
+                        {...stringAvatar('Cuzinho limpo')}
+                        title='Paulo Victor'
+                        className='me-2'
+                        style={{
+                            height: '2rem',
+                            width: '2rem'
+                        }}/>
+                        João Pedro
+                    </MenuItem>
+                </Link>
             </Menu>
 
             <h1
