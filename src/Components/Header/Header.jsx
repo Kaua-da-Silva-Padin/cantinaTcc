@@ -94,7 +94,7 @@ export default function Header({ cartPrice }) {
 
             <h1
             className='space-grotesk fw-bold'>
-                CantinaShop
+                CantinaTec
             </h1>
             
             <div className="d-flex justify-content-center align-items-center">
