@@ -1,4 +1,4 @@
-import { IconButton, Button, Menu, MenuItem, Avatar } from '@mui/material';
+import { IconButton, Menu, MenuItem, Avatar } from '@mui/material';
 import { useState } from 'react';
 import { RiShoppingCart2Fill, RiMenuFill, RiHomeFill } from 'react-icons/ri';
 import { Link } from 'react-router-dom'
@@ -35,6 +35,7 @@ function stringAvatar(name) {
         children: `${firstNameChar}${secondNameChar}`,
     };
 }
+
 // The MUI Avatar script ends here and is used later.
 
 export default function Header({ cartPrice }) {
@@ -48,7 +49,7 @@ export default function Header({ cartPrice }) {
 
     return(
         <div
-        className='d-flex justify-content-between mb-2 p-2'>
+        className='d-flex justify-content-between mb-2 p-2 border-darken-b'>
             <IconButton
             size="large"
             onClick={handleMenu}
@@ -65,7 +66,7 @@ export default function Header({ cartPrice }) {
                 <Link
                 to='/'
                 className='text-dark text-decoration-none'>
-                    <MenuItem>
+                    <MenuItem className='fs-4'>
                         {/*Substituir este ícone pela logo do site*/}
                         <RiHomeFill
                         className='me-2 fs-2'/>
@@ -76,9 +77,18 @@ export default function Header({ cartPrice }) {
                     </MenuItem>
                 </Link>
                 <Link
+                to='/buy'
+                className='text-dark text-decoration-none'>
+                    <MenuItem className='fs-4'>
+                        <RiShoppingCart2Fill
+                        className='me-2 fs-2'/>
+                        Comprar
+                    </MenuItem>
+                </Link>
+                <Link
                 to='/profile'
                 className='text-dark text-decoration-none'>
-                    <MenuItem>
+                    <MenuItem className='fs-4'>
                         <Avatar
                         {...stringAvatar('Cuzinho limpo')}
                         title='Paulo Victor'
@@ -92,10 +102,14 @@ export default function Header({ cartPrice }) {
                 </Link>
             </Menu>
 
-            <h1
-            className='space-grotesk fw-bold'>
-                CantinaTec
-            </h1>
+            <Link
+            to='/'
+            className='text-dark text-decoration-none'>
+                <h1
+                className='space-grotesk fw-bold'>
+                    CantinaTec
+                </h1>
+            </Link>
             
             <div className="d-flex justify-content-center align-items-center">
                 <h5

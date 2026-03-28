@@ -1,3 +1,4 @@
+import BuyPage from "./Pages/BuyPage/BuyPage";
 import Home from "./Pages/Home/Home";
 import Cart from "./Pages/Cart/Cart";
 import Profile from "./Pages/Profile/Profile";
@@ -31,6 +32,9 @@ export default function App() {
           <Route
           path='/'
           element={<Home/>}/>
+          <Route
+          path='/buy'
+          element={<BuyPage/>}/>
           <Route
           path='/cart'
           element={<Cart/>}/>

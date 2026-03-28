@@ -1,4 +1,4 @@
-import { ImageList, ImageListItem, ImageListItemBar, IconButton, useMediaQuery } from '@mui/material';
+import { ImageList, ImageListItem, ImageListItemBar, ListSubheader, Skeleton, Tooltip, IconButton, useMediaQuery } from '@mui/material';
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
 import { FaCartPlus } from 'react-icons/fa6';
@@ -7,9 +7,11 @@ import supabase from '../../supabaseClient';
 
 export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
     const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(()=>{
         async function getProducts() {
+            setLoading(true);
             const {data, error} = await supabase.from('products').select('*');
 
             if (data) {
@@ -17,6 +19,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             } else if (error) {
                 console.error(`Error selecting from supabase!\n${error.message}`);
             }
+            setLoading(false);
         }
 
         getProducts();
@@ -56,7 +59,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             kind: foodKind,
             price: foodPrice,
             stock: foodStock
-        });  
+        });
     })
 
     // Checks if the device being used is mobile or not
@@ -77,70 +80,96 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             {/*If the device is mobile only show 2 cols for the table, otherwise show 4*/}
             <ImageList
             cols={isMobile ? 2 : 4}
-            rowHeight={280}
-            className={`rounded mx-2 overflow-auto bg-dark p-2`}
+            rowHeight={320}
+            className={`rounded mx-2 overflow-auto p-2`}
             sx={{
-                width: '100dvw',
+                width: '95dvw',
                 height: isMobile ? '62dvh' : '65dvh'
             }}>
-                {filteredFoods.map(item=>(
+                {
+                loading
+                ?
+                [...Array(isMobile ? 4 : 8)].map((_, i)=>(
+                    <Skeleton
+                    key={i}
+                    className='bg-darken'
+                    variant='rounded'
+                    animation='wave'
+                    style={{flexWrap: 'wrap'}}
+                    sx={{height: '100%', width: '100%'}}/>
+                ))
+                :
+                filteredFoods.map(item=>(
                     // Item da lista de imagens que muda de estilo automaticamente se perceber que o estoque do item é 0.
-                    <ImageListItem
+                    <Tooltip
                     key={item.title}
-                    className={`bg-orange rounded ${item.stock == 0 && 'unavailable-food'}`}
-                    title={item.title}
+                    title={item.stock === 0 ? "Item Indisponível" : item.title}
+                    slotProps={{
+                        tooltip: {
+                            sx: {
+                                fontSize: '1.4rem !important',
+                                backgroundColor: '#333',
+                            }
+                        }
+                    }}
                     >
-                        {/*Componente do cloudinary que aceita imagens em um formato "dinâmico" que muda dependendo do navegador que acessa o site, send a prioridade AVIF para navegadores suportados.*/}
-                        <AdvancedImage
-                        cldImg={item.img}
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'contain',
-                        }}/>
-                        {/*Barra inferior de cada card. a propriedade sx (seria basicamente um style) desse elemento afeta o css interno do MUI, por isso parece tão estranho.*/}
-                        <ImageListItemBar
-                        className='bg-darken fw-bold'
-                        title={item.title}
-                        subtitle={`R$ ${formatPrice(item.price)}`}
-                        sx={{
-                            "& .MuiImageListItemBar-subtitle": {
-                                fontSize: "1rem",
-                                color: 'rgba(0,0,0,.6)',
-                            },
-                            "& .MuiImageListItemBar-title": {
-                                fontSize: '1.4rem',
-                                marginBottom: '2%',
-                                color: 'rgba(255,255,255,.6)'
-                            }
-                        }}
-                        actionIcon={
-                            // Botão no canto inferior direito de cada card, ao clicar faz a soma do total atual do carrinho + o preço do item e devolve esse novo valor para o app.jsx que devolve pro Header.jsx que mostra esse valor em seu botão de carrinho.
-                            <IconButton
-                            onClick={
-                                ()=>buyItem(
-                                    item.img,
-                                    item.title,
-                                    item.kind,
-                                    item.price,
-                                    item.stock
-                                )
-                            }
-                            className='text-light bg-darken rounded p-2 mx-2'
+                        <ImageListItem
+                        className={`bg-orange rounded ${item.stock == 0 && 'unavailable-food'}`}
+                        >
+                            {/*Componente do cloudinary que aceita imagens em um formato "dinâmico" que muda dependendo do navegador que acessa o site, send a prioridade AVIF para navegadores suportados.*/}
+                            <AdvancedImage
+                            cldImg={item.img}
+                            loading='lazy'
                             style={{
-                                transition: 'all 200ms ease-out'
-                            }}
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain',
+                            }}/>
+                            {/*Barra inferior de cada card. a propriedade sx (seria basicamente um style) desse elemento afeta o css interno do MUI, por isso parece tão estranho.*/}
+                            <ImageListItemBar
+                            className='bg-darken fw-bold'
+                            title={item.title}
+                            subtitle={`R$ ${formatPrice(item.price)}`}
                             sx={{
-                                ':active ': {
-                                    scale: .9
+                                "& .MuiImageListItemBar-subtitle": {
+                                    fontSize: "1rem",
+                                    color: 'rgba(0,0,0,.6)',
+                                },
+                                "& .MuiImageListItemBar-title": {
+                                    fontSize: '1.4rem',
+                                    marginBottom: '2%',
+                                    color: 'rgba(255,255,255,.6)'
                                 }
                             }}
-                            title={`Adicionar ${item.title} ao carrinho (${formatPrice(item.price)})`}>
-                                <FaCartPlus className='fs-1'/>
-                            </IconButton>
-                        }/>
-                    </ImageListItem>
-                ))}
+                            actionIcon={
+                                // Botão no canto inferior direito de cada card, ao clicar faz a soma do total atual do carrinho + o preço do item e devolve esse novo valor para o app.jsx que devolve pro Header.jsx que mostra esse valor em seu botão de carrinho.
+                                <IconButton
+                                onClick={
+                                    ()=>buyItem(
+                                        item.img,
+                                        item.title,
+                                        item.kind,
+                                        item.price,
+                                        item.stock
+                                    )
+                                }
+                                className='text-light bg-darken rounded p-2 mx-2'
+                                style={{
+                                    transition: 'all 200ms ease-out'
+                                }}
+                                sx={{
+                                    ':active ': {
+                                        scale: .9
+                                    }
+                                }}
+                                title={`Adicionar ${item.title} ao carrinho (${formatPrice(item.price)})`}>
+                                    <FaCartPlus className='fs-1'/>
+                                </IconButton>
+                            }/>
+                        </ImageListItem>
+                    </Tooltip>
+                ))
+                }
 
             </ImageList>
         </div>
