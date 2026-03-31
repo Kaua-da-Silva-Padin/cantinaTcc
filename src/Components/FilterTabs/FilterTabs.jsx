@@ -29,7 +29,7 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
                     icon={icon}
                     key={i}
                     value={filter.toLowerCase()}
-                    className='rounded mx-1 w-50 bg-darken'/>
+                    className='rounded mx-1 w-50 border-darken'/>
                 ))}
             </Tabs>
         </div>

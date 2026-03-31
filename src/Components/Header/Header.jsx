@@ -1,7 +1,7 @@
-import { IconButton, Menu, MenuItem, Avatar } from '@mui/material';
+import {Avatar, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop } from '@mui/material';
+import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill } from 'react-icons/ri';
 import { useState } from 'react';
-import { RiShoppingCart2Fill, RiMenuFill, RiHomeFill } from 'react-icons/ri';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 // This profile Color creation script was taken from the MUI official website from its Avatar component page on MUI Material.
 function stringToColor(string, n) {
@@ -30,77 +30,74 @@ function stringAvatar(name) {
 
     return {
         sx: {
-        background: `linear-gradient(${stringToColor(name, 2)}, ${stringToColor(name, 4)})`,
+            background: `linear-gradient(${stringToColor(name, 2)}, ${stringToColor(name, 4)})`,
         },
         children: `${firstNameChar}${secondNameChar}`,
     };
 }
-
 // The MUI Avatar script ends here and is used later.
 
+
+const actions = [
+    { icon: <RiHomeFill />, name: 'Home', link: '/' },
+    { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' },
+    { icon: <Avatar {...stringAvatar('João Paulo')} />, name: 'Perfil', link: '/profile' },
+]
+
 export default function Header({ cartPrice }) {
-    const [anchorEl, setAnchorEl] = useState(null);
-    
-    const handleMenu = (e)=> setAnchorEl(e.currentTarget);
-    const handleClose = ()=> setAnchorEl(null);
-    const formatPrice = (price)=> {
-        return price.toFixed(2).replace('.', ',')
+    const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
+
+    // const formatPrice = (price)=> {
+    //     return price.toFixed(2).replace('.', ',')
+    // }
+
+    const handleActionClick = (link) => {
+        navigate(link);
+        setOpen(false);
     }
 
     return(
         <div
-        className='d-flex justify-content-between mb-2 p-2 border-darken-b'>
-            <IconButton
-            size="large"
-            onClick={handleMenu}
-            color="inherit">
-                <RiMenuFill
-                className='text-dark fs-1'/>
-            </IconButton>
-            <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-            keepMounted
-            color='inherit'>
-                <Link
-                to='/'
-                className='text-dark text-decoration-none'>
-                    <MenuItem className='fs-4'>
-                        {/*Substituir este ícone pela logo do site*/}
-                        <RiHomeFill
-                        className='me-2 fs-2'/>
-                            Home
-                        {/* <img
-                        src=""
-                        alt="" /> */}
-                    </MenuItem>
-                </Link>
-                <Link
-                to='/buy'
-                className='text-dark text-decoration-none'>
-                    <MenuItem className='fs-4'>
-                        <RiShoppingCart2Fill
-                        className='me-2 fs-2'/>
-                        Comprar
-                    </MenuItem>
-                </Link>
-                <Link
-                to='/profile'
-                className='text-dark text-decoration-none'>
-                    <MenuItem className='fs-4'>
-                        <Avatar
-                        {...stringAvatar('Cuzinho limpo')}
-                        title='Paulo Victor'
-                        className='me-2'
-                        style={{
-                            height: '2rem',
-                            width: '2rem'
-                        }}/>
-                        João Pedro
-                    </MenuItem>
-                </Link>
-            </Menu>
+        className='d-flex justify-content-center gap-2 mb-2 p-2 border-darken-b'>
+            <Backdrop
+            open={open}
+            sx={{
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                zIndex: 999
+            }}/>
+            <SpeedDial
+            ariaLabel='headerMenu'
+            direction='down'
+            open={open}
+            onOpen={() => {}}
+            onClose={() => {}}
+            sx={{
+                position:'fixed',
+                top: 10,
+                left: 16,
+            }}
+            FabProps={{
+                onClick: () => setOpen(!open)
+            }}
+            icon={
+                <SpeedDialIcon
+                className='text-center d-flex justify-content-center align-items-center fs-2'
+                icon={<RiMenuFill/>}
+                openIcon={<RiCloseFill/>}/>
+            }>
+                {actions.map((action) => (
+                    <SpeedDialAction
+                    key={action.name}
+                    icon={action.icon}
+                    onClick={() => handleActionClick(action.link)}
+                    tooltipTitle={action.name}
+                    tooltipOpen={true}
+                    tooltipPlacement="right"
+                    className='text-center d-flex justify-content-center align-items-center fs-4 bg-primary text-light'
+                    />
+                ))}
+            </SpeedDial>
 
             <Link
             to='/'
@@ -111,7 +108,7 @@ export default function Header({ cartPrice }) {
                 </h1>
             </Link>
             
-            <div className="d-flex justify-content-center align-items-center">
+            {/* <div className="d-flex justify-content-center align-items-center">
                 <h5
                 className='space-grotesk'>
                     R$ {formatPrice(cartPrice)}
@@ -126,7 +123,7 @@ export default function Header({ cartPrice }) {
                         className='text-dark fs-1'/>
                     </IconButton>
                 </Link>
-            </div>
+            </div> */}
             {/* <IconButton
             size='large'
             color='inherit'
