@@ -10,7 +10,7 @@ export default function SearchField({ setSearch }) {
     }
 
     const handleKeySearch = (e)=> {
-        let key = e.key;
+        let key = e.key; 
         let input = e.currentTarget.querySelector('input');
 
         if (key === 'Enter') {
@@ -21,21 +21,25 @@ export default function SearchField({ setSearch }) {
 
     return(
         <div
-        className='d-flex justify-content-center mb-3'>
-            <TextField
-            type='search'
-            label='Pesquisar...'
-            variant='standard'
-            className='m-3 rounded w-75'
-            onKeyDown={handleKeySearch}
-            />
-            <IconButton
-            size='large'
-            color='inherit'
-            onClick={handleSearch}>
-                <RiSearchLine
-                className='fs-1'/>
-            </IconButton>
+        className='d-flex justify-content-center'>
+            <div className='d-flex w-90 align-items-center'>
+                <TextField
+                type='search'
+                label='Pesquisar...'
+                variant='standard'
+                color='inherit'
+                className='m-2 rounded w-100 searchField'
+                onKeyDown={handleKeySearch}
+                />
+                <IconButton
+                size='large'
+                color='inherit'
+                className='searchField'
+                onClick={handleSearch}>
+                    <RiSearchLine
+                    className='fs-2'/>
+                </IconButton>
+            </div>
         </div>
     )
 }

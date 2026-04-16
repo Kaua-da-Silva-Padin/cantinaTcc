@@ -36,8 +36,6 @@ export default function BuyPage() {
       filterTxt={searchTxt.trim().toLowerCase()}
       setCartPrice={setCartPrice}
       cartPrice={parseFloat(cartPrice)}/>
-
-      <Footer/>
     </>
   )
 }

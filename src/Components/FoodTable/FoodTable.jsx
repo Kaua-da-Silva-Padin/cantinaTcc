@@ -81,7 +81,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             <ImageList
             cols={isMobile ? 2 : 4}
             rowHeight={320}
-            className={`rounded mx-2 overflow-auto p-2`}
+            className={`rounded mx-2 overflow-auto p-1`}
             sx={{
                 width: '95dvw',
                 height: isMobile ? '62dvh' : '65dvh'
@@ -114,7 +114,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                     }}
                     >
                         <ImageListItem
-                        className={`bg-orange rounded ${item.stock == 0 && 'unavailable-food'}`}
+                        className={`bg-new-orange rounded-4 ${item.stock == 0 && 'unavailable-food'}`}
                         >
                             {/*Componente do cloudinary que aceita imagens em um formato "dinâmico" que muda dependendo do navegador que acessa o site, send a prioridade AVIF para navegadores suportados.*/}
                             <AdvancedImage
@@ -122,23 +122,23 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                             loading='lazy'
                             style={{
                                 width: '100%',
-                                height: '100%',
+                                height: '90%',
                                 objectFit: 'contain',
                             }}/>
                             {/*Barra inferior de cada card. a propriedade sx (seria basicamente um style) desse elemento afeta o css interno do MUI, por isso parece tão estranho.*/}
                             <ImageListItemBar
-                            className='bg-darken fw-bold'
+                            className={`bg-brown fw-bold rounded-4 p-1`}
                             title={item.title}
                             subtitle={`R$ ${formatPrice(item.price)}`}
                             sx={{
                                 "& .MuiImageListItemBar-subtitle": {
                                     fontSize: "1rem",
-                                    color: 'rgba(0,0,0,.6)',
+                                    color: 'rgb(255, 255, 255)',
                                 },
                                 "& .MuiImageListItemBar-title": {
                                     fontSize: '1.4rem',
                                     marginBottom: '2%',
-                                    color: 'rgba(255,255,255,.6)'
+                                    color: 'rgb(255, 255, 255)'
                                 }
                             }}
                             actionIcon={
@@ -153,7 +153,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                                         item.stock
                                     )
                                 }
-                                className='text-light bg-darken rounded p-2 mx-2'
+                                className='text-light bg-darken rounded-4 p-2 mx-1'
                                 style={{
                                     transition: 'all 200ms ease-out'
                                 }}
