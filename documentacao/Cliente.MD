@@ -1,9 +1,16 @@
 # Parte do cliente
 
 ## BuyPage.jsx
+### TODO:
+- [] ## Carrinho de compras
+    - ...
+    - ...
+
+
 ### Ideias:
 
 - ##### SnackBar - Notificação ao adicionar item.
+    - Vamos utilizar o **[SnackBar](https://v7.mui.com/material-ui/react-snackbar/ "🦊")** do *MUI*
 Quando adicionar um `item` ao carrinho, aparecerá uma notificação:
 >     Minipizza      R$ 5.00
 
@@ -14,7 +21,7 @@ function notificarNovoItemAdicionado(item) {
 }
 ```
 
+- ##### Personalizar a aparência dos btns de filtro
+    Algo com border radius.
 
-
-- Vamos utilizar o **[SnackBar](https://v7.mui.com/material-ui/react-snackbar/ "🦊")** do *MUI*
 

@@ -9,12 +9,6 @@
     --brown: #7E3726;
 }
 
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .border-darken {
     border: solid 1px var(--darken) !important;
 }
@@ -47,8 +41,21 @@ body{
   font-family: "Space Grotesk", sans-serif !important;
 }
 
-.w-20{
+.w-10{
     width: 20%;
+}
+
+
+.w-30{
+    width: 30%;
+}
+
+.w-40{
+    width: 40%;
+}
+
+.w-60{
+    width: 60%;
 }
 
 .w-90{
@@ -94,7 +101,7 @@ body{
 }
 
 .searchField{
-    background-color: #cacaca23 !important;
+    background: linear-gradient(135deg, #cacaca23, #9b9b9b38);
     padding: 0 1rem 1rem 1rem !important;
     border-radius: 1rem !important;
 }
@@ -106,6 +113,7 @@ body{
 .searchField + button {
     padding: 1.5rem !important;
     height: 4.2rem !important;
+    background: #9b9b9b38;
 }
 
 .searchField + button svg {

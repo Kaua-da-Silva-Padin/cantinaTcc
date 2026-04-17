@@ -21,3 +21,11 @@ Pois a fazerem commit, os outros (Eu e o João), automaticamente poderão ver e 
 [E que deve ter um fim.](https://www.youtube.com/watch?v=pjzuAi9NE8A "Engenheiro explica como organizar e terminar um projeto a tempo.")
 
 ---
+### 17/04/2026 - João Pedro
+**Modifiquei**
+- `index.css`
+- `FilterTabs.jsx`
+- `FoodTable.jsx`
+- `FoodTable.jsx`
+- `SearchField.jsx`
+**Responsividade para dispositvos móveis. Ajuste de cores.**

@@ -76,7 +76,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
 
     return(
         <div
-        className="d-flex justify-content-center">
+        className="d-flex justify-content-center m-4">
             {/*If the device is mobile only show 2 cols for the table, otherwise show 4*/}
             <ImageList
             cols={isMobile ? 2 : 4}
