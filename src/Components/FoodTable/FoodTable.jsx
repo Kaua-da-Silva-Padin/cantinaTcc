@@ -106,6 +106,8 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
     // Filtragem que procura por quaisquer items que possuam o texto da pesquisa em seu título e retorna uma nova lista.
     filteredFoods = filteredFoods.filter(item => item.title.toLowerCase().includes(filterTxt));
 
+    filteredFoods = filteredFoods.sort((a, b) => b.price - a.price);
+
     return(
         <>
             <Snackbar
