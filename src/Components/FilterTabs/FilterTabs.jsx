@@ -27,6 +27,7 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
                     <Tab
                     label={filter}
                     icon={icon}
+                    iconPosition='start'
                     key={i}
                     value={filter.toLowerCase()}
                     className='rounded mx-1 w-50 border-darken'/>
