@@ -2,6 +2,8 @@ import { Tabs, Tab } from '@mui/material';
 import { RiDrinksFill } from 'react-icons/ri';
 import { FaAsterisk } from 'react-icons/fa6'
 import { GiChipsBag, GiHotDog, GiChocolateBar, GiIceCreamScoop } from 'react-icons/gi'
+import { useState } from 'react';
+
 
 export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
     // Cada valor do filtro e seu ícone.
@@ -13,6 +15,14 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
         [<GiChocolateBar className='fs-1'/>,'Doces'],
         [<GiIceCreamScoop className='fs-1'/>,'Sorvetes'],
     ]
+
+    const [clickedTab, setClickedTab] = useState();
+
+    function highlightElement(e) {
+        setClickedTab(e);
+    }
+
+    console.log(JSON.stringify(clickedTab))
 
     return(
         <div
@@ -30,7 +40,9 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
                     iconPosition='start'
                     key={i}
                     value={filter.toLowerCase()}
-                    className='rounded mx-1 w-50 border-darken'/>
+                    className='rounded mx-1 w-50 border-darken'
+                    onClick={highlightElement}
+                    />
                 ))}
             </Tabs>
         </div>
