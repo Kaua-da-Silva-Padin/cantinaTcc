@@ -16,20 +16,20 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
         [<GiIceCreamScoop className='fs-1'/>,'Sorvetes'],
     ]
 
-    const [clickedTab, setClickedTab] = useState();
+    // const [clickedTab, setClickedTab] = useState();
 
-    function highlightElement(e) {
-        setClickedTab(e);
-    }
+    // function highlightElement(e) {
+    //     setClickedTab(e);
+    // }
 
-    console.log(JSON.stringify(clickedTab))
+    // console.log(JSON.stringify(clickedTab))
 
     return(
         <div
         className="d-flex justify-content-center mb-4zz">
             <Tabs
             value={selectedFilterTab}
-            onChange={(e,newValue)=>setFilterTab(newValue)}
+            onChange={(e, newValue)=>setFilterTab(newValue)}
             variant='scrollable'
             scrollButtons='auto'
             className='rounded py-1 w-100 mx-2'>
@@ -41,7 +41,7 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
                     key={i}
                     value={filter.toLowerCase()}
                     className='rounded mx-1 w-50 border-darken'
-                    onClick={highlightElement}
+                    // onClick={highlightElement}
                     />
                 ))}
             </Tabs>
