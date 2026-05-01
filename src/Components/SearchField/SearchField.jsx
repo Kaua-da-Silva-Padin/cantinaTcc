@@ -28,7 +28,7 @@ export default function SearchField({ setSearch }) {
                 label='Pesquisar...'
                 variant='standard'
                 color='inherit'
-                className='m-3 rounded w-100 searchField'
+                className='m-4 rounded w-100 searchField'
                 onKeyDown={handleKeySearch}
                 />
                 <IconButton

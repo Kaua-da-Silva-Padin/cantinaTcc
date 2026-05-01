@@ -9,6 +9,10 @@
     --brown: #7E3726;
 }
 
+body{
+    margin: 0;
+}
+
 .border-darken {
     border: solid 1px var(--darken) !important;
 }
@@ -127,3 +131,9 @@
 .MuiTabs-indicator{
     display: none;
 }
+
+.ml-4{
+    margin-left: 4% !important;
+}
+
+

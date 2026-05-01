@@ -8,12 +8,12 @@ import { useState } from 'react';
 export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
     // Cada valor do filtro e seu ícone.
     const filters = [
-        [<FaAsterisk className='fs-2'/>,'Todos'],
-        [<GiHotDog className='fs-2'/>,'Salgados'],
-        [<GiChipsBag className='fs-2'/>,'Salgadinhos'],
-        [<RiDrinksFill className='fs-2'/>,'Bebidas'],
-        [<GiChocolateBar className='fs-2'/>,'Doces'],
-        [<GiIceCreamScoop className='fs-2'/>,'Sorvetes'],
+        [<FaAsterisk className='fs-4'/>,'Todos'],
+        [<GiHotDog className='fs-4'/>,'Salgados'],
+        [<GiChipsBag className='fs-4'/>,'Salgadinhos'],
+        [<RiDrinksFill className='fs-4'/>,'Bebidas'],
+        [<GiChocolateBar className='fs-4'/>,'Doces'],
+        [<GiIceCreamScoop className='fs-4'/>,'Sorvetes'],
     ]
 
     
@@ -45,7 +45,7 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
 
     return(
         <div
-        className="d-flex justify-content-center m-4">
+        className="d-flex justify-content-center m-4 ml-2">
             <Tabs
             value={selectedFilterTab}
             onChange={(e, newValue)=>setFilterTab(newValue)}
@@ -57,6 +57,7 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
                     backgroundColor: '#FF9D39 !important',
                     color: '#fff !important',
                 },
+                minHeight: '48px', // Define a altura mínima do container das Tabs
             }}
             >
                 {filters.map(([icon, filter], i)=>(
@@ -66,10 +67,13 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
                     iconPosition='start'
                     key={i}
                     value={filter.toLowerCase()}
-                    className='rounded-5 mx-1 w-20 border-darken'
+                    className='rounded-5 mx-1 border-darken'
                     sx={{
                         backgroundColor: '#ffffff',
                         transition: 'background-color 0.3s',
+                        padding: '.5em 2.5em .5em 2.5em',
+                        minHeight: '3.5em', // Define a altura mínima de cada Tab individualmente
+                        height: '3.5em',    // Força a altura desejada
                     }}
                     />
                 ))}
