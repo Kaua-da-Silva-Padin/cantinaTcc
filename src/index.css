@@ -119,3 +119,7 @@
 .searchField + button svg {
     margin-left: .2rem !important;
 }
+
+.MuiTabs-indicator{
+    display: none;
+}
