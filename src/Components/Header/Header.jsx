@@ -1,5 +1,5 @@
 import {Avatar, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop } from '@mui/material';
-import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill } from 'react-icons/ri';
+import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiAdminFill } from 'react-icons/ri';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -41,6 +41,7 @@ function stringAvatar(name) {
 const actions = [
     { icon: <RiHomeFill />, name: 'Home', link: '/' },
     { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' },
+    { icon: <RiAdminFill />, name: 'Admin', link: '/adm' },
     { icon: <Avatar {...stringAvatar('João Paulo')} />, name: 'Perfil', link: '/profile' },
 ]
 
