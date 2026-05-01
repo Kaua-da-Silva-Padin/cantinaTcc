@@ -2,10 +2,11 @@ import Header from "../../Components/Header/Header"
 import OrdersList from "../../Components/OrdersList/OrdersList"
 import FoodTable from "../../Components/FoodTable/FoodTable"
 import Footer from "../../Components/Footer/Footer"
+import DBManage from "../../Components/DBManage/DBManage"
 import { useState } from "react"
 
-export default function BuyPage() {
-{/*Query do input de pesquisa.*/}
+export default function AdmPage() {
+  {/*Query do input de pesquisa.*/}
   const [searchTxt, setSearch] = useState('');
 
   {/*Filtro da barra selecionado atualmente.*/}
@@ -21,6 +22,7 @@ export default function BuyPage() {
       <Header
       cartPrice={cartPrice}/>
       <OrdersList />
+      <DBManage />
     </>
   )
 }

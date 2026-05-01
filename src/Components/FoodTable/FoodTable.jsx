@@ -175,11 +175,11 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                         sx={{height: '100%', width: '100%'}}/>
                     ))
                     :
-                    filteredFoods.map(item=>(
+                    filteredFoods.map((item, i)=>(
                         // Item da lista de imagens que muda de estilo automaticamente se perceber que o estoque do item é 0.
                         <ImageListItem
-                            className={`bg-new-orange rounded-4 ${item.stock == 0 && 'unavailable-food'}`}
-                            >
+                        className={`bg-new-orange rounded-4 ${item.stock == 0 && 'unavailable-food'}`}
+                        key={i}>
                                 {/*Componente do cloudinary que aceita imagens em um formato "dinâmico" que muda dependendo do navegador que acessa o site, send a prioridade AVIF para navegadores suportados.*/}
                                 <AdvancedImage
                                 cldImg={item.img}

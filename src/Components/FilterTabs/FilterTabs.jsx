@@ -22,7 +22,15 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
         setClickedTab(e);
     }
 
-    console.log(JSON.stringify(clickedTab))
+    /* console.log(JSON.stringify(clickedTab))
+    This line was causing this error:
+        FilterTabs.jsx?t=1777597768403:46 Uncaught TypeError: Converting circular structure to JSON
+        --> starting at object with constructor 'HTMLButtonElement'
+        |     property '__reactFiber$238xefxvewc' -> object with constructor 'FiberNode'
+        --- property 'stateNode' closes the circle
+        at JSON.stringify (<anonymous>)
+        at FilterTabs (FilterTabs.jsx?t=1777597768403:46:20)
+    */
 
     return(
         <div

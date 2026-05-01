@@ -6,7 +6,7 @@ import Footer from "../../Components/Footer/Footer"
 import { useState } from "react"
 
 export default function BuyPage() {
-{/*Query do input de pesquisa.*/}
+  {/*Query do input de pesquisa.*/}
   const [searchTxt, setSearch] = useState('');
 
   {/*Filtro da barra selecionado atualmente.*/}
