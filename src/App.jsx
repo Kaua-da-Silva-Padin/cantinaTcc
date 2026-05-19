@@ -3,6 +3,7 @@ import Home from "./Pages/Home/Home";
 import Cart from "./Pages/Cart/Cart";
 import Profile from "./Pages/Profile/Profile";
 import AdmPage from "./Pages/AdmPage/AdmPage";
+import RealTimeOrders from "./Pages/AdmPage/RealTimeOrders";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
@@ -45,6 +46,10 @@ export default function App() {
           <Route
           path='/adm'
           element={<AdmPage/>}/>
+          <Route
+          path='/orders'
+          element={<RealTimeOrders/>}/>
+          {/* Usar sessions (Back End) Para gerenciar o nível de acesso */}
         </Routes>
       </Router>
       <SpeedInsights/>
