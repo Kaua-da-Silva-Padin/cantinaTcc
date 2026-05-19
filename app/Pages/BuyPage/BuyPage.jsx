@@ -1,11 +1,23 @@
 import SearchField from "../../Components/SearchField/SearchField"
-import Header from "../../Components/Header/Header"
 import FilterTabs from "../../Components/FilterTabs/FilterTabs"
 import FoodTable from "../../Components/FoodTable/FoodTable"
-import Footer from "../../Components/Footer/Footer"
 import { useState } from "react"
+import { useLoaderData } from "react-router"
+import supabase from "../../supabaseClient"
+
+export async function loader() {
+  const { data, error } = await supabase.from('products').select('*');
+
+  if (error) {
+    console.error(`Erro ao buscar dados do Supabase na BuyPage: ${error.message}`);
+    return [];
+  }
+  return data;
+}
 
 export default function BuyPage() {
+  const products = useLoaderData();
+
   {/*Query do input de pesquisa.*/}
   const [searchTxt, setSearch] = useState('');
 
@@ -17,21 +29,15 @@ export default function BuyPage() {
 
   return(
     <>
-      
-      {/*Cabeçalho da págino com profile, username e carrinho de compras*/}
-      <Header
-      cartPrice={cartPrice}/>
-      {/*Input de pesquisa e botão de pesquisa (Nota: botão ainda não funcional diferente do input)*/}
       <SearchField
       setSearch={setSearch}/>
 
-      {/*Barra horizontal "scrolável" com filtros de comida.*/}
       <FilterTabs
       selectedFilterTab={filterTab.trim().toLowerCase()}
       setFilterTab={setFilterTab}/>
 
-      {/*Tabela de comidas que muda a quantidade de colunas dependendo do dispositivo, PC = 4 colunas enquanto Mobile = 2 colunas.*/}
       <FoodTable
+      products={products}
       filterTab={filterTab.trim().toLowerCase()}
       filterTxt={searchTxt.trim().toLowerCase()}
       setCartPrice={setCartPrice}

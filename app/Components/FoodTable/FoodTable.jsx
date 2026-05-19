@@ -4,31 +4,16 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import { FaCartPlus, FaCartShopping, FaX } from 'react-icons/fa6';
 import { useState, useEffect } from "react";
 import supabase from '../../supabaseClient';
+import { useLoaderData } from 'react-router';
 
 export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
-    const [products, setProducts] = useState([]);
+    const products = useLoaderData();
     const [itemAlert, setItemAlert] = useState({
         'state': false,
         'message': '',
         'img': ''
     });
     const [loading, setLoading] = useState(false);
-
-    useEffect(()=>{
-        async function getProducts() {
-            setLoading(true);
-            const {data, error} = await supabase.from('products').select('*');
-
-            if (data) {
-                setProducts(data);
-            } else if (error) {
-                console.error(`Error selecting from supabase!\n${error.message}`);
-            }
-            setLoading(false);
-        }
-
-        getProducts();
-    },[])
 
     // Inicia a "conexão" com o Cloudinary, 'dntfculcp' é o nome do ambiente em que as imagens se encontram.
     const cld = new Cloudinary({

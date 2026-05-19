@@ -19,8 +19,6 @@ export default function AdmPage() {
     <>
       
       {/*Cabeçalho da págino com profile, username e carrinho de compras*/}
-      <Header
-      cartPrice={cartPrice}/>
       <OrdersList />
       <DBManage />
     </>
