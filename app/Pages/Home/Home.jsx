@@ -8,7 +8,6 @@ export default function Home() {
 
     return(
         <>
-            <Header cartPrice={0}/>
 
             <main className="m-4 p-2">
                 <section>

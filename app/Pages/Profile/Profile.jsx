@@ -4,8 +4,6 @@ export default function Profile() {
 
     return(
         <>
-            <Header
-            cartPrice={0}/>
         </>
     )
 }

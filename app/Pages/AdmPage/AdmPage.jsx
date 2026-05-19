@@ -1,5 +1,4 @@
 import Header from "../../Components/Header/Header"
-import OrdersList from "../../Components/OrdersList/OrdersList"
 import FoodTable from "../../Components/FoodTable/FoodTable"
 import Footer from "../../Components/Footer/Footer"
 import DBManage from "../../Components/DBManage/DBManage"

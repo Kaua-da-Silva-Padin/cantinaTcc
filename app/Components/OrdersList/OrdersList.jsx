@@ -27,20 +27,21 @@ function SingleOrder({ id, entrance, customerId, productsLength, price }) {
         flexItem />
     );
     
+    // Will be replaced by Table
     return (
-        <TableRow
+        <Stack
         className='py-2'
         direction="row"
         divider={divider}
         spacing={2}
         sx={style}
         >
-        <TableCell># {id}</TableCell>
-        <TableCell>{entrance}</TableCell>
-        <TableCell>{customerId}</TableCell>
-        <TableCell>{productsLength}</TableCell>
-        <TableCell>R$ {price}</TableCell>
-        </TableRow>
+        <span># {id}</span>
+        <span>{entrance}</span>
+        <span>{customerId}</span>
+        <span>{productsLength}</span>
+        <span>R$ {price}</span>
+        </Stack>
     );
 }
 

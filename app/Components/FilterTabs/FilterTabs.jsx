@@ -29,8 +29,6 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
         } else{
             e.target.style.backgroundColor = "#ffffff";
         }
-
-        console.log("")
     }
 
     /* console.log(JSON.stringify(clickedTab))
