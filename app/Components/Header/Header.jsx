@@ -1,6 +1,6 @@
 // app/Components/Header/Header.jsx
 import { Avatar, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop, ScopedCssBaseline } from '@mui/material';
-import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiAdminFill } from 'react-icons/ri';
+import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiAdminFill, RiTableView } from 'react-icons/ri';
 import { useState } from 'react';
 import { Link } from 'react-router'; 
 
@@ -40,7 +40,8 @@ const actions = [
     { icon: <RiHomeFill />, name: 'Home', link: '/' },
     { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' },
     { icon: <RiAdminFill />, name: 'Admin', link: '/adm' },
-    { icon: <Avatar {...stringAvatar('João Paulo')} />, name: 'Perfil', link: '/profile' },
+    { icon: <RiTableView />, name: 'Pedidos', link: '/orders'},
+    { icon: <Avatar {...stringAvatar('João Paulo')} />, name: 'Perfil', link: '/profile' },,
 ]
 
 export default function Header() {
