@@ -8,6 +8,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Tab from '@mui/material/Tab';
 
 function SingleOrder({ id, entrance, customerId, productsLength, price }) {
     
@@ -46,19 +47,50 @@ function SingleOrder({ id, entrance, customerId, productsLength, price }) {
 }
 
 export default function OrdersList({ orders }) {
+    const divider = (
+        <Divider 
+        orientation='vertical' 
+        sx={{border: "1px solid darkgray"}} 
+        flexItem />)
+
     return (
         <>
-        <div 
+        <TableContainer 
         className="bg-dark text-light rounded-2 p-2 mx-2"
         style={{
             height: 600,
             width: 600
-        }}
-        >
-        <TableHead>
-            
-        </TableHead>
-        <Stack spacing={1}>
+        }}>
+        <Table>
+
+            <TableHead> 
+                <TableRow className='bg-white' key="24">
+                    {['ID', 'Entrada', 'Cliente', 'Itens', 'Valor']
+                    .map(txt => 
+                    <TableCell className='fw-bold fs-5' align='center'>{txt}</TableCell>)}
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {orders.map((order) => 
+                    <TableRow 
+                    key={order.id}
+                    className='bg-white'
+                    divider={<Divider 
+                    orientation='vertical' 
+                    sx={{border: "1px solid darkgray"}} 
+                    flexItem />}
+                    >
+                        <TableCell align='center' className='fw-bold fs-6'>#{order.id}</TableCell>
+                        <TableCell align='center' className='fw-bold fs-6'>{order.entrance}</TableCell>
+                        <TableCell align='center' className='fw-bold fs-6'>{order.customer.id}</TableCell>
+                        <TableCell align='center' className='fw-bold fs-6'>{order.products.length}</TableCell>
+                        <TableCell align='center' className='fw-bold fs-6'>R$ {order.price}</TableCell>
+                    </TableRow>
+                )}
+            </TableBody>
+        </Table>
+        </TableContainer>
+        {/*<Stack spacing={1}>
         { orders.map(orderData => 
             <SingleOrder 
             id={orderData.id}
@@ -67,8 +99,7 @@ export default function OrdersList({ orders }) {
             productsLength={orderData.products.length} // Shows how many products are there
             price={orderData.price}
             />)
-        }
-        </Stack>
-        </div>
+            }
+            </Stack> */}
         </>);
     }
