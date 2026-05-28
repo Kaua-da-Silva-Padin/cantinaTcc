@@ -88,6 +88,11 @@ export default function Header() {
                 </SpeedDial>
 
                 <h1 className='space-grotesk fw-bold'>
+                    <img
+                    src="/imgs/coxinhaFormada.png"
+                    alt="Imagem de uma Coxinha Formada" 
+                    width={80}
+                    className='me-2'/>
                     CantinaTec
                 </h1>
             </div>

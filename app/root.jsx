@@ -9,7 +9,8 @@ export function Layout({ children }) {
     <html lang="pt-br">
       <head>
         <meta charSet="UTF-8" />
-        <link rel="icon" href="/imgs/pelicano.jpg" />
+        <meta name="description" content="Um projeto de cantina digital para ETECs. Um TCC feito por Kauã Padin, Paulo Victor, João Pedro e Kainã Igor" />
+        <link rel="icon" href="/imgs/coxinhaFormada.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin='true' />

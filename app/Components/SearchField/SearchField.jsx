@@ -15,7 +15,7 @@ export default function SearchField({ setSearch }) {
 
         if (key === 'Enter') {
             let searchTxt = input.value;
-            setSearch(searchTxt)
+            setSearch(searchTxt);
         }
     }
 

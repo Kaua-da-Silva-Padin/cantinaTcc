@@ -1,7 +1,10 @@
-import { TextField, MenuItem, Button, Tooltip } from '@mui/material';
+import { TextField, MenuItem, Button, Tooltip, IconButton, Snackbar, Alert } from '@mui/material';
 import supabase from '../../supabaseClient';
 import { useState } from 'react';
 import { RiSettings3Fill, RiCloseFill, RiSendPlaneFill } from 'react-icons/ri';
+import { FaX } from 'react-icons/fa6';
+import { AdvancedImage } from '@cloudinary/react';
+import { Cloudinary } from '@cloudinary/url-gen';
 
 function LblInput({ ...props }) {
     return(
@@ -52,9 +55,10 @@ function LblInput({ ...props }) {
 }
 
 export default function DBManage() {
+    const [selectedProduct, setSelectedProduct] = useState([]);
     const [loading, setLoading] = useState(false);
     const [options, setOptions] = useState([
-        {'name': 'Ação', 'id': 'type', 'type': 'text', 'select': true, 'values': ['Atualizar Produto', 'Inserir Novo Produto', 'Verificar Produto']},
+        {'name': 'Ação', 'id': 'action', 'type': 'text', 'select': true, 'values': ['Atualizar Produto', 'Inserir Novo Produto', 'Verificar Produto']},
         {'name': 'Dados', 'id': 'data', 'type': 'text', 'select': true, 'values': ['Estoque', 'Preço']},
         {'name': 'Produto', 'id': 'product', 'type': 'text'},
         {'name': 'Novo Valor', 'id': 'newValue', 'type': 'number'}
@@ -62,7 +66,42 @@ export default function DBManage() {
     const [confDB, setConfDB] = useState(
         {'action': '', 'data': '', 'product': '', 'newValue': ''}
     );
+    const [itemAlert, setItemAlert] = useState({
+        'state': false,
+        'message': '',
+    });
+
+    const cld = new Cloudinary({
+        cloud: {
+            cloudName: 'dntfculcp'
+        }
+    })
+    const productData = [];
     
+    const formatName = (name)=> {
+        return name.trim().toLowerCase().replaceAll(' ', '')
+    }
+
+    const closeAlert = (e, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setItemAlert(prev => ({
+            ...prev,
+            state: false
+        }));
+    };
+    
+    const closeBtnAlert = (
+        <IconButton
+        aria-label="close"
+        color="inherit"
+        onClick={closeAlert}>
+            <FaX className='text-danger'/>
+        </IconButton>
+    );
+
     async function insertProducts() {
         // setLoading(true);
         // const {data, error} = await supabase.from('products');
@@ -89,21 +128,77 @@ export default function DBManage() {
         // setLoading(false);
     }
 
-    async function insertProducts() {
-        // setLoading(true);
-        // const {data, error} = await supabase.from('products');
-        
-        // if (data) {
-        //     setProducts(data);
-        // } else if (error) {
-        //     console.error(`Error selecting from supabase!\n${error.message}`);
-        // }
+    async function selectProduct(product) {}
 
-        // setLoading(false);
+    const formatInput = (id)=> {
+        let txt = document.getElementById(id).innerText;
+
+        if (txt.length == '') {
+            txt = document.getElementById(id).value;
+        }
+
+        return txt.trim().split(' ')[0].toLowerCase();
     }
+
+    const handleDBManage = ()=> {
+        try {
+            let action = formatInput('action');
+            let product = formatInput('product');
+            console.log(product);
+            
+
+            switch (action) {
+                case 'atualizar':
+                    updateProducts();
+                    break;
+                case 'inserir':
+                    insertProducts();
+                    break;
+                case 'verificar':
+                    selectProduct(product);    
+                    break;
+                case '':
+                    break;
+            }
+
+            setItemAlert({
+                state: true,
+                message: `Ação ${action} registrada!`
+            });
+        }
+        catch (err) {
+            console.error(`Something went wrong!\nERROR: ${err}`);
+        }
+    };
 
     return(
         <>
+            <Snackbar
+            open={itemAlert.state}
+            message={itemAlert.message}
+            autoHideDuration={6000}
+            onClose={closeAlert}
+            action={closeBtnAlert}
+            sx={{ zIndex: 9999999 }}
+            >
+                <Alert
+                onClose={closeAlert}
+                severity="success"
+                variant="filled"
+                >
+                    <h6
+                    style={{ color: 'rgba(255,255,255,.6)' }}>
+                        <i>
+                            Aperte <kbd>esc</kbd> ou clique no x para fechar esta janela
+                        </i>
+                    </h6>
+                    <div>
+                        <h3>
+                            {itemAlert.message}
+                        </h3>
+                    </div>
+                </Alert>
+            </Snackbar>
             <div
             className="d-flex justify-content-center">
                 <div
@@ -125,9 +220,7 @@ export default function DBManage() {
                             name={option.name}
                             id={option.id}
                             values={option.values}
-                            select={option.select}>
-
-                            </LblInput>
+                            select={option.select}/>
                         ))}
                     </section>
                     <hr />
@@ -137,7 +230,8 @@ export default function DBManage() {
                         variant='contained'
                         color='primary'
                         className='w-50 fs-5'
-                        size='large'>
+                        size='large'
+                        onClick={handleDBManage}>
                             <RiSendPlaneFill 
                             className='me-2 fs-2' />
                             Submit
@@ -153,6 +247,17 @@ export default function DBManage() {
                     </section>
                 </div>
             </div>
+
+            {/* FIX LATER */}
+            {/* <div
+            className='m-2 p-2 rounded-2 bg-new-orange d-flex align-items-center'>
+                <h3>
+                    {selectedProduct.map((product, i)=>(
+                        product.name
+                    ))}
+                </h3>
+            </div> */}
+
         </>
     )
 }
