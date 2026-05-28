@@ -25,7 +25,7 @@ export default function Orders() {
             price: 10
         },
         {
-            id: 1,
+            id: 2,
             entrance: "09:10",
             customer: {
                 name: "João Pedro",
@@ -39,7 +39,7 @@ export default function Orders() {
             price: 10
         },
         {
-            id: 1,
+            id: 3,
             entrance: "09:10",
             customer: {
                 name: "João Pedro",
@@ -53,7 +53,7 @@ export default function Orders() {
             price: 10
         },
         {
-            id: 1,
+            id: 4,
             entrance: "09:10",
             customer: {
                 name: "João Pedro",
@@ -67,7 +67,7 @@ export default function Orders() {
             price: 10
         },
         {
-            id: 1,
+            id: 5,
             entrance: "09:10",
             customer: {
                 name: "João Pedro",
@@ -81,7 +81,7 @@ export default function Orders() {
             price: 10
         },
         {
-            id: 1,
+            id: 6,
             entrance: "09:10",
             customer: {
                 name: "João Pedro",
@@ -95,7 +95,7 @@ export default function Orders() {
             price: 10
         },
         {
-            id: 1,
+            id: 7,
             entrance: "09:10",
             customer: {
                 name: "João Pedro",
@@ -127,7 +127,7 @@ https://github.com/Kaua-da-Silva-Padin/cantinaTcc/issues/4
 TODO:
 - [ ] OrdersList
     - [ ] Box title
-    - [ ] Column Names
+    - [x] Column Names
     - [x] singleListItem
 
 - [ ] OrderInfo
