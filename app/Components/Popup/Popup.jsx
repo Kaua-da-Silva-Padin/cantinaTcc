@@ -50,7 +50,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                 zIndex: 99999,
                 position: 'fixed'
             }}
-            className="border-darken rounded-2 w-75 h-90 bg-light text-dark shadow-box">
+            className="border-darken rounded-2 w-75 h-90 bg-light text-dark shadow-box overflow-auto d-flex flex-column">
 
                 <div className='bg-new-orange p-2 px-3 mt-2'>
                     <h1 className='d-flex justify-content-between'>
@@ -73,11 +73,12 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                         {capitalize(product.kind)}
                     </h6>
                 </div>
-                <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center flex-grow-1" style={{minHeight: 0}}>
                     <AdvancedImage
                     cldImg={product.img}
                     loading='lazy'
-                    width={400}/>
+                    className='w-100 h-100'
+                    style={{ objectFit: 'contain' }}/>
                 </div>
 
                 <h2 className='p-3 px-4 bg-new-orange'>
