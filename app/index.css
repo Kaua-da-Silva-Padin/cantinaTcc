@@ -65,6 +65,10 @@ body{
     width: 90%;
 }
 
+.h-90 {
+    height: 90dvh;
+}
+
 .rounded-t-2 {
     border-top-left-radius: 10px !important;
     border-top-right-radius: 10px !important;
@@ -136,4 +140,6 @@ body{
     margin-left: 8% !important;
 }
 
-
+.shadow-box {
+    box-shadow: 4px 4px 80px black;
+}

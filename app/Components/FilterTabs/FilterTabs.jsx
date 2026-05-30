@@ -4,7 +4,6 @@ import { FaAsterisk } from 'react-icons/fa6'
 import { GiChipsBag, GiHotDog, GiChocolateBar, GiIceCreamScoop } from 'react-icons/gi'
 import { useState } from 'react';
 
-
 export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
     // Cada valor do filtro e seu ícone.
     const filters = [

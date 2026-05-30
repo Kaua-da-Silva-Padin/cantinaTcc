@@ -5,6 +5,7 @@ import { FaCartPlus, FaCartShopping, FaX } from 'react-icons/fa6';
 import { useState, useEffect } from "react";
 import supabase from '../../supabaseClient';
 import { useLoaderData } from 'react-router';
+import Popup from "../../Components/Popup/Popup"
 
 export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
     const products = useLoaderData();
@@ -12,6 +13,10 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
         'state': false,
         'message': '',
         'img': ''
+    });
+    const [productPopup, setProductPopup] = useState({
+        'state': false,
+        'product': ''
     });
     const [loading, setLoading] = useState(false);
 
@@ -32,13 +37,10 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
         return price.toFixed(2).replace('.', ',')
     }
 
-    const buyItem = (img, title, kind, price, stock)=> {
-        setCartPrice(cartPrice+=price);
-
-        setItemAlert({
-            state: true,
-            message: `${title} adicionado ao carrinho!`,
-            img: img
+    const openPopup = (item)=> {
+        setProductPopup({
+            'state': true,
+            'product': item
         });
     };
 
@@ -95,6 +97,16 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
 
     return(
         <>
+            {
+                productPopup.state
+                &&
+                <Popup
+                cartPrice={cartPrice}
+                setCartPrice={setCartPrice}
+                setItemAlert={setItemAlert}
+                setProductPopup={setProductPopup}
+                product={productPopup.product}/>
+            }
             <Snackbar
             open={itemAlert.state}
             message={itemAlert.message}
@@ -194,13 +206,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                                     // Botão no canto inferior direito de cada card, ao clicar faz a soma do total atual do carrinho + o preço do item e devolve esse novo valor para o app.jsx que devolve pro Header.jsx que mostra esse valor em seu botão de carrinho.
                                     <IconButton
                                     onClick={
-                                        ()=>buyItem(
-                                            item.img,
-                                            item.title,
-                                            item.kind,
-                                            item.price,
-                                            item.stock
-                                        )
+                                        ()=>openPopup(item)
                                     }
                                     className='text-light bg-darken rounded-4 p-2 mx-1'
                                     style={{
