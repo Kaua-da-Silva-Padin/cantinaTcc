@@ -1,11 +1,12 @@
 import { AdvancedImage } from '@cloudinary/react';
-import { Slider, TextField, IconButton } from '@mui/material';
+import { Slider, TextField, IconButton, Backdrop } from '@mui/material';
 import { useState } from 'react';
 import { RiShoppingCart2Fill, RiCloseFill } from 'react-icons/ri';
 import { FaHotdog, FaCartPlus } from 'react-icons/fa6';
 
-export default function Popup({ product, setProductPopup, setItemAlert, cartPrice, setCartPrice }) {
+export default function Popup({ productPopup, setProductPopup, setItemAlert, cartPrice, setCartPrice }) {
     const [value, setValue] = useState(1);
+    let product = productPopup.product;
 
     const handleSliderChange = (e, newValue) => setValue(newValue);
 
@@ -47,6 +48,11 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
         <div
         style={{height:'30dvh'}}
         className="d-flex justify-content-center align-items-center">
+            <Backdrop
+            open={productPopup.state}
+            sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 999 }}
+            onClick={closePopup}/>
+
             <div
             style={{
                 zIndex: 99999,
@@ -59,7 +65,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                         {product.title}
 
                         <IconButton
-                        className='text-light bg-darken rounded mx-1'
+                        className='text-light bg-darken rounded'
                         style={{transition: 'all 200ms ease-out', height: '42px', width: '42px'}}
                         sx={{
                             minWidth: '42px',
@@ -133,6 +139,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                     onClick={buyProduct}>
                         <FaCartPlus className='fs-1'/>
                     </IconButton>
+                    
                     <IconButton
                     className='text-light bg-danger rounded p-2 mx-1 px-4'
                     style={{transition: 'all 200ms ease-out'}}
