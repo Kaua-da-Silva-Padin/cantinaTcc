@@ -57,9 +57,11 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                         {product.title}
 
                         <IconButton
-                        className='text-light bg-darken rounded p-2 mx-1'
-                        style={{transition: 'all 200ms ease-out'}}
+                        className='text-light bg-darken rounded mx-1'
+                        style={{transition: 'all 200ms ease-out', height: '42px', width: '42px'}}
                         sx={{
+                            minWidth: '42px',
+                            height: '42px',
                             ':active ': {
                                 scale: .9
                             }

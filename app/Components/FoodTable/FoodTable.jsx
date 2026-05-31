@@ -91,7 +91,15 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
     foodData.filter(item => item.kind === filterTab);
 
     // Filtragem que procura por quaisquer items que possuam o texto da pesquisa em seu título e retorna uma nova lista.
-    filteredFoods = filteredFoods.filter(item => item.title.toLowerCase().includes(filterTxt));
+    const searchFoods = filterTxt
+    .split(',')
+    .map(food => food.trim().toLowerCase())
+
+    if (searchFoods.length) {
+        filteredFoods = filteredFoods.filter(item =>
+            searchFoods.some(food => item.title.toLowerCase().includes(food))
+        );
+    }
 
     filteredFoods = filteredFoods.sort((a, b) => b.price - a.price);
 
