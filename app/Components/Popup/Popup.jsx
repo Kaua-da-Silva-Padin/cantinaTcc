@@ -11,7 +11,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
 
     const handleInputChange = (e) => {
         let inputVal = e.target.value;
-        setValue(inputVal <= 10 && inputVal >= 1 ? inputVal : 1);
+        setValue(inputVal <= product.stock && inputVal >= 1 ? inputVal : 1);
     };
 
     const formatPrice = (price)=> {
@@ -101,7 +101,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                 className='p-4 d-flex gap-4 my-4'>
                     <Slider
                     min={1}
-                    max={10}
+                    max={product.stock}
                     color='warning'
                     value={value}
                     valueLabelDisplay={true}
@@ -115,7 +115,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                     aria-labelledby="input-slider"
                     inputProps={{
                         min: 1,
-                        max: 10
+                        max: product.stock
                     }}
                     />
                 </div>
