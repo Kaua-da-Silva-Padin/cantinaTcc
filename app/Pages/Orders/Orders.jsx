@@ -1,11 +1,12 @@
-import Header from "../../Components/Header/Header"
 import OrdersList from "../../Components/OrdersList/OrdersList"
-import FoodTable from "../../Components/FoodTable/FoodTable"
-import Footer from "../../Components/Footer/Footer"
+import OrderInfo from "../../Components/OrdersInfo/OrdersInfo"
 import { useState } from "react"
 
+import "../../Pages/Orders/Orders.css"
+
 function newOrder(orderData) {
-    // This function will append an order to the end of the list upon the NewOrderEvent() - Or something like that
+    // This function will append an order to the end of the list when a new order appears.
+    //     - Upon the NewOrderEvent() webhook - Or something like that
 }
 
 export default function Orders() {
@@ -109,11 +110,12 @@ export default function Orders() {
             price: 10
         },
     ];
-    
     return (
         <>
+        <div className="orders-element">
         <OrdersList orders={orders}/>
-        {/* <OrderInfo order={orders[0]}>  - Or something like that*/}
+        <OrderInfo order={orders[0]}/> {/* The first order of the list. */}
+        </div>
         </>
 
 )

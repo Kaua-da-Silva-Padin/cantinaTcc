@@ -56,11 +56,7 @@ export default function OrdersList({ orders }) {
     return (
         <>
         <TableContainer 
-        className="bg-dark text-light rounded-2 p-2 mx-2"
-        style={{
-            height: 600,
-            width: 600
-        }}>
+        className="bg-dark text-light rounded-2 p-2">
         <Table>
 
             <TableHead> 
