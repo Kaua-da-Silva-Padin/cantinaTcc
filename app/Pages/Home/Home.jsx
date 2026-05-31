@@ -71,21 +71,31 @@ export default function Home() {
                             <sub>
                                 - Jurema, Coxinha
                                 <sub>
-                                     Legal
-                                     <sub>
-                                         Feliz
-                                         <sub>
-                                            E Formada
+                                    <sub>
+                                        <sub>
                                             <sub>
-                                                Ganhou 7 campeonatos de Minecraft.
-                                                <br />
-                                                
                                                 <sub>
-                                                    Por favor tire o zoom de seu dispositivo e compre algo logo.
+                                                    <sub>
+                                                        Legal
+                                                        <sub>
+                                                            Feliz
+                                                            <sub>
+                                                                E Formada
+                                                                <sub>
+                                                                    Ganhou 7 campeonatos de Minecraft.
+                                                                    <br />
+                                                                    
+                                                                    <sub>
+                                                                        Por favor tire o zoom de seu dispositivo e compre algo logo.
+                                                                    </sub>
+                                                                </sub>
+                                                            </sub>
+                                                        </sub>
+                                                    </sub>
                                                 </sub>
                                             </sub>
-                                         </sub>
-                                     </sub>
+                                        </sub>
+                                    </sub>
                                 </sub>
                             </sub>
                         </h4>
