@@ -41,6 +41,8 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
         closePopup();
     }
 
+    let remainingTxt = product.stock > 1 ? `${product.stock} produtos restantes` : `${product.stock} produto restante`;
+
     return(
         <div
         style={{height:'30dvh'}}
@@ -75,12 +77,19 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                         {capitalize(product.kind)}
                     </h6>
                 </div>
-                <div className="d-flex justify-content-center flex-grow-1" style={{minHeight: 0}}>
+                <div className="py-2 d-flex flex-column justify-content-center flex-grow-1" style={{minHeight: 0}}>
                     <AdvancedImage
                     cldImg={product.img}
                     loading='lazy'
                     className='w-100 h-100'
                     style={{ objectFit: 'contain' }}/>
+                </div>
+                <div className="d-flex justify-content-end">
+                    <p
+                    style={{width:'fit-content'}}
+                    className={`bg-new-orange m-2 fs-4 px-4 fw-bold text-center ${product.stock <= 5 ? 'text-danger' : product.stock <= 10 ? 'text-dark' : 'text-success'}`}>
+                        {remainingTxt}
+                    </p>
                 </div>
 
                 <h2 className='p-3 px-4 bg-new-orange'>

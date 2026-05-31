@@ -5,7 +5,7 @@ import { FaCartPlus, FaCartShopping, FaX } from 'react-icons/fa6';
 import { useState, useEffect } from "react";
 import supabase from '../../supabaseClient';
 import { useLoaderData } from 'react-router';
-import Popup from "../../Components/Popup/Popup"
+import Popup from "../../Components/Popup/Popup";
 
 export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
     const products = useLoaderData();
@@ -121,15 +121,12 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             autoHideDuration={6000}
             onClose={closeAlert}
             action={closeBtnAlert}
-            sx={{ zIndex: 9999999 }}
-            >
+            sx={{ zIndex: 9999999 }}>
                 <Alert
                 onClose={closeAlert}
                 severity="success"
-                variant="filled"
-                >
-                    <h6
-                    style={{ color: 'rgba(255,255,255,.6)' }}>
+                variant="filled">
+                    <h6 style={{ color: 'rgba(255,255,255,.6)' }}>
                         <i>
                             Aperte <kbd>esc</kbd> ou clique no x para fechar esta janela
                         </i>
