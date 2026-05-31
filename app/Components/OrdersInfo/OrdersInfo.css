@@ -1,0 +1,11 @@
+.data-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    font-weight: bold;
+
+    background-color: var(--data-display-bg);
+    color: var(--data-display-color)
+}
