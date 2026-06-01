@@ -1,28 +1,65 @@
 import Grid from "@mui/material/Grid";
+
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+
 import './OrdersInfo.css'
+import Table from "@mui/material/Table";
+
+function FirstRow({ customerName, customerId, orderId }) {
+    return (
+        <div className="first-row">
+            <div className="data-display">
+                Nome: {customerName}
+                <br/>
+                Código: {customerId}
+            </div>
+    
+            <div className="data-display">
+                #{orderId}
+            </div>
+        </div>    
+    );
+}
+
 export default function OrderInfo({ order }){
 
     return (
     <>
-    <Grid container spacing={2}
-    className="bg-dark text-light rounded-2 p-2">
-        <Grid size={8} className="data-display">
-            <div>
-                Nome: {order.customer.name}    
-            </div>
-            <div>
-                Código: {order.customer.id}
-            </div>
-        </Grid>
-        <Grid size={4}  className="data-display">
-            #{order.id}
-        </Grid>
-        <Grid size={12} className="data-display">
+    <div className="order-info bg-dark text-light p-2">
+        <FirstRow 
+            customerName={order.customer.name}
+            customerId={order.customer.id}
+            orderId={order.id}
+        />
 
-        </Grid>
-        <Grid size={12} className="data-display">
+        
+        <div className="data-display">
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Código</TableCell>
+                            <TableCell>Nome</TableCell>
+                            <TableCell>Valor un.</TableCell>
+                            <TableCell>Qtde</TableCell>
+                            <TableCell>Valor</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
 
-        </Grid>
-    </Grid>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
+        <div size={12} className="data-display">
+            a
+        </div>
+    </div>
+
+
     </>);
 }

@@ -112,7 +112,7 @@ export default function Orders() {
     ];
     return (
         <>
-        <div className="orders-element">
+        <div className="orders-container">
         <OrdersList orders={orders}/>
         <OrderInfo order={orders[0]}/> {/* The first order of the list. */}
         </div>

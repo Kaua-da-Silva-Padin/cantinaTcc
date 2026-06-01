@@ -8,7 +8,6 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Tab from '@mui/material/Tab';
 
 function SingleOrder({ id, entrance, customerId, productsLength, price }) {
     
@@ -56,7 +55,7 @@ export default function OrdersList({ orders }) {
     return (
         <>
         <TableContainer 
-        className="bg-dark text-light rounded-2 p-2">
+        className="bg-dark rounded-2 p-2">
         <Table>
 
             <TableHead> 

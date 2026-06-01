@@ -1,15 +1,34 @@
 :root {
     --data-display-bg: #fff;
     --data-display-color: #000;
+    --border-radius: .2em;
+    --grid-gap: .5em;
 }
 
-.orders-element {
+.orders-container {
     border: 2px solid red;
 
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 3fr 2fr;
     grid-template-rows: 1fr;
+    gap: var(--grid-gap);
+    margin: auto 2rem;
+
     & {
         min-height: 10rem;
     }
+}
+
+.data-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    font-weight: bold;
+
+    background-color: var(--data-display-bg);
+    color: var(--data-display-color);
+    border-radius: var(--border-radius);
+
 }
