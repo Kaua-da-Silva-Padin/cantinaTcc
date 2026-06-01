@@ -90,7 +90,7 @@ body{
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 9999;
+    z-index: 99;
     backdrop-filter: grayscale(20) !important;
 }
 
@@ -108,7 +108,7 @@ body{
     border: solid 2px crimson;
     border-radius: 10px;
     position: absolute;
-    z-index: 9999;
+    z-index: 99;
     backdrop-filter: blur(10px);
 }
 
@@ -142,4 +142,20 @@ body{
 
 .shadow-box {
     box-shadow: 4px 4px 80px black;
+}
+
+.cursor-click {
+    cursor: pointer;
+}
+
+.hover-scale-up {
+    transition: all 200ms ease-in-out;
+}
+
+.hover-scale-up:hover {
+    scale: .95;
+}
+
+.hover-scale-up:active {
+    scale: .9;
 }

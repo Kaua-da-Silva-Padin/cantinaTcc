@@ -1,17 +1,18 @@
 import { AdvancedImage } from '@cloudinary/react';
-import { Slider, TextField, IconButton } from '@mui/material';
+import { Slider, TextField, IconButton, Backdrop } from '@mui/material';
 import { useState } from 'react';
 import { RiShoppingCart2Fill, RiCloseFill } from 'react-icons/ri';
 import { FaHotdog, FaCartPlus } from 'react-icons/fa6';
 
-export default function Popup({ product, setProductPopup, setItemAlert, cartPrice, setCartPrice }) {
+export default function Popup({ productPopup, setProductPopup, setItemAlert, cartPrice, setCartPrice }) {
     const [value, setValue] = useState(1);
+    let product = productPopup.product;
 
     const handleSliderChange = (e, newValue) => setValue(newValue);
 
     const handleInputChange = (e) => {
         let inputVal = e.target.value;
-        setValue(inputVal <= 10 && inputVal >= 1 ? inputVal : 1);
+        setValue(inputVal <= product.stock && inputVal >= 1 ? inputVal : 1);
     };
 
     const formatPrice = (price)=> {
@@ -41,10 +42,17 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
         closePopup();
     }
 
+    let remainingTxt = product.stock > 1 ? `${product.stock} produtos restantes` : `${product.stock} produto restante`;
+
     return(
         <div
         style={{height:'30dvh'}}
         className="d-flex justify-content-center align-items-center">
+            <Backdrop
+            open={productPopup.state}
+            sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 999 }}
+            onClick={closePopup}/>
+
             <div
             style={{
                 zIndex: 99999,
@@ -57,9 +65,11 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                         {product.title}
 
                         <IconButton
-                        className='text-light bg-darken rounded p-2 mx-1'
-                        style={{transition: 'all 200ms ease-out'}}
+                        className='text-light bg-darken rounded'
+                        style={{transition: 'all 200ms ease-out', height: '42px', width: '42px'}}
                         sx={{
+                            minWidth: '42px',
+                            height: '42px',
                             ':active ': {
                                 scale: .9
                             }
@@ -73,12 +83,19 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                         {capitalize(product.kind)}
                     </h6>
                 </div>
-                <div className="d-flex justify-content-center flex-grow-1" style={{minHeight: 0}}>
+                <div className="py-2 d-flex flex-column justify-content-center flex-grow-1" style={{minHeight: 0}}>
                     <AdvancedImage
                     cldImg={product.img}
                     loading='lazy'
                     className='w-100 h-100'
                     style={{ objectFit: 'contain' }}/>
+                </div>
+                <div className="d-flex justify-content-end">
+                    <p
+                    style={{width:'fit-content'}}
+                    className={`bg-new-orange m-2 fs-4 px-4 fw-bold text-center ${product.stock <= 5 ? 'text-danger' : product.stock <= 10 ? 'text-dark' : 'text-success'}`}>
+                        {remainingTxt}
+                    </p>
                 </div>
 
                 <h2 className='p-3 px-4 bg-new-orange'>
@@ -90,7 +107,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                 className='p-4 d-flex gap-4 my-4'>
                     <Slider
                     min={1}
-                    max={10}
+                    max={product.stock}
                     color='warning'
                     value={value}
                     valueLabelDisplay={true}
@@ -104,7 +121,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                     aria-labelledby="input-slider"
                     inputProps={{
                         min: 1,
-                        max: 10
+                        max: product.stock
                     }}
                     />
                 </div>
@@ -122,6 +139,7 @@ export default function Popup({ product, setProductPopup, setItemAlert, cartPric
                     onClick={buyProduct}>
                         <FaCartPlus className='fs-1'/>
                     </IconButton>
+                    
                     <IconButton
                     className='text-light bg-danger rounded p-2 mx-1 px-4'
                     style={{transition: 'all 200ms ease-out'}}

@@ -60,8 +60,10 @@ export default function Header() {
                 ariaLabel='headerMenu'
                 direction='down'
                 open={open}
-                onOpen={() => setOpen(true)}
-                onClose={() => setOpen(false)}
+                onOpen={() => {}}
+                onClose={(e, reason) => {
+                    if (reason === 'toggle') setOpen(false);
+                }}
                 sx={{ position: 'fixed', top: 10, left: 16, zIndex: 1000 }}
                 FabProps={{ onClick: () => setOpen(!open) }}
                 icon={
@@ -88,12 +90,16 @@ export default function Header() {
                 </SpeedDial>
 
                 <h1 className='space-grotesk fw-bold'>
-                    <img
-                    src="/imgs/coxinhaFormada.png"
-                    alt="Imagem de uma Coxinha Formada" 
-                    width={80}
-                    className='me-2'/>
-                    CantinaTec
+                    <Link
+                    to='/'
+                    className='text-decoration-none text-dark'>
+                        <img
+                        src="/imgs/coxinhaFormada.png"
+                        alt="Imagem de uma Coxinha Formada" 
+                        width={80}
+                        className='me-2'/>
+                        CantinaTec
+                    </Link>
                 </h1>
             </div>
         </ScopedCssBaseline>

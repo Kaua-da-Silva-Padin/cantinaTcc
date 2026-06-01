@@ -5,7 +5,7 @@ import { FaCartPlus, FaCartShopping, FaX } from 'react-icons/fa6';
 import { useState, useEffect } from "react";
 import supabase from '../../supabaseClient';
 import { useLoaderData } from 'react-router';
-import Popup from "../../Components/Popup/Popup"
+import Popup from "../../Components/Popup/Popup";
 
 export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
     const products = useLoaderData();
@@ -91,7 +91,15 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
     foodData.filter(item => item.kind === filterTab);
 
     // Filtragem que procura por quaisquer items que possuam o texto da pesquisa em seu título e retorna uma nova lista.
-    filteredFoods = filteredFoods.filter(item => item.title.toLowerCase().includes(filterTxt));
+    const searchFoods = filterTxt
+    .split(',')
+    .map(food => food.trim().toLowerCase())
+
+    if (searchFoods.length) {
+        filteredFoods = filteredFoods.filter(item =>
+            searchFoods.some(food => item.title.toLowerCase().includes(food))
+        );
+    }
 
     filteredFoods = filteredFoods.sort((a, b) => b.price - a.price);
 
@@ -105,7 +113,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                 setCartPrice={setCartPrice}
                 setItemAlert={setItemAlert}
                 setProductPopup={setProductPopup}
-                product={productPopup.product}/>
+                productPopup={productPopup}/>
             }
             <Snackbar
             open={itemAlert.state}
@@ -113,30 +121,24 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
             autoHideDuration={6000}
             onClose={closeAlert}
             action={closeBtnAlert}
-            sx={{ zIndex: 9999999 }}
-            >
+            sx={{ zIndex: 9999999 }}>
                 <Alert
                 onClose={closeAlert}
                 severity="success"
-                variant="filled"
-                >
-                    <h6
-                    style={{ color: 'rgba(255,255,255,.6)' }}>
+                variant="outlined"
+                className='bg-light'>
+                    {/* Não sei se deixo essas intruções! */}
+                    {/* <h6>
                         <i>
                             Aperte <kbd>esc</kbd> ou clique no x para fechar esta janela
                         </i>
-                    </h6>
-                    <AdvancedImage
-                    cldImg={itemAlert.img}
-                    loading='lazy'
-                    className='bg-darken rounded-2 mb-2 p-2'
-                    style={{ width: '30%' }}/>
+                    </h6> */}
+
                     <div>
                         <h3>
                             {itemAlert.message}
                         </h3>
-                        <h5
-                        style={{ color: 'rgba(255,255,255,.6)' }}>
+                        <h5 style={{opacity: '65%'}}>
                             <i>
                                 <FaCartShopping className='ms-3 me-2'/>
                                 Carrinho:
@@ -148,13 +150,14 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                     </div>
                 </Alert>
             </Snackbar>
+            
             <div
             className="d-flex justify-content-center m-3">
                 {/*If the device is mobile only show 2 cols for the table, otherwise show 4*/}
                 <ImageList
                 cols={isMobile ? 2 : 4}
                 rowHeight={320}
-                className={`rounded mx-2 overflow-auto p-1`}
+                className={`rounded overflow-auto gap-2`}
                 sx={{
                     width: '95dvw',
                     height: isMobile ? '62dvh' : '65dvh'
@@ -175,7 +178,8 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                     filteredFoods.map((item, i)=>(
                         // Item da lista de imagens que muda de estilo automaticamente se perceber que o estoque do item é 0.
                         <ImageListItem
-                        className={`bg-new-orange rounded-4 ${item.stock == 0 && 'unavailable-food'}`}
+                        className={`bg-new-orange rounded-4 cursor-click hover-scale-up ${item.stock == 0 && 'unavailable-food'}`}
+                        onClick={()=>openPopup(item)}
                         key={i}>
                                 {/*Componente do cloudinary que aceita imagens em um formato "dinâmico" que muda dependendo do navegador que acessa o site, send a prioridade AVIF para navegadores suportados.*/}
                                 <AdvancedImage
@@ -202,25 +206,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                                         color: 'rgb(255, 255, 255)'
                                     }
                                 }}
-                                actionIcon={
-                                    // Botão no canto inferior direito de cada card, ao clicar faz a soma do total atual do carrinho + o preço do item e devolve esse novo valor para o app.jsx que devolve pro Header.jsx que mostra esse valor em seu botão de carrinho.
-                                    <IconButton
-                                    onClick={
-                                        ()=>openPopup(item)
-                                    }
-                                    className='text-light bg-darken rounded-4 p-2 mx-1'
-                                    style={{
-                                        transition: 'all 200ms ease-out'
-                                    }}
-                                    sx={{
-                                        ':active ': {
-                                            scale: .9
-                                        }
-                                    }}
-                                    title={`Adicionar ${item.title} ao carrinho (${formatPrice(item.price)})`}>
-                                        <FaCartPlus className='fs-1'/>
-                                    </IconButton>
-                                }/>
+                                />
                             </ImageListItem>
                     ))
                     }
