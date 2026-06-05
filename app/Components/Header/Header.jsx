@@ -47,7 +47,7 @@ const actions = [
 
 export default function Header(props) {
     const [open, setOpen] = useState(false);
-    const location = useLocation();
+    // const location = useLocation();
 
     
     return (
@@ -108,7 +108,7 @@ export default function Header(props) {
                 </h1>
                 </div>
             
-            <SwipeableTemporaryDrawer page={location.pathname} />
+            {/* <SwipeableTemporaryDrawer page={location.pathname}  /> */}
             </div>
         </ScopedCssBaseline>
     )

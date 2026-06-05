@@ -1,0 +1,102 @@
+
+/* Custom Navbar Styles */
+.admnav-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background-color: var(--orangenew);
+    border-radius: 12px;
+    padding: 10px;
+    width: 80px;
+    height: 60px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.admnav-container.open {
+    width: 90%;
+    max-width: 800px;
+}
+
+.admnav-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+    white-space: nowrap;
+    gap: 20px;
+}
+
+.admnav-logo {
+    min-width: 60px;
+    width: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.admnav-links {
+    display: flex;
+    gap: 25px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
+    flex: 1;
+    justify-content: center;
+    font-weight: 600;
+    color: white;
+}
+
+.admnav-container.open .admnav-links {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.admnav-config {
+    opacity: 0;
+    transition: all 0.3s ease;
+    color: white;
+    padding-right: 10px;
+}
+
+.admnav-container.open .admnav-config {
+    opacity: 1;
+}
+
+/* Tablet and Mobile adjustments */
+@media (max-width: 992px) {
+    .admnav-container {
+        width: 100px; /* Admin text/svg size */
+    }
+    
+    .admnav-container.open {
+        height: auto;
+        min-height: 250px;
+        width: 200px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .admnav-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    .admnav-links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .admnav-config {
+        padding-top: 10px;
+        border-top: 1px solid rgba(255,255,255,0.3);
+        width: 100%;
+    }
+}
+
+

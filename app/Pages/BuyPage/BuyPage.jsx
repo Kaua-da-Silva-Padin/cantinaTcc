@@ -1,7 +1,7 @@
 import SearchField from "../../Components/SearchField/SearchField"
 import FilterTabs from "../../Components/FilterTabs/FilterTabs"
 import FoodTable from "../../Components/FoodTable/FoodTable"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useLoaderData } from "react-router"
 import supabase from "../../supabaseClient"
 
@@ -18,30 +18,35 @@ export async function loader() {
 export default function BuyPage() {
   const products = useLoaderData();
 
-  {/*Query do input de pesquisa.*/}
+  {/*Query do input de pesquisa.*/ }
   const [searchTxt, setSearch] = useState('');
 
-  {/*Filtro da barra selecionado atualmente.*/}
+  {/*Filtro da barra selecionado atualmente.*/ }
   const [filterTab, setFilterTab] = useState('todos');
 
-  {/*Preço total do carrinho a ser somado ou mostrado.*/}
+  {/*Preço total do carrinho a ser somado ou mostrado.*/ }
   const [cartPrice, setCartPrice] = useState(0);
 
-  return(
+  const [cartProducts, setCartProducts] = useState([]);
+
+  return (
     <>
       <SearchField
-      setSearch={setSearch}/>
+        setSearch={setSearch} />
 
       <FilterTabs
-      selectedFilterTab={filterTab.trim().toLowerCase()}
-      setFilterTab={setFilterTab}/>
+        selectedFilterTab={filterTab.trim().toLowerCase()}
+        setFilterTab={setFilterTab} />
 
       <FoodTable
-      products={products}
-      filterTab={filterTab.trim().toLowerCase()}
-      filterTxt={searchTxt.trim().toLowerCase()}
-      setCartPrice={setCartPrice}
-      cartPrice={parseFloat(cartPrice)}/>
+        products={products}
+        filterTab={filterTab.trim().toLowerCase()}
+        filterTxt={searchTxt.trim().toLowerCase()}
+        setCartPrice={setCartPrice}
+        cartPrice={parseFloat(cartPrice)}
+        cartProducts={cartProducts}
+        setCartProducts={setCartProducts}
+      />
     </>
   )
 }

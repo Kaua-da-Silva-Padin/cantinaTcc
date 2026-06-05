@@ -4,11 +4,14 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import { FaCartPlus, FaCartShopping, FaX } from 'react-icons/fa6';
 import { useState, useEffect } from "react";
 import supabase from '../../supabaseClient';
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useLocation } from 'react-router';
 import Popup from "../../Components/Popup/Popup";
+import SwipeableTemporaryDrawer from "../SwipeableDrawer/SwipeableDrawer";
 
-export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPrice }) {
+export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProducts, setCartProducts, setCartPrice }) {
     const products = useLoaderData();
+    const location = useLocation();
+
     const [itemAlert, setItemAlert] = useState({
         'state': false,
         'message': '',
@@ -29,15 +32,15 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
     const foodData = [];
 
     // Formata o nome do item para um nome minusculo e sem espaços (utilizado para acessar a imagem do cloudinary).
-    const formatName = (name)=> {
+    const formatName = (name) => {
         return name.trim().toLowerCase().replaceAll(' ', '')
     }
     // Utilizado para quando queremos apenas formatar o preço de um item para mostra-lo para o usuário e não fazer operações com ele.
-    const formatPrice = (price)=> {
+    const formatPrice = (price) => {
         return price.toFixed(2).replace('.', ',')
     }
 
-    const openPopup = (item)=> {
+    const openPopup = (item) => {
         setProductPopup({
             'state': true,
             'product': item
@@ -57,16 +60,16 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
 
     const closeBtnAlert = (
         <IconButton
-        aria-label="close"
-        color="inherit"
-        onClick={closeAlert}
+            aria-label="close"
+            color="inherit"
+            onClick={closeAlert}
         >
-            <FaX className='text-danger'/>
+            <FaX className='text-danger' />
         </IconButton>
     );
 
     // Mapeia a lista de produtos e a coloca em uma nova lista porém agora com sua imagem, tirada do Cloudinary.
-    products.map(item=>{
+    products.map(item => {
         let foodName = item.name;
         let foodKind = item.kind;
         let foodPrice = item.price;
@@ -86,14 +89,14 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
 
     // Filtragem usando os filtros da barra horizontal, se o valor for igual a todos então mostre todos os items, se não, então mostre uma nova lista apenas com os items em que a chave 'kind' do item são iguais ao valor do filtro (ex: filtro => salgados e item.kind => Salgados).
     let filteredFoods =
-    filterTab === 'todos' ? foodData
-    :
-    foodData.filter(item => item.kind === filterTab);
+        filterTab === 'todos' ? foodData
+            :
+            foodData.filter(item => item.kind === filterTab);
 
     // Filtragem que procura por quaisquer items que possuam o texto da pesquisa em seu título e retorna uma nova lista.
     const searchFoods = filterTxt
-    .split(',')
-    .map(food => food.trim().toLowerCase())
+        .split(',')
+        .map(food => food.trim().toLowerCase())
 
     if (searchFoods.length) {
         filteredFoods = filteredFoods.filter(item =>
@@ -103,30 +106,33 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
 
     filteredFoods = filteredFoods.sort((a, b) => b.price - a.price);
 
-    return(
+    return (
         <>
             {
                 productPopup.state
                 &&
                 <Popup
-                cartPrice={cartPrice}
-                setCartPrice={setCartPrice}
-                setItemAlert={setItemAlert}
-                setProductPopup={setProductPopup}
-                productPopup={productPopup}/>
+                    cartPrice={cartPrice}
+                    setCartPrice={setCartPrice}
+                    setItemAlert={setItemAlert}
+                    setProductPopup={setProductPopup}
+                    productPopup={productPopup}
+                    cartProducts={cartProducts}
+                    setCartProducts={setCartProducts}
+                />
             }
             <Snackbar
-            open={itemAlert.state}
-            message={itemAlert.message}
-            autoHideDuration={6000}
-            onClose={closeAlert}
-            action={closeBtnAlert}
-            sx={{ zIndex: 9999999 }}>
-                <Alert
+                open={itemAlert.state}
+                message={itemAlert.message}
+                autoHideDuration={6000}
                 onClose={closeAlert}
-                severity="success"
-                variant="outlined"
-                className='bg-light'>
+                action={closeBtnAlert}
+                sx={{ zIndex: 9999999 }}>
+                <Alert
+                    onClose={closeAlert}
+                    severity="success"
+                    variant="outlined"
+                    className='bg-light'>
                     {/* Não sei se deixo essas intruções! */}
                     {/* <h6>
                         <i>
@@ -138,9 +144,9 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                         <h3>
                             {itemAlert.message}
                         </h3>
-                        <h5 style={{opacity: '65%'}}>
+                        <h5 style={{ opacity: '65%' }}>
                             <i>
-                                <FaCartShopping className='ms-3 me-2'/>
+                                <FaCartShopping className='ms-3 me-2' />
                                 Carrinho:
                                 <b>
                                     {formatPrice(cartPrice)} R$
@@ -150,69 +156,75 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, setCartPric
                     </div>
                 </Alert>
             </Snackbar>
-            
+
             <div
-            className="d-flex justify-content-center m-3">
+                className="d-flex justify-content-center m-3">
                 {/*If the device is mobile only show 2 cols for the table, otherwise show 4*/}
                 <ImageList
-                cols={isMobile ? 2 : 4}
-                rowHeight={320}
-                className={`rounded overflow-auto gap-2`}
-                sx={{
-                    width: '95dvw',
-                    height: isMobile ? '62dvh' : '65dvh'
-                }}>
+                    cols={isMobile ? 2 : 4}
+                    rowHeight={320}
+                    className={`rounded overflow-auto gap-2`}
+                    sx={{
+                        width: '95dvw',
+                        height: isMobile ? '62dvh' : '65dvh'
+                    }}>
                     {
-                    loading
-                    ?
-                    [...Array(isMobile ? 4 : 8)].map((_, i)=>(
-                        <Skeleton
-                        key={i}
-                        className='bg-darken'
-                        variant='rounded'
-                        animation='wave'
-                        style={{flexWrap: 'wrap'}}
-                        sx={{height: '100%', width: '100%'}}/>
-                    ))
-                    :
-                    filteredFoods.map((item, i)=>(
-                        // Item da lista de imagens que muda de estilo automaticamente se perceber que o estoque do item é 0.
-                        <ImageListItem
-                        className={`bg-new-orange rounded-4 cursor-click hover-scale-up ${item.stock == 0 && 'unavailable-food'}`}
-                        onClick={()=>openPopup(item)}
-                        key={i}>
-                                {/*Componente do cloudinary que aceita imagens em um formato "dinâmico" que muda dependendo do navegador que acessa o site, send a prioridade AVIF para navegadores suportados.*/}
-                                <AdvancedImage
-                                cldImg={item.img}
-                                loading='lazy'
-                                style={{
-                                    width: '100%',
-                                    height: '90%',
-                                    objectFit: 'contain',
-                                }}/>
-                                {/*Barra inferior de cada card. a propriedade sx (seria basicamente um style) desse elemento afeta o css interno do MUI, por isso parece tão estranho.*/}
-                                <ImageListItemBar
-                                className={`bg-brown fw-bold rounded-4 p-1`}
-                                title={item.title}
-                                subtitle={`R$ ${formatPrice(item.price)}`}
-                                sx={{
-                                    "& .MuiImageListItemBar-subtitle": {
-                                        fontSize: "1rem",
-                                        color: 'rgb(255, 255, 255)',
-                                    },
-                                    "& .MuiImageListItemBar-title": {
-                                        fontSize: '1.4rem',
-                                        marginBottom: '2%',
-                                        color: 'rgb(255, 255, 255)'
-                                    }
-                                }}
-                                />
-                            </ImageListItem>
-                    ))
+                        loading
+                            ?
+                            [...Array(isMobile ? 4 : 8)].map((_, i) => (
+                                <Skeleton
+                                    key={i}
+                                    className='bg-darken'
+                                    variant='rounded'
+                                    animation='wave'
+                                    style={{ flexWrap: 'wrap' }}
+                                    sx={{ height: '100%', width: '100%' }} />
+                            ))
+                            :
+                            filteredFoods.map((item, i) => (
+                                // Item da lista de imagens que muda de estilo automaticamente se perceber que o estoque do item é 0.
+                                <ImageListItem
+                                    className={`bg-new-orange rounded-4 cursor-click hover-scale-up ${item.stock == 0 && 'unavailable-food'}`}
+                                    onClick={() => openPopup(item)}
+                                    key={i}>
+                                    {/*Componente do cloudinary que aceita imagens em um formato "dinâmico" que muda dependendo do navegador que acessa o site, send a prioridade AVIF para navegadores suportados.*/}
+                                    <AdvancedImage
+                                        cldImg={item.img}
+                                        loading='lazy'
+                                        style={{
+                                            width: '100%',
+                                            height: '90%',
+                                            objectFit: 'contain',
+                                        }} />
+                                    {/*Barra inferior de cada card. a propriedade sx (seria basicamente um style) desse elemento afeta o css interno do MUI, por isso parece tão estranho.*/}
+                                    <ImageListItemBar
+                                        className={`bg-brown fw-bold rounded-4 p-1`}
+                                        title={item.title}
+                                        subtitle={`R$ ${formatPrice(item.price)}`}
+                                        sx={{
+                                            "& .MuiImageListItemBar-subtitle": {
+                                                fontSize: "1rem",
+                                                color: 'rgb(255, 255, 255)',
+                                            },
+                                            "& .MuiImageListItemBar-title": {
+                                                fontSize: '1.4rem',
+                                                marginBottom: '2%',
+                                                color: 'rgb(255, 255, 255)'
+                                            }
+                                        }}
+                                    />
+                                </ImageListItem>
+                            ))
                     }
 
                 </ImageList>
             </div>
+            <SwipeableTemporaryDrawer
+                page={location.pathname}
+                productPopup={productPopup}
+                cartProducts={cartProducts}
+                setCartProducts={setCartProducts} 
+                />
         </>
     )
 }
