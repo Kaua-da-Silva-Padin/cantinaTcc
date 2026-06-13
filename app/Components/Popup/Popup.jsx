@@ -32,11 +32,10 @@ export default function Popup({ productPopup, setProductPopup, setItemAlert, car
         });
     }
 
-    const buyProduct = () => {
+    const addToCart = () => {
         setItemAlert({
             state: true,
-            message: `${value} ${product.title} adicionado ao carrinho!`,
-            img: product.img
+            message: `${value} ${product.title} adicionado ao carrinho!`
         });
 
         setCartPrice(cartPrice + product.price * value);
@@ -55,7 +54,6 @@ export default function Popup({ productPopup, setProductPopup, setItemAlert, car
                     title: product.title, 
                     quantity: value, 
                     price: product.price, 
-                    kind: product.kind,
                     img: product.img 
                 }];
             });
@@ -102,9 +100,6 @@ export default function Popup({ productPopup, setProductPopup, setItemAlert, car
                             <RiCloseFill className='fs-1' />
                         </IconButton>
                     </h1>
-                    <h6 style={{ opacity: '50%' }}>
-                        {capitalize(product.kind)}
-                    </h6>
                 </div>
                 <div className="py-2 d-flex flex-column justify-content-center flex-grow-1" style={{ minHeight: 0 }}>
                     <AdvancedImage
@@ -149,24 +144,28 @@ export default function Popup({ productPopup, setProductPopup, setItemAlert, car
                     />
                 </div>
                 <div
-                    className='d-flex justify-content-around align-items-center bg-new-orange p-2'>
+                    className='d-flex align-items-center bg-new-orange p-2 gap-2'>
                     <IconButton
-                        className='text-light bg-success rounded p-2 mx-1 px-4'
-                        style={{ transition: 'all 200ms ease-out' }}
+                        className='text-light bg-success rounded p-2'
+                        style={{ transition: 'all 200ms ease-out', width: '100%' }}
                         sx={{
+                            flex: 1,
+                            minWidth: 0,
                             ':active ': {
                                 scale: .9
                             }
                         }}
                         title={`Adicionar ${product.title} ao carrinho`}
-                        onClick={buyProduct}>
+                        onClick={addToCart}>
                         <FaCartPlus className='fs-1' />
                     </IconButton>
 
                     <IconButton
-                        className='text-light bg-danger rounded p-2 mx-1 px-4'
-                        style={{ transition: 'all 200ms ease-out' }}
+                        className='text-light bg-danger rounded p-2'
+                        style={{ transition: 'all 200ms ease-out', width: '100%' }}
                         sx={{
+                            flex: 1,
+                            minWidth: 0,
                             ':active ': {
                                 scale: .9
                             }

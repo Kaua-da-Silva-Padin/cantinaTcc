@@ -8,6 +8,15 @@ import { useLoaderData, useLocation } from 'react-router';
 import Popup from "../../Components/Popup/Popup";
 import SwipeableTemporaryDrawer from "../SwipeableDrawer/SwipeableDrawer";
 
+export async function buyer(productName, productQuantity) {
+  const { data, error } = await supabase.rpc('decrement_stock', {
+    product_name: productName,
+    qty: productQuantity
+  });
+
+  return !error;
+}
+
 export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProducts, setCartProducts, setCartPrice }) {
     const products = useLoaderData();
     const location = useLocation();
@@ -124,7 +133,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
             <Snackbar
                 open={itemAlert.state}
                 message={itemAlert.message}
-                autoHideDuration={6000}
+                autoHideDuration={2000}
                 onClose={closeAlert}
                 action={closeBtnAlert}
                 sx={{ zIndex: 9999999 }}>
@@ -133,12 +142,6 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
                     severity="success"
                     variant="outlined"
                     className='bg-light'>
-                    {/* Não sei se deixo essas intruções! */}
-                    {/* <h6>
-                        <i>
-                            Aperte <kbd>esc</kbd> ou clique no x para fechar esta janela
-                        </i>
-                    </h6> */}
 
                     <div>
                         <h3>
@@ -223,7 +226,9 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
                 page={location.pathname}
                 productPopup={productPopup}
                 cartProducts={cartProducts}
-                setCartProducts={setCartProducts} 
+                setCartProducts={setCartProducts}
+                setCartPrice={setCartPrice}
+                cartPrice={cartPrice}
                 />
         </>
     )

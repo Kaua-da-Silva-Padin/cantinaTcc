@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import FoodList from '../FoodList/FoodList';
 import { FaCartShopping } from 'react-icons/fa6';
 
-export default function SwipeableTemporaryDrawer({ page, productPopup, cartProducts, setCartProducts }) {
+export default function SwipeableTemporaryDrawer({ page, productPopup, cartProducts, setCartProducts, setCartPrice, cartPrice }) {
     const [state, setState] = React.useState({
         top: false,
         left: false,
@@ -24,11 +24,15 @@ export default function SwipeableTemporaryDrawer({ page, productPopup, cartProdu
 
     const list = (anchor) => (
         <Box
-            sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
+            sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 300 }}
             role="presentation"
             onClick={toggleDrawer(anchor, true)}
         >
-            <FoodList cartProducts={cartProducts} />
+            <FoodList
+            cartProducts={cartProducts}
+            setCartProducts={setCartProducts}
+            setCartPrice={setCartPrice} 
+            cartPrice={cartPrice} />
         </Box>
     );
 
@@ -45,13 +49,19 @@ export default function SwipeableTemporaryDrawer({ page, productPopup, cartProdu
                             padding: '1em 0em'
                         }}
                     >
-                        <FaCartShopping />
+                        <FaCartShopping
+                        className='fs-4'/>
                     </Button>
                     <SwipeableDrawer
                         anchor={anchor}
                         open={state[anchor]}
                         onClose={toggleDrawer(anchor, false)}
                         onOpen={toggleDrawer(anchor, true)}
+                        PaperProps={{
+                            sx: {
+                            width: 300,
+                            },
+                        }}
                     >
 
                         {list(anchor)}
