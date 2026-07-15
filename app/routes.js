@@ -5,6 +5,7 @@ export default [
     route("buy", "Pages/BuyPage/BuyPage.jsx"),
     route("adm", "Pages/AdmPage/AdmPage.jsx"),
     route("profile", "Pages/Profile/Profile.jsx"),
-    route("orders", "Pages/Orders/Orders.jsx")
+    route("orders", "Pages/Orders/Orders.jsx"),
+    route("afterPurchase", "Pages/SuccessPurchase/SuccessPurchase.jsx")
 ];
 

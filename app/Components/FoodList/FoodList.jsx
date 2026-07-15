@@ -2,9 +2,20 @@ import { ImageList, ImageListItem, ListSubheader, useMediaQuery, IconButton } fr
 import { FaCartShopping, FaTrash, FaMinus, FaPlus } from 'react-icons/fa6';
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
+import supabase from '../../supabaseClient';
+import { useNavigate } from 'react-router';
 
-// cartPrice, setCartPrice
+export async function buyProducts(productName, productQuantity) {
+  const { data, error } = await supabase.rpc('decrement_stock', {
+    product_name: productName,
+    qty: productQuantity
+  });
+
+  return !error;
+}
+
 export default function FoodList({ cartProducts, setCartProducts, setCartPrice, cartPrice }) {
+    const navigate = useNavigate();
     const cld = new Cloudinary({
         cloud: {
             cloudName: 'dntfculcp'
@@ -27,17 +38,25 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
     }
 
     const addToCart = (product) => {
-        setCartPrice(cartPrice + product.price);
+        setCartProducts(prev => {
+            const existing = prev.find(item => item.title === product.title);
 
-        if (setCartProducts) {
-            setCartProducts(prev => prev.map(item => {
+            if (!existing) {
+                return [...prev, { ...product, quantity: 1 }];
+            }
+
+            return prev.map(item => {
                 if (item.title !== product.title) return item;
                 if (item.quantity >= item.stock) return item;
-                return { ...item, quantity: item.quantity + 1 };
-            }));
-        }
 
-    }
+                return {
+                    ...item,
+                    quantity: item.quantity + 1
+                };
+                setCartPrice(prev => prev + product.price);
+            });
+        });
+    };
 
     const removeFromCart = (product)=> {
         setCartPrice(cartPrice - product.price);
@@ -59,6 +78,14 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
         setCartProducts([]);
         setCartPrice(0);
     };
+
+    const buyCart = ()=> {
+        cartProducts.map((product, i)=>{
+            buyProducts(product.title, product.quantity);
+        })
+        clearCart();
+        navigate('/afterPurchase', { state: { cartProducts: cartProducts } })
+    }
 
     if (!cartProducts || cartProducts.length === 0) {
         return (
@@ -90,7 +117,7 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
                                     objectFit: 'contain',
                                 }} />
                         </div>
-                        <div className="d-flex flex-column ms-3 flex-grow-1">
+                        <div className="d-flex flex-column ms-3 grow">
                             <h6 className='mb-0 fw-bold' style={{fontSize: '0.9rem'}}>
                                 {item.title}
                             </h6>
@@ -138,7 +165,8 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
                         minWidth: 0,
                         ':active ': {scale: .9}
                         }}
-                    title='Comprar'>
+                    title='Comprar'
+                    onClick={buyCart}>
                         <FaCartShopping className='fs-4' />
                     </IconButton>
 

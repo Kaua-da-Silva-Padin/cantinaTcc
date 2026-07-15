@@ -54,7 +54,8 @@ export default function Popup({ productPopup, setProductPopup, setItemAlert, car
                     title: product.title, 
                     quantity: value, 
                     price: product.price, 
-                    img: product.img 
+                    img: product.img,
+                    stock: product.stock
                 }];
             });
         }
@@ -101,7 +102,7 @@ export default function Popup({ productPopup, setProductPopup, setItemAlert, car
                         </IconButton>
                     </h1>
                 </div>
-                <div className="py-2 d-flex flex-column justify-content-center flex-grow-1" style={{ minHeight: 0 }}>
+                <div className="py-2 d-flex flex-column justify-content-center grow" style={{ minHeight: 0 }}>
                     <AdvancedImage
                         cldImg={product.img}
                         loading='lazy'

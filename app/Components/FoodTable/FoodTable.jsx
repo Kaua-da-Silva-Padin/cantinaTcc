@@ -8,11 +8,8 @@ import { useLoaderData, useLocation } from 'react-router';
 import Popup from "../../Components/Popup/Popup";
 import SwipeableTemporaryDrawer from "../SwipeableDrawer/SwipeableDrawer";
 
-export async function buyer(productName, productQuantity) {
-  const { data, error } = await supabase.rpc('decrement_stock', {
-    product_name: productName,
-    qty: productQuantity
-  });
+export async function productSelector() {
+  const { data, error } = await supabase.from('products').select();
 
   return !error;
 }
