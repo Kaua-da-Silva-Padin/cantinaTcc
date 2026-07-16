@@ -1,5 +1,4 @@
 import Header from "../../Components/Header/Header";
-import Footer from "../../Components/Footer/Footer"
 import { useMediaQuery, Tooltip, Box } from "@mui/material";
 
 export default function Home() {
@@ -35,70 +34,6 @@ export default function Home() {
                             className="rounded-2 mx-2 border border-2 border-dark"
                             width='350dvw' />
                         </Tooltip>
-                    </div>
-                </section>
-
-                <hr />
-
-                <section>
-                    <h1 className="display-4 fw-bold pb-4">
-                        Conheça a coxinha Jurema!
-                    </h1>
-                    <div
-                    className={`d-flex justify-content-center align-items-center ${isMobile ? 'flex-column gap-4' : ''}`}>
-                        <Tooltip
-                        title='Foto da Grande e Eterna Jurema!'
-                        slotProps={{
-                            tooltip: {
-                                sx: {
-                                    fontSize: '1.2rem !important',
-                                    backgroundColor: '#333',
-                                }
-                            }
-                        }}>
-                            <img
-                            src="/imgs/coxinhaFormada.png"
-                            alt="Foto da coxinha Jurema"
-                            className="mx-2"
-                            width='350dvw' />
-                        </Tooltip>
-                        <h4 className="text-center p-2 mx-2">
-                            <q>
-                                <i>
-                                    O quanto de verdade pode um homem suportar?
-                                </i>
-                            </q>
-                            <sub>
-                                - Jurema, Coxinha
-                                <sub>
-                                    <sub>
-                                        <sub>
-                                            <sub>
-                                                <sub>
-                                                    <sub>
-                                                        Legal
-                                                        <sub>
-                                                            Feliz
-                                                            <sub>
-                                                                E Formada
-                                                                <sub>
-                                                                    Ganhou 7 campeonatos de Minecraft.
-                                                                    <br />
-                                                                    
-                                                                    <sub>
-                                                                        Por favor tire o zoom de seu dispositivo e compre algo logo.
-                                                                    </sub>
-                                                                </sub>
-                                                            </sub>
-                                                        </sub>
-                                                    </sub>
-                                                </sub>
-                                            </sub>
-                                        </sub>
-                                    </sub>
-                                </sub>
-                            </sub>
-                        </h4>
                     </div>
                 </section>
 
@@ -167,8 +102,6 @@ export default function Home() {
                 </section>
                 
             </main>
-
-            <Footer/>
         </>
     )
 }

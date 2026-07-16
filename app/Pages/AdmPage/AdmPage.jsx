@@ -1,7 +1,7 @@
 import Header from "../../Components/Header/Header"
 import FoodTable from "../../Components/FoodTable/FoodTable"
-import Footer from "../../Components/Footer/Footer"
 import DBManage from "../../Components/DBManage/DBManage"
+import WeeklySales from "../../Components/WeeklySales/WeeklySales"
 import { useState } from "react"
 
 export default function AdmPage() {
@@ -16,7 +16,8 @@ export default function AdmPage() {
 
   return(
     <>
-      <DBManage />
+      {/* <DBManage /> */}
+      <WeeklySales/>
     </>
   )
 }
