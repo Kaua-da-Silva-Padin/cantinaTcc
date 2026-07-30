@@ -5,7 +5,7 @@ import { FaCartPlus, FaCartShopping, FaX } from 'react-icons/fa6';
 import { useState, useEffect } from "react";
 import supabase from '../../supabaseClient';
 import { useLoaderData, useLocation } from 'react-router';
-import Popup from "../../Components/Popup/Popup";
+import ProductPopup from '../ProductPopup/ProductPopup';
 import SwipeableTemporaryDrawer from "../SwipeableDrawer/SwipeableDrawer";
 
 export async function productSelector() {
@@ -117,7 +117,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
             {
                 productPopup.state
                 &&
-                <Popup
+                <ProductPopup
                     cartPrice={cartPrice}
                     setCartPrice={setCartPrice}
                     setItemAlert={setItemAlert}
