@@ -11,7 +11,19 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
     const handleSliderChange = (e, newValue) => setValue(newValue);
 
     const handleInputChange = (e) => {
-        let inputVal = e.target.value;
+        let inputVal = e.target.value.replace(/[^0-9]/g, '');
+        const unwantedValues = ['e', 'E', '-', '+', '.', ','];
+
+        unwantedValues.forEach(value => {
+            if (inputVal.includes(value)) {
+                e.preventDefault();
+            }
+        })
+
+        if (['e', 'E', '-', '+', '.'].includes(e.key)) {
+            e.preventDefault();
+        }
+        
         setValue(inputVal <= product.stock && inputVal >= 1 ? inputVal : 1);
     };
 
@@ -68,7 +80,7 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
 
     return (
         <div
-            style={{ height: '30dvh' }}
+            style={{ height: '40dvh' }}
             className="d-flex justify-content-center align-items-center">
             <Backdrop
                 open={productPopup.state}
