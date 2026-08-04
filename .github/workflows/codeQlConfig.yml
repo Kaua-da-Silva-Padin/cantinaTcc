@@ -1,0 +1,13 @@
+name: "React Custom CodeQL Config"
+
+paths:
+  - 'app'
+  - '*.js'
+  - '*.jsx'
+
+paths-ignore:
+  - '**/node_modules/**'
+  - '**/build/**'
+  - '**/dist/**'
+  - '**/*.spec.js'
+  - '**/*.test.js'
