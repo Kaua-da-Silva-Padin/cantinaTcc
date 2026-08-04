@@ -1,5 +1,5 @@
 import { AdvancedImage } from '@cloudinary/react';
-import { Slider, TextField, IconButton, Backdrop } from '@mui/material';
+import { Slider, TextField, IconButton, Backdrop, useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import { RiShoppingCart2Fill, RiCloseFill } from 'react-icons/ri';
 import { FaHotdog, FaCartPlus, FaPlus, FaMinus } from 'react-icons/fa6';
@@ -7,6 +7,7 @@ import { FaHotdog, FaCartPlus, FaPlus, FaMinus } from 'react-icons/fa6';
 export default function ProductPopup({ productPopup, setProductPopup, setItemAlert, cartPrice, setCartPrice, cartProducts, setCartProducts }) {
     let [value, setValue] = useState(1);
     let product = productPopup.product;
+    const isMobile = useMediaQuery('(max-width: 768px)');
 
     const handleAddBtn = ()=> {
         value < product.stock && setValue(value+=1);
@@ -84,11 +85,11 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
 
     return (
         <div
-            style={{ height: '40dvh' }}
-            className="d-flex justify-content-center align-items-center">
+            style={{ height: isMobile ? '25dvh' : '40dvh' }}
+            className="d-flex justify-content-center align-items-center m-4">
             <Backdrop
                 open={productPopup.state}
-                sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 999 }}
+                sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 9999 }}
                 onClick={closePopup} />
 
             <div
@@ -128,12 +129,12 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
                 <div className="d-flex justify-content-end">
                     <p
                         style={{ width: 'fit-content' }}
-                        className={`bg-new-orange m-2 fs-4 px-4 fw-bold text-center ${product.stock <= 5 ? 'text-danger' : product.stock <= 10 ? 'text-dark' : 'text-success'}`}>
+                        className={`bg-new-orange px-4 fw-bold text-center ${isMobile ? 'fs-6' : 'fs-4 m-2'} ${product.stock <= 5 ? 'text-danger' : product.stock <= 10 ? 'text-dark' : 'text-success'}`}>
                         {remainingTxt}
                     </p>
                 </div>
 
-                <h2 className='p-3 px-4 bg-new-orange'>
+                <h2 className={`p-3 px-4 bg-new-orange ${isMobile && 'fs-4'}`}>
                     <RiShoppingCart2Fill
                     className='me-2' />
                     Comprar
