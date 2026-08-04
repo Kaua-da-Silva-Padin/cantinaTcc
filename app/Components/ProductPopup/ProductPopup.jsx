@@ -2,11 +2,19 @@ import { AdvancedImage } from '@cloudinary/react';
 import { Slider, TextField, IconButton, Backdrop } from '@mui/material';
 import { useState } from 'react';
 import { RiShoppingCart2Fill, RiCloseFill } from 'react-icons/ri';
-import { FaHotdog, FaCartPlus } from 'react-icons/fa6';
+import { FaHotdog, FaCartPlus, FaPlus, FaMinus } from 'react-icons/fa6';
 
 export default function ProductPopup({ productPopup, setProductPopup, setItemAlert, cartPrice, setCartPrice, cartProducts, setCartProducts }) {
-    const [value, setValue] = useState(1);
+    let [value, setValue] = useState(1);
     let product = productPopup.product;
+
+    const handleAddBtn = ()=> {
+        value < product.stock && setValue(value+=1);
+    }
+
+    const handleSubBtn = ()=> {
+        value != 1 && setValue(value-=1);
+    }
 
     const handleSliderChange = (e, newValue) => setValue(newValue);
 
@@ -20,10 +28,6 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
             }
         })
 
-        if (['e', 'E', '-', '+', '.'].includes(e.key)) {
-            e.preventDefault();
-        }
-        
         setValue(inputVal <= product.stock && inputVal >= 1 ? inputVal : 1);
     };
 
@@ -131,36 +135,76 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
 
                 <h2 className='p-3 px-4 bg-new-orange'>
                     <RiShoppingCart2Fill
-                        className='me-2' />
-                    Comprar <b className='text-success'>{value}</b> {product.title} por <b className='text-success'>{formatPrice(product.price * value)}R$</b>
+                    className='me-2' />
+                    Comprar
+                    <TextField
+                    type='number'
+                    value={value}
+                    variant='standard'
+                    color='success'
+                    className='mx-2 p-1'
+                    sx={{
+                        '& input':
+                        {
+                            textAlign: 'center',
+                            fontSize: '1.6em',
+                            fontWeight: 'bold',
+                            color: 'forestgreen'
+                        }
+                    }} 
+                    onChange={handleInputChange}
+                    aria-labelledby="input-slider"
+                    inputProps={{
+                        min: 1,
+                        max: product.stock
+                    }}/>
+                    {product.title} por <b className='text-success'>{formatPrice(product.price * value)}R$</b>
                 </h2>
                 <div
-                    className='p-4 d-flex gap-4 my-4'>
+                className='p-4 d-flex gap-4 my-4'>
+                    <IconButton
+                    className='text-danger rounded'
+                    style={{ transition: 'all 200ms ease-out' }}
+                    sx={{
+                    minWidth: '42px',
+                    height: '42px',
+                        ':active ': {
+                            scale: .9
+                        }
+                    }}
+                    title='Fechar Janela'
+                    onClick={handleSubBtn}>
+                        <FaMinus className='fs-1' />
+                    </IconButton>
+
                     <Slider
-                        min={1}
-                        max={product.stock}
-                        color='warning'
-                        value={value}
-                        valueLabelDisplay={true}
-                        onChange={handleSliderChange} />
-                    <TextField
-                        type='number'
-                        value={value}
-                        variant='standard'
-                        color='inherit'
-                        onChange={handleInputChange}
-                        aria-labelledby="input-slider"
-                        inputProps={{
-                            min: 1,
-                            max: product.stock
-                        }}
-                    />
+                    min={1}
+                    max={product.stock}
+                    color='warning'
+                    value={value}
+                    valueLabelDisplay={true}
+                    onChange={handleSliderChange} />
+                    
+                    <IconButton
+                    className='text-success rounded'
+                    style={{ transition: 'all 200ms ease-out' }}
+                    sx={{
+                    minWidth: '42px',
+                    height: '42px',
+                        ':active ': {
+                            scale: .9
+                        }
+                    }}
+                    title='Fechar Janela'
+                    onClick={handleAddBtn}>
+                        <FaPlus className='fs-1' />
+                    </IconButton>
                 </div>
                 <div
-                    className='d-flex align-items-center bg-new-orange p-2 gap-2'>
+                className='d-flex align-items-center bg-new-orange p-2 gap-2'>
                     <IconButton
-                        className='text-light bg-success rounded p-2'
-                        style={{ transition: 'all 200ms ease-out', width: '100%' }}
+                        className='text-light bg-success rounded p-2 mx-4'
+                        style={{ transition: 'all 200ms ease-out' }}
                         sx={{
                             flex: 1,
                             minWidth: 0,
@@ -174,8 +218,8 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
                     </IconButton>
 
                     <IconButton
-                        className='text-light bg-danger rounded p-2'
-                        style={{ transition: 'all 200ms ease-out', width: '100%' }}
+                        className='text-light bg-danger rounded p-2 mx-4'
+                        style={{ transition: 'all 200ms ease-out' }}
                         sx={{
                             flex: 1,
                             minWidth: 0,

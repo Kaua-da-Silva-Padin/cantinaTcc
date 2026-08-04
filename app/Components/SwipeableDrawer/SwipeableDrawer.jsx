@@ -1,14 +1,8 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import Button from '@mui/material/Button';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
+import { Box, SwipeableDrawer, Button, List, Divider, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import FoodList from '../FoodList/FoodList';
 import { FaCartShopping } from 'react-icons/fa6';
+import ProductBadge from '../ProductBadge/ProductBadge';
 
 export default function SwipeableTemporaryDrawer({ page, productPopup, cartProducts, setCartProducts, setCartPrice, cartPrice }) {
     const [state, setState] = React.useState({
@@ -17,6 +11,7 @@ export default function SwipeableTemporaryDrawer({ page, productPopup, cartProdu
         bottom: false,
         right: false,
     });
+    const [allLenCart, setAllLenCart] = React.useState(0);
 
     const toggleDrawer = (anchor, open) => (event) => {
         setState({ ...state, [anchor]: open });
@@ -36,22 +31,36 @@ export default function SwipeableTemporaryDrawer({ page, productPopup, cartProdu
         </Box>
     );
 
+    const getAllLenCart = ()=> {
+        let newValue = 0;
+        cartProducts.forEach(product => {
+            newValue += product.quantity;
+        })
+        setAllLenCart(newValue);
+    }
+
+    React.useEffect(()=>{
+        getAllLenCart();
+    },[cartProducts])
+
     return (
-        <div style={page === '/buy' ? { visibility: 'visible', position: 'absolute', right: '16px', top: '25px' } : { visibility: "hidden" }}>
+        <div style={page === '/buy' ? { visibility: 'visible', position: 'absolute', right: '28px', top: '15px' } : { visibility: "hidden" }}>
             {['right'].map((anchor) => (
                 <React.Fragment key={anchor}>
-                    <Button
+                    <ProductBadge
+                    productQuantity={allLenCart}>
+                        <Button
                         onClick={toggleDrawer(anchor, true)}
                         variant="contained"
                         sx={{
                             borderRadius: '20px',
                             textTransform: 'none',
                             padding: '1em 0em'
-                        }}
-                    >
-                        <FaCartShopping
-                        className='fs-4'/>
-                    </Button>
+                        }}>
+                            <FaCartShopping
+                            className='fs-4'/>
+                        </Button>
+                    </ProductBadge>
                     <SwipeableDrawer
                         anchor={anchor}
                         open={state[anchor]}

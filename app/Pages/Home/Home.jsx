@@ -7,7 +7,6 @@ export default function Home() {
 
     return(
         <>
-
             <main className="m-4 p-2">
                 <section>
                     <h1 className="display-4 fw-bold pb-4">
