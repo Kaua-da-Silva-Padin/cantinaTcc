@@ -1,0 +1,13 @@
+name: "React Custom CodeQL Config"
+
+paths:
+  - src # Forces CodeQL to look inside your src folder
+
+paths-ignore:
+  - '**/node_modules'
+  - '**/build'
+  - '**/dist'
+  - '**/*.spec.js'
+  - '**/*.test.js'
+  - '**/*.spec.tsx'
+  - '**/*.test.tsx'
