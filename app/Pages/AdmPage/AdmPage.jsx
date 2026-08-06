@@ -16,7 +16,7 @@ export default function AdmPage() {
 
   return(
     <>
-      {/* <DBManage /> */}
+      <DBManage />
       <WeeklySales/>
     </>
   )
