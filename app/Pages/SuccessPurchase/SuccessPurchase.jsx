@@ -64,14 +64,13 @@ export default function SuccessPurchase() {
             
             <div className="rounded-2 m-2 p-2 border-darken">
             <h2>
-                Pagar <b className="text-success">R$6,00</b> para Marcos da cantina
+                Pagar <b className="text-success">R${getTotalPrice()}</b> para Marcos da cantina
             </h2>
             <hr />
             <div className="d-flex justify-content-center align-items-center">
                 <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?data=${JSON.stringify(cartProducts)}&size=300x300&charset-source=UTF-8`}
-                alt="QR Code"
-                />
+                alt="QR Code" />
             </div>
             <hr />
             <h1 className="text-center">
