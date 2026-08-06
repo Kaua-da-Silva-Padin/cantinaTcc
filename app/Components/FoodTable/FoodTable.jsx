@@ -128,6 +128,10 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
                 />
             }
             <Snackbar
+                anchorOrigin={{
+                    vertical: isMobile ? 'top' : 'bottom',
+                    horizontal: 'left'
+                }}
                 open={itemAlert.state}
                 message={itemAlert.message}
                 autoHideDuration={2000}

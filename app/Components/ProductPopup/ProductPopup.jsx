@@ -100,12 +100,16 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
                 className="border-darken rounded-2 w-75 h-90 bg-light text-dark shadow-box overflow-auto d-flex flex-column">
 
                 <div className='bg-new-orange p-2 px-3 mt-2'>
-                    <h1 className='d-flex justify-content-between'>
+                    <h1 className={`d-flex justify-content-between ${isMobile ? 'fs-4' : 'fs-2'}`}>
                         {product.title}
 
                         <IconButton
                             className='text-light bg-darken rounded'
-                            style={{ transition: 'all 200ms ease-out', height: '42px', width: '42px' }}
+                            style={{
+                                transition: 'all 200ms ease-out',
+                                height: isMobile ? '32px' : '42px',
+                                width: isMobile ? '32px' : '42px'
+                            }}
                             sx={{
                                 minWidth: '42px',
                                 height: '42px',
@@ -148,7 +152,7 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
                         '& input':
                         {
                             textAlign: 'center',
-                            fontSize: '1.6em',
+                            fontSize: isMobile ? '1.2em' : '1.6em',
                             fontWeight: 'bold',
                             color: 'forestgreen'
                         }
@@ -175,7 +179,7 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
                     }}
                     title='Fechar Janela'
                     onClick={handleSubBtn}>
-                        <FaMinus className='fs-1' />
+                        <FaMinus className={isMobile ? 'fs-4' : 'fs-1'} />
                     </IconButton>
 
                     <Slider
@@ -198,7 +202,7 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
                     }}
                     title='Fechar Janela'
                     onClick={handleAddBtn}>
-                        <FaPlus className='fs-1' />
+                        <FaPlus className={isMobile ? 'fs-4' : 'fs-1'} />
                     </IconButton>
                 </div>
                 <div
