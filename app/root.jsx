@@ -2,7 +2,7 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import Header from "./Components/Header/Header";
-import bootstrapUrl from "../app/index.css?url"; 
+import bootstrapUrl from "../app/index.css?url";
 
 export function Layout({ children }) {
   return (
@@ -37,7 +37,7 @@ export function Layout({ children }) {
 export default function App() {
   return (
     <>
-      <Header /> 
+      <Header />
       <Outlet />
     </>
   );

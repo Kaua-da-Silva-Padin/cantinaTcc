@@ -73,7 +73,7 @@ export default function SuccessPurchase() {
                 alt="QR Code" />
             </div>
             <hr />
-            <h1 className="text-center">
+            <h1 className={`text-center ${displayMins <= 5 ? 'text-danger' : 'text-success'}`}>
                 <FaClock className="me-2" />
                 {displayMins}:{displaySecs}
             </h1>

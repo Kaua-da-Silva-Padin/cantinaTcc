@@ -1,8 +1,8 @@
 // app/Components/Header/Header.jsx
 import { Avatar, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop, ScopedCssBaseline } from '@mui/material';
-import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiAdminFill, RiTableView } from 'react-icons/ri';
+import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiAdminFill, RiTableView, RiUserFill, RiUserAddFill } from 'react-icons/ri';
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router'; 
+import { Link } from 'react-router'; 
 import SwipeableTemporaryDrawer from "../SwipeableDrawer/SwipeableDrawer";
 
 function stringToColor(string, n) {
@@ -38,16 +38,17 @@ function stringAvatar(name) {
 
 
 const actions = [
-    { icon: <RiHomeFill />, name: 'Home', link: '/' },
+    { icon: <RiHomeFill />, name: 'Home', link: '/home' },
+    { icon: <RiUserAddFill />, name: 'Registrar', link: '/'},
+    { icon: <RiUserFill />, name: 'Login', link: '/login'},
     { icon: <RiShoppingCart2Fill /> , name: 'Cantina', link: '/buy' },
     { icon: <RiAdminFill />, name: 'Admin', link: '/adm' },
     { icon: <RiTableView />, name: 'Pedidos', link: '/orders'},
-    { icon: <Avatar {...stringAvatar('João Paulo')} />, name: 'Perfil', link: '/profile' },,
+    { icon: <Avatar {...stringAvatar('João Paulo')} />, name: 'Perfil', link: '/profile' },
 ]
 
 export default function Header(props) {
     const [open, setOpen] = useState(false);
-    // const location = useLocation();
 
     
     return (
@@ -96,7 +97,7 @@ export default function Header(props) {
                 <div>
                 <h1 className='space-grotesk fw-bold'>
                     <Link
-                    to='/'
+                    to='/home'
                     className='text-decoration-none text-dark'>
                         <img
                         src="/imgs/coxinhaFormada.png"
