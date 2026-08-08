@@ -2,7 +2,7 @@ import { Tabs, Tab } from '@mui/material';
 import { RiDrinksFill } from 'react-icons/ri';
 import { FaAsterisk } from 'react-icons/fa6'
 import { GiChipsBag, GiHotDog, GiChocolateBar, GiIceCreamScoop } from 'react-icons/gi'
-import { useState } from 'react';
+// import { useState } from 'react';
 
 export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
     // Cada valor do filtro e seu ícone.
@@ -17,18 +17,18 @@ export default function FilterTabs({ setFilterTab, selectedFilterTab }) {
 
     
 
-    const [clickedTab, setClickedTab] = useState();
+    // const [clickedTab, setClickedTab] = useState();
     
 
-    function highlightElement(e) {
-        setClickedTab(e);
+    // function highlightElement(e) {
+    //     setClickedTab(e);
 
-        if (e.target.ariaSelected){
-            e.target.style.backgroundColor = "#FF9D39";
-        } else{
-            e.target.style.backgroundColor = "#ffffff";
-        }
-    }
+    //     if (e.target.ariaSelected){
+    //         e.target.style.backgroundColor = "#FF9D39";
+    //     } else{
+    //         e.target.style.backgroundColor = "#ffffff";
+    //     }
+    // }
 
     /* console.log(JSON.stringify(clickedTab))
     This line was causing this error:

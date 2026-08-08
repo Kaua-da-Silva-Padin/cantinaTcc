@@ -2,7 +2,7 @@ import { ImageList, ImageListItem, ImageListItemBar, ListSubheader, Skeleton, To
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
 import { FaCartPlus, FaCartShopping, FaX } from 'react-icons/fa6';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import supabase from '../../supabaseClient';
 import { useLoaderData, useLocation } from 'react-router';
 import ProductPopup from '../ProductPopup/ProductPopup';
