@@ -1,147 +1,99 @@
-/* Custom Navbar Styles */
-.admnav-container {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    background-color: var(--orangenew);
-    border-radius: 12px;
-    padding: 10px;
-    width: 80px;
-    height: 60px;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-}
-
-.admnav-container.open {
-    width: 90%;
-    max-width: 800px;
-}
-
-.admnav-content {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100%;
-    white-space: nowrap;
-    gap: 20px;
-}
-
-.admnav-logo {
-    min-width: 60px;
-    width: 60px;
-    display: flex;
-    align-items: center;
-}
-
-.admnav-links {
-    display: flex;
-    gap: 25px;
-    opacity: 0;
-    transform: translateX(-20px);
-    transition: all 0.3s ease;
-    flex: 1;
-    justify-content: center;
-    font-weight: 600;
-    color: white;
-}
-
-.admnav-container.open .admnav-links {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.admnav-config {
-    opacity: 0;
-    transition: all 0.3s ease;
-    color: white;
-    padding-right: 10px;
-}
-
-.admnav-container.open .admnav-config {
-    opacity: 1;
-}
-
-/* Tablet and Mobile adjustments */
-@media (max-width: 992px) {
-    .admnav-container {
-        width: 100px;
-        /* Admin text/svg size */
-    }
-
-    .admnav-container.open {
-        height: auto;
-        min-height: 250px;
-        width: 200px;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 20px;
-    }
-
-    .admnav-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 30px;
-    }
-
-    .admnav-links {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .admnav-config {
-        padding-top: 10px;
-        border-top: 1px solid rgba(255, 255, 255, 0.3);
-        width: 100%;
-    }
-}
-
-#groupAdmGeneral {
+.groupAdmGeneral { /* Estilização da tabela geral da pagina de admin */
     width: 100%;
     height: 100%;
     background-color: rgb(5, 82, 63);
+}
+
+.sideBarOn{
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+.sideBarOff{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+
+    #admPageSideBar{
+        display: none;
+    }
+}
+
+#subGroupAdmGeneralTwo {  /* Estilização do subgrupo contido na tabela geral da pagina. Este subgrupo contém os btns e divs "atalhos"*/
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows:  repeat(24, 1fr);
+    grid-column: span 4;
     gap: 1em;
+} 
 
-    /* & > :nth-child(1){
-        grid-column: span 2;
-    } */
-}
-
-.blockAdm {
-    width: 90%;
-    height: 10em;
-    background-color: rgb(11, 107, 136);
+#admPageNavBar{ /* Esta é a navbar da pagina, ela só contém um btn para encolher e expandir a #admPageSideBar(barra lateral), e para conter o nome do usuário e um atalho para o perfil */
+    display: flex;
+    justify-content: space-between;
     color: white;
+    align-items: center;
+    grid-column: span 4;
+    grid-row: span 2;
+    background-image: linear-gradient(135deg,  var(--orangenew), #ff850a);
+    background-repeat: no-repeat;
+
+    button{
+        background: none;
+        border: none;
+    }
+    
+    img{
+        width: 2em;
+        height: 2em;
+        filter: invert(100%); /* Um filtro para inverter a cor dos ícones(Hamburguer e User). A cor deles é o preto, mas para seguir o padrão de cores, precisei do branco */
+    }
+}
+/* Existe também o #subGroupAdmGeneralOne, mas este não esta sendo estilizado no momento. Serve apenas para separar as áreas da página*/
+
+
+.admQuickButton { /* Uma classe para estilizar cada bloquinho dentro do #subGroupAdmGeneralTwo*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 95%;
+    grid-column: span 1;
+    grid-row: span 3;
+    border-radius: 1em;
+    cursor: pointer;
+    /* Os outros estilos como: backgroundColor, color e border estão no arquivo do componente */
+    
+    & > *{ /* Remoção da decoração que é autoaplicada pelo componente <Link> e estilização do texto para branco*/
+        text-decoration: none;
+    }
 }
 
-#admPageSideBar {
+#admPageSideBar { /* A barra lateral que contém o bloco de notificações(#admPageSideBarNotifications) e os atalhos para cada página e */
     background-image: linear-gradient(135deg, var(--orangenew), #ff850a);
     background-repeat: no-repeat;
     background-attachment: fixed;
-    height: 90dvh;
-
-    padding: 1em;
+    height: 100dvh;
+    padding: 0em 1em;
 }
 
 #admPageSideBarHeader {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 1em;
+    padding-bottom: 15%;
     border-bottom: 1px white solid;
-
+    height: 1.9em;
     b {
         color: white;
         font-size: 1.5em;
     }
 }
 
-.admPageSideBarTools {
+.admPageSideBarLinks { /* O bloco da barra lateral que contém todos os atalhos mencionados anteriormente */
     display: grid;
     grid-template-columns: 1fr;
     border: none;
+    font-size: 1.3em;
 
     * {
         text-decoration: none;
@@ -151,14 +103,13 @@
         color: white;
         font-weight: 400;
         transition: 0.5s all ease;
-
         &:hover {
             font-weight: 600;
         }
     }
 }
 
-#admPageSideBarNotifications{
+#admPageSideBarNotifications { /* O bloco geral onde estão as notificações */
     display: grid;
     background-color: white;
     border-radius: 0.5em;
@@ -168,24 +119,20 @@
     margin-top: 1em;
     padding: 1em;
     box-sizing: border-box;
-
-    /* & > :first-child{
-        margin-bottom: 1em;
-    } */
 }
 
-.admPageNotificationItem{
+.admPageNotificationItem { /* O bloco de cada notificação contido no bloco geral das notificações */
     background-color: #FFED8F;
-    border: 0.2em solid #FFD600;   
+    border: 0.2em solid #FFD600;
     border-radius: 1em;
     padding: 1em;
     display: flex;
 
-    .admNotificationsTexts{
+    .admNotificationsTexts {
         display: flex;
         flex-direction: column;
 
-        & > :nth-child(2){
+        &> :nth-child(2) {
             line-height: 1.1em;
         }
     }

@@ -1,13 +1,12 @@
 import Header from "../../Components/Header/Header"
+import useMediaQuery from '@mui/material/useMediaQuery';
 import FoodTable from "../../Components/FoodTable/FoodTable"
 import DBManage from "../../Components/DBManage/DBManage"
 import WeeklySales from "../../Components/WeeklySales/WeeklySales"
-import BlockAdm from "../../Components/BlockAdm/BlockAdm"
+import AdmQuickButton from "../../Components/AdmQuickButton/AdmQuickButton"
+import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar"
 import '/./index.css';
 import { Link } from 'react-router';
-
-
-
 import { useState } from "react"
 
 export default function AdmPage() {
@@ -20,46 +19,37 @@ export default function AdmPage() {
   {/*Preço total do carrinho a ser somado ou mostrado.*/ }
   const [cartPrice, setCartPrice] = useState(0);
 
-  const blocks = [{ title: "Olá Funcionário", link: "/buy", id: "greetingsBlock" }, { title: "Gráfico", link: "/", id: "graphicBlock" }, { title: "Estatísticas", link: "/buy", id: "statisticBlock" }, { title: "Calendário", link: "/buy", id: "calendarBlock" }];
+  const valor = "Deus é bom";
 
-  const toolsAdmPageBar = [{ text: "Menu", link: "/adm" }, { text: "Pedidos", link: "/orders" }, { text: "Estoque", link: "/stock" }, { text: "Finanças", link: "/finance" }, { text: "Estatísticas", link: "/statistics" }, { text: "Funcionários", link: "/employees" }, { text: "Configurações", link: "/settings" }]
+  const blocks = [
+    { title: "PEDIDOS", link: "/orders", backgroundColor: "#fff2b3", primaryColor: "#ffc400" },
+    { title: "ADICIONAR PRODUTO", link: "/buy", backgroundColor: "#b0fcb7", primaryColor: "#08e600" },
+    { title: "EDITAR PRODUTO", link: "/buy", backgroundColor: "#b0f3ff", primaryColor: "#00aeff" },
+    { title: "REMOVER PRODUTO", link: "/", backgroundColor: "#ffb5b5", primaryColor: "#ff0000" },
+  ];
+
+  const [sideBarOn, setSideBarOn] = useState(true);
+
+  const toolsAdmPageBar = [{ text: "Menu", link: "/adm" }, { text: "Pedidos", link: "/orders" }, { text: "Estoque", link: "/stock" }, { text: "Finanças", link: "/finance" }, { text: "Estatísticas", link: "/statistics" }, { text: "Funcionários", link: "/employees" }, { text: "Configurações", link: "/settings" }];
+
   return (
     <>
 
-      <div id="groupAdmGeneral"> {/* Agrupamento geral de tudo que está na pagina adm */}
-
-        <div id="admPageSideBar">
-
-          <div id="admPageSideBarHeader">
-            <b>ADMIN</b>
-          </div>
-
-          <div className="admPageSideBarTools">
-            {toolsAdmPageBar.map((item, i) => {
-              return (
-                <Link to={item.link} key={i}> <span> {item.text}</span> </Link>
-              )
-            })}
-          </div>
-
-          <div id="admPageSideBarNotifications">
-            <h5> Notificações </h5>
-            <div className="admPageNotificationItem">
-              <div className="admNotificationsTexts">
-                <span>
-                  <b> Notificação </b>
-                </span>
-                <span> Nova notificação que não tem nenhuma utilidade além de placeholder</span>
-              </div>
-              <span> ... </span>
-            </div>
-          </div>
+      <div className={`groupAdmGeneral ${sideBarOn ? 'sideBarOn' : 'sideBarOff'} `}> {/* Agrupamento geral de tudo que está na pagina adm */}
+        <div id="subGroupAdmGeneralOne"> {/* O primeiro subgrupo, que separa a barra lateral dos outros blocos exteriores */}
+          <AdmSideBar tools={toolsAdmPageBar} />
         </div>
-        {blocks.map((item, i) => {
-          return (
-            <BlockAdm title={item.title} link={item.link} id={item.id} key={i} />
-          )
-        })}
+        <div id="subGroupAdmGeneralTwo"> {/*O segundo subgrupo, que separa os blocos e a navbar da barra lateral */}
+          <div id="admPageNavBar"> 
+            <button onClick={() => sideBarOn ? setSideBarOn(false) : setSideBarOn(true)}> <img src={sideBarOn  ? '/imgs/closeicon.png' : '/imgs/more.png'}/> </button>
+            <span> <b> Funcionário </b><img src="\.\public\imgs\user.png" /> </span>
+          </div>
+          {blocks.map((item, i) => {
+            return (
+              <AdmQuickButton valor={valor} title={item.title} link={item.link} id={item.id} backgroundColor={item.backgroundColor} primaryColor={item.primaryColor} key={i} />
+            )
+          })}
+        </div>
       </div>
       {/* <DBManage />
       <WeeklySales/> */}
