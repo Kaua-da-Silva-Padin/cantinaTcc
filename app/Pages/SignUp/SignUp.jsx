@@ -14,36 +14,25 @@ async function sha256(message) {
 
 export default function SignUp() {
     const [passwordShowing, setPasswordShowing] = useState(false);
+    const [rmShowing, setRmShowing] = useState(false);
     const [userType, setUserType] = useState("user");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [rm, setRM] = useState("");
     const [popup, setPopup] = useState({
         'content': '',
         'header': '',
         'state': false
     });
 
-    const registerUser = async (username, password, type) => {
-        if (!username.trim() || !password.trim() || !type.trim()) {
-            setPopup({
-                content: 'Por favor preencha todos os campos antes de continuar.',
-                header: (
-                    <h2 className='text-danger'>
-                        <RiCloseFill className='me-2'/>
-                        Campos Vazios!
-                    </h2>
-                ),
-                state: true
-            });
-            return false;
-        }
-
+    const registerUser = async () => {
         const { data, error } = await supabase
             .from('users')
             .insert({
                 name: username.trim(),
                 password: await sha256(password.trim()),
-                type: type.trim()
+                type: userType.trim(),
+                rm: await sha256(rm.trim())
             });
 
         if (error) {
@@ -76,12 +65,16 @@ export default function SignUp() {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        await registerUser(username, password, userType);
+        await registerUser();
     };
 
-    const handleUserTypeChange = e => setUserType(e.target.value);
+    const handleUserTypeChange = e => {
+        setRM('');
+        setUserType(e.target.value);
+    };
     const handleUsernameChange = e => setUsername(e.target.value);
     const handlePasswordChange = e => setPassword(e.target.value);
+    const handleRMChange = e => setRM(e.target.value);
     
     return (
         <div className="d-flex justify-content-center align-items-center">
@@ -119,6 +112,7 @@ export default function SignUp() {
                                     name='username'
                                     className='m-2'
                                     fullWidth
+                                    required
                                 />
                             </li>
                             <li
@@ -139,6 +133,7 @@ export default function SignUp() {
                                     className='ms-2 my-2'
                                     label='Senha'
                                     fullWidth
+                                    required
                                 />
                                 <Button
                                     variant='outlined'
@@ -175,6 +170,41 @@ export default function SignUp() {
                                     <MenuItem value="admin">Administrador</MenuItem>
                                 </Select>
                             </li>
+                            {userType === 'user' &&
+                            <>
+                                <li
+                                className='list-group-item mt-3'
+                                style={{borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}>
+                                    <label htmlFor="rm" className='fs-5 mx-2 fw-bold'>
+                                        <RiLockPasswordFill className='me-2'/>
+                                        RM
+                                    </label>
+                                </li>
+                                <li className='list-group-item d-flex align-items-center mb-3'>
+                                    <TextField
+                                    onChange={handleRMChange}
+                                    name='rm'
+                                    id='rm'
+                                    required
+                                    type={!rmShowing ? 'password' : 'text'}
+                                    className='ms-2 my-2'
+                                    label='RM do aluno'
+                                    fullWidth/>
+                                    <Button
+                                    variant='outlined'
+                                    className='py-2'
+                                    color='inherit'
+                                    onClick={() => setRmShowing(!rmShowing)}>
+                                        {
+                                            !rmShowing ?
+                                            <RiEyeCloseFill className='text-secondary fs-2 text-center'/>
+                                            :
+                                            <RiEyeFill className='text-dark fs-2 text-center'/>
+                                        }
+                                    </Button>
+                                </li>
+                            </>
+                            }
                         </ul>
                     </div>
 

@@ -1,5 +1,5 @@
 import { RiCloseFill, RiDoorOpenFill, RiEyeFill, RiEyeCloseFill, RiLockPasswordFill, RiUserFill, RiCheckFill } from 'react-icons/ri';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Select, MenuItem } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Popup from '../../Components/Popup/Popup';
@@ -15,8 +15,10 @@ async function sha256(message) {
 
 export default function Login() {
     const [passwordShowing, setPasswordShowing] = useState(false);
-    const [username, setUsername] = useState("");
+    const [rmShowing, setRmShowing] = useState(false);
     const [password, setPassword] = useState("");
+    const [userType, setUserType] = useState("user");
+    const [rm, setRM] = useState("");
     const [popup, setPopup] = useState({
         'content': null,
         'header': '',
@@ -24,27 +26,15 @@ export default function Login() {
     });
     const navigate = useNavigate();
 
-    const loginUser = async (username, password) => {
-        if (!username.trim() || !password.trim()) {
-            setPopup({
-                content: 'Por favor preencha todos os campos antes de continuar.',
-                header: (
-                    <h2 className='text-danger'>
-                        <RiCloseFill className='me-2'/>
-                        Campos Vazios!
-                    </h2>
-                ),
-                state: true
-            });
-            return { success: false };
-        }
-
+    const loginUser = async () => {
         const hashedPassword = await sha256(password);
+        const hashedRM = await sha256(rm);
 
         const { data, error } = await supabase
         .from('users')
         .select()
-        .eq('name', username.trim())
+        .eq('type', userType)
+        .eq('rm', hashedRM)
         .eq('password', hashedPassword);
 
         if (error) {
@@ -78,7 +68,6 @@ export default function Login() {
 
         const user = data[0];
 
-        // Format and show user info in the popup content
         setPopup({
             content: (
                 <div>
@@ -104,11 +93,15 @@ export default function Login() {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        await loginUser(username, password);
+        await loginUser();
     };
 
-    const handleUsernameChange = e => setUsername(e.target.value);
+    const handleUserTypeChange = e => {
+        setRM('');
+        setUserType(e.target.value);
+    };
     const handlePasswordChange = e => setPassword(e.target.value);
+    const handleRMChange = e => setRM(e.target.value);
 
     return (
         <div className="d-flex justify-content-center align-items-center">
@@ -128,23 +121,25 @@ export default function Login() {
                     <div className='d-flex justify-content-center align-items-center'>
                         <ul className='list-group w-100'>
                             <li
-                            className='list-group-item'
-                            style={{borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}>
-                                <label htmlFor="username" className='fs-5 mx-2 fw-bold'>
-                                    <RiUserFill className='me-2'/>
-                                    Nome
+                                className='list-group-item'
+                                style={{borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}
+                            >
+                                <label htmlFor="typeUser" className='fs-5 mx-2 fw-bold'>
+                                    Tipo de usuário
                                 </label>
                             </li>
                             <li className='list-group-item mb-3'>
-                                <TextField
-                                onChange={handleUsernameChange}
-                                value={username}
-                                type='text'
-                                label='Nome'
-                                id='username'
-                                name='username'
-                                className='m-2'
-                                fullWidth/>
+                                <Select
+                                    value={userType}
+                                    id="typeUser"
+                                    name="typeUser"
+                                    onChange={handleUserTypeChange}
+                                    className='m-2'
+                                    fullWidth
+                                >
+                                    <MenuItem value="user">Aluno</MenuItem>
+                                    <MenuItem value="admin">Administrador</MenuItem>
+                                </Select>
                             </li>
                             <li
                             className='list-group-item'
@@ -154,7 +149,7 @@ export default function Login() {
                                     Senha
                                 </label>
                             </li>
-                            <li className='list-group-item d-flex align-items-center mb-3'>
+                            <li className='list-group-item d-flex align-items-center'>
                                 <TextField
                                 onChange={handlePasswordChange}
                                 value={password}
@@ -177,6 +172,41 @@ export default function Login() {
                                     }
                                 </Button>
                             </li>
+                            {userType === 'user' &&
+                            <>
+                                <li
+                                className='list-group-item mt-3'
+                                style={{borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}>
+                                    <label htmlFor="rm" className='fs-5 mx-2 fw-bold'>
+                                        <RiLockPasswordFill className='me-2'/>
+                                        RM
+                                    </label>
+                                </li>
+                                <li className='list-group-item d-flex align-items-center mb-3'>
+                                    <TextField
+                                    onChange={handleRMChange}
+                                    name='rm'
+                                    id='rm'
+                                    required
+                                    type={!rmShowing ? 'password' : 'text'}
+                                    className='ms-2 my-2'
+                                    label='RM do aluno'
+                                    fullWidth/>
+                                    <Button
+                                    variant='outlined'
+                                    className='py-2'
+                                    color='inherit'
+                                    onClick={() => setRmShowing(!rmShowing)}>
+                                        {
+                                            !rmShowing ?
+                                            <RiEyeCloseFill className='text-secondary fs-2 text-center'/>
+                                            :
+                                            <RiEyeFill className='text-dark fs-2 text-center'/>
+                                        }
+                                    </Button>
+                                </li>
+                            </>
+                            }
                         </ul>
                     </div>
 
