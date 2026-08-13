@@ -4,9 +4,11 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import { useMediaQuery } from '@mui/material';
 import { FaClock, FaCartShopping } from 'react-icons/fa6';
 import { useEffect, useState } from 'react';
+import { sha256 } from '../Login/Login';
 
 export default function SuccessPurchase() {
     const location = useLocation();
+    const [rndCode, setRndCode] = useState('');
     const [secondsLeft, setSecondsLeft] = useState(10 * 60);
 
     useEffect(() => {
@@ -50,6 +52,34 @@ export default function SuccessPurchase() {
         return totalPrice;
     }
 
+    const qrCodeTxt = JSON.stringify(cartProducts);
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+    const setCode = ()=> {
+        let x = [];
+        for (let i=0;i < 6;i++) {
+            let rndNum = Math.round(Math.random());
+
+            if (rndNum === 0) {
+                x.push(Math.floor(Math.random() * 9));
+            } else {
+                let rndNumAlphabet = Math.floor(Math.random() * alphabet.length);
+                let rndCaseNum = Math.round(Math.random());
+
+                let rndLetter = alphabet[rndNumAlphabet];
+                rndLetter = rndCaseNum === 0 ? rndLetter.toLowerCase() : rndLetter.toUpperCase();
+
+                x.push(rndLetter);
+            }
+
+            console.log(x);
+
+            setRndCode(x.join(''));
+        }
+    }
+
+    useEffect(setCode, [])
+
     return(
         secondsLeft <= 0 ? 
         <div className="d-flex align-items-center flex-column m-4">
@@ -69,9 +99,17 @@ export default function SuccessPurchase() {
             <hr />
             <div className="d-flex justify-content-center align-items-center">
                 <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?data=${JSON.stringify(cartProducts)}&size=300x300&charset-source=UTF-8`}
+                src={`https://api.qrserver.com/v1/create-qr-code/?data=${sha256(qrCodeTxt)}&size=300x300&charset-source=UTF-8`}
                 alt="QR Code" />
             </div>
+            <hr />
+            <h2 className='text-center'>
+                Código da compra:
+                <br />
+                <b>
+                    {rndCode}
+                </b>
+            </h2>
             <hr />
             <h1 className={`text-center ${displayMins <= 5 ? 'text-danger' : 'text-success'}`}>
                 <FaClock className="me-2" />

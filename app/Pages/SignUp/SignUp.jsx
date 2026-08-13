@@ -3,14 +3,7 @@ import { TextField, Select, MenuItem, Button } from '@mui/material';
 import { useState } from 'react';
 import Popup from '../../Components/Popup/Popup';
 import supabase from '../../supabaseClient';
-
-async function sha256(message) {
-    const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer)); 
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return hashHex;
-}
+import { sha256 } from '../Login/Login';
 
 export default function SignUp() {
     const [passwordShowing, setPasswordShowing] = useState(false);
