@@ -137,3 +137,48 @@
         }
     }
 }
+
+.addDialog{
+    margin: auto;
+    width: 50%;
+    height: 50%;
+    padding: 1em;
+    background-color: #0aff0a;
+    border-color: #24b300;
+    color: white;
+    border-radius: 1em;
+
+    &::backdrop{
+        backdrop-filter: blur(100px)
+    }
+}
+
+.editDialog{
+    margin: auto;
+    width: 50%;
+    height: 50%;
+    padding: 1em;
+    background-color: #0a60ff;
+    border-color: #002ab3;
+    color: white;
+    border-radius: 1em;
+
+    &::backdrop{
+        backdrop-filter: blur(100px)
+    }
+}
+
+.removeDialog{
+    margin: auto;
+    width: 50%;
+    height: 50%;
+    padding: 1em;
+    background-color: #ff0a0a;
+    border-color: #24b300;
+    color: white;
+    border-radius: 1em;
+
+    &::backdrop{
+        backdrop-filter: blur(100px)
+    }
+}
