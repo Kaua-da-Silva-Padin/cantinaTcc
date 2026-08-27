@@ -1,30 +1,38 @@
 import supabase from "../../supabaseClient";
-import { useState } from "react";
+import { use, useState } from "react";
 
 export default function AdmDialog({ dialog, setDialog }) {
     const [produto, setProduto] = useState("");
+    const [nameEdit, setNameEdit] = useState("");
+    
+    
+    async function searchEdit(formData) {
+        // if (!formData){ 
+        //     return;
+        // }
 
-    // async function searchEdit(formData) {
-    //     if (!formData){
-    //         return;
-    //     }
+        // const { data, error } = await supabase.from('products').select('*').eq('name', formData.get("productSearchName"));
 
-    //     const { data, error } = await supabase.from('products').select('*').eq('name', formData.get("productSearchName")).single();
-
-    //     if (error) {
-    //         console.log(`Erro ao buscar dados do Supabase na BuyPage: ${error.message}`);
-    //         return [];
-    //     }
-    //     setProduto(data);
-    //     alert(data.name)
-    // }
+        // if (error) {
+        //     console.log(`Erro ao buscar dados do Supabase na BuyPage: ${error.message}`);
+        //     return [];
+        // }
+        // setProduto(data.name);
+        
+        // PROVAVELMENTE ADICIONAREI UM MODO DE TER OS DADOS EM CACHE E BUSCAR DE MODO MAIS RÁPIDO
+        alert("hi");
+    }
 
     function addProduct(formData) {
         alert(formData.get("productAddName"));
     }
 
+    function editProduct(){
+        alert(`Form submitted ${produto}`);
+    }
+
     const addDialog = (
-        <dialog open className="addDialog">
+        <div open className="addDialog">
             <section className="addDialogHeader">
                 <button onClick={closeDialog}> X </button>
             </section>
@@ -68,40 +76,40 @@ export default function AdmDialog({ dialog, setDialog }) {
                     </div>
                 </form>
             </section>
-        </dialog>
+        </div>
     );
 
 
     const editDialog = (
-        <dialog open className="editDialog">
+        <div open className="editDialog">
             <section className="editDialogHeader">
                 <button onClick={closeDialog}> X </button>
             </section>
             <section>
-                <form>
+                <form action={editProduct}>
                     <section className="productSearch">
                         <label htmlFor="productSearchName">
-                            Nome:
-                            <input type="text" name="productSearchName" required />
-                            <button type="submit"> Pesquisar</button>
+                            {nameEdit}
+                            <input type="text" name="productSearchName"/>
+                            <button formAction={searchEdit}> Pesquisar</button>
                         </label>
                     </section>
 
                     <section className="productSearch">
                         <div className="nameInputBlock">
                             <label htmlFor="productAddName"> Nome:
-                                <input required type="text" name="productAddName"/>
+                                <input type="text" name="productAddName" value={nameEdit} onChange={(e) => setNameEdit(e.target.value)}/>
                             </label>
                         </div>
 
                         <div className="priceInputBlock">
                             <label htmlFor="productEditPrice"> Preço: </label>
-                            <input required type="text" name="productEditPrice" />
+                            <input type="text" name="productEditPrice" />
                         </div>
 
                         <div className="quantInputBlock">
                             <label htmlFor="productEditQuant"> Quantidade: </label>
-                            <input required type="number" name="productEditQuant" min={0} />
+                            <input type="number" name="productEditQuant" min={0} />
                         </div>
 
                         <div className="typeSelectBlock">
@@ -117,11 +125,11 @@ export default function AdmDialog({ dialog, setDialog }) {
                     </section>
                 </form>
             </section>
-        </dialog>
+        </div>
     );
 
     const removeDialog = (
-        <dialog open className="removeDialog">
+        <div open className="removeDialog">
             <section className="removeDialogHeader">
                 <button onClick={closeDialog}> X </button>
             </section>
@@ -141,7 +149,7 @@ export default function AdmDialog({ dialog, setDialog }) {
                 <span className="productRemoveTitle"> Quantidade: </span> <span className="productRemoveLabel"> ... </span>
             </section>
 
-        </dialog>
+        </div>
     );
 
     function closeDialog() {

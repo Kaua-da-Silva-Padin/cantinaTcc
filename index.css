@@ -1,6 +1,6 @@
 .groupAdmGeneral { /* Estilização da tabela geral da pagina de admin */
     width: 100%;
-    height: 100%;
+    height: 100dvh;
     background-color: rgb(5, 82, 63);
 }
 
@@ -22,11 +22,13 @@
 
 #subGroupAdmGeneralTwo {  /* Estilização do subgrupo contido na tabela geral da pagina. Este subgrupo contém os btns e divs "atalhos"*/
     display: grid;
+    height: 100dvh;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows:  repeat(24, 1fr);
     grid-column: span 4;
     gap: 1em;
 } 
+
 
 #admPageNavBar{ /* Esta é a navbar da pagina, ela só contém um btn para encolher e expandir a #admPageSideBar(barra lateral), e para conter o nome do usuário e um atalho para o perfil */
     display: flex;
@@ -138,47 +140,44 @@
     }
 }
 
+.admDialogScreen{
+    grid-column: span 4;
+    grid-row: span 12;
+    background-color: white;
+    border-color: gray solid 2px;
+    border-radius: 1em;
+}
+
 .addDialog{
     margin: auto;
-    width: 50%;
-    height: 50%;
+    width: 100%;
+    height: 100%;
     padding: 1em;
-    background-color: #0aff0a;
+    background-color: #dfffdf;
     border-color: #24b300;
-    color: white;
+    color: black;
     border-radius: 1em;
-
-    &::backdrop{
-        backdrop-filter: blur(100px)
-    }
 }
 
 .editDialog{
     margin: auto;
-    width: 50%;
-    height: 50%;
+    width: 100%;
+    height: 100%;
     padding: 1em;
-    background-color: #0a60ff;
+    background-color: #ebf6ff;
     border-color: #002ab3;
-    color: white;
+    color: black;
     border-radius: 1em;
-
-    &::backdrop{
-        backdrop-filter: blur(100px)
-    }
 }
 
 .removeDialog{
     margin: auto;
-    width: 50%;
-    height: 50%;
+    width: 100%;
+    height: 100%;
     padding: 1em;
-    background-color: #ff0a0a;
+    background-color: #ffdbdb;
     border-color: #24b300;
-    color: white;
+    color: black;
     border-radius: 1em;
-
-    &::backdrop{
-        backdrop-filter: blur(100px)
-    }
 }
+
