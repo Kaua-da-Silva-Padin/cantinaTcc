@@ -1,11 +1,13 @@
-import { RiUserAddFill, RiCloseFill, RiAddFill, RiEyeFill, RiEyeCloseFill, RiLockPasswordFill, RiUserFill, RiCheckFill } from 'react-icons/ri'
+import { RiUserAddFill, RiCloseFill, RiAddFill, RiEyeFill, RiEyeCloseFill, RiLockPasswordFill, RiUserFill } from 'react-icons/ri';
 import { TextField, Select, MenuItem, Button } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import Popup from '../../Components/Popup/Popup';
 import supabase from '../../supabaseClient';
-import { sha256 } from '../Login/Login';
+import { sha256, loadLoggedInUser } from '../Login/Login';
 
 export default function SignUp() {
+    const navigate = useNavigate();
     const [passwordShowing, setPasswordShowing] = useState(false);
     const [rmShowing, setRmShowing] = useState(false);
     const [userType, setUserType] = useState("user");
@@ -13,47 +15,66 @@ export default function SignUp() {
     const [password, setPassword] = useState("");
     const [rm, setRM] = useState("");
     const [popup, setPopup] = useState({
-        'content': '',
-        'header': '',
-        'state': false
+        content: '',
+        header: '',
+        state: false
     });
 
+    const currentUser = loadLoggedInUser();
+
     const registerUser = async () => {
-        const { data, error } = await supabase
-            .from('users')
-            .insert({
-                name: username.trim(),
-                password: await sha256(password.trim()),
-                type: userType.trim(),
-                rm: await sha256(rm.trim())
+        const trimmedUsername = username.trim();
+        const hashedPassword = await sha256(password.trim());
+        let error;
+
+        if (userType === 'admin') {
+            // Check frontend session state first
+            if (currentUser?.type !== 'admin') {
+                setPopup({
+                    header: 'Acesso Negado',
+                    content: 'Apenas administradores conectados podem cadastrar novos administradores.',
+                    state: true
+                });
+                return;
+            }
+
+            // Call RPC function passing current admin's ID for DB-side validation
+            const result = await supabase.rpc('register_admin_by_admin', {
+                p_admin_id: currentUser.id,
+                p_new_name: trimmedUsername,
+                p_new_password_hash: hashedPassword
             });
+            error = result.error;
+        } else {
+            // Standard student/user registration
+            const hashedRM = rm.trim() ? await sha256(rm.trim()) : null;
+            const result = await supabase
+                .from('users')
+                .insert({
+                    name: trimmedUsername,
+                    password: hashedPassword,
+                    type: 'user',
+                    rm: hashedRM
+                });
+            error = result.error;
+        }
 
         if (error) {
-            console.error("Erro no Supabase:", error.message);
             setPopup({
-                content: 'Falha ao registrar usuário no banco de dados!',
-                header: (
-                    <h2 className='text-danger'>
-                        <RiCloseFill className='me-2'/>
-                        Erro de Registro!
-                    </h2>
-                ),
+                header: 'Erro no Cadastro',
+                content: `Não foi possível cadastrar o usuário: ${error.message}`,
                 state: true
             });
-            return false;
+            return;
         }
 
         setPopup({
-            content: 'Usuário registrado com sucesso!',
-            header: (
-                <h2 className='text-success'>
-                    <RiCheckFill className='me-2'/>
-                    Usuário Registrado!
-                </h2>
-            ),
+            header: 'Sucesso',
+            content: 'Usuário cadastrado com sucesso!',
             state: true
         });
-        return true;
+
+        setTimeout(() => navigate('/login'), 2000);
     };
 
     const handleFormSubmit = async (e) => {
@@ -65,15 +86,12 @@ export default function SignUp() {
         setRM('');
         setUserType(e.target.value);
     };
-    const handleUsernameChange = e => setUsername(e.target.value);
-    const handlePasswordChange = e => setPassword(e.target.value);
-    const handleRMChange = e => setRM(e.target.value);
-    
+
     return (
         <div className="d-flex justify-content-center align-items-center">
             <Popup
                 state={popup.state}
-                setState={setPopup}
+                setState={(state) => setPopup(prev => ({ ...prev, state }))}
                 header={popup.header}
             >
                 {popup.content}
@@ -98,7 +116,8 @@ export default function SignUp() {
                             </li>
                             <li className='list-group-item mb-3'>
                                 <TextField
-                                    onChange={handleUsernameChange}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    value={username}
                                     type='text'
                                     label='Nome'
                                     id='username'
@@ -119,7 +138,8 @@ export default function SignUp() {
                             </li>
                             <li className='list-group-item d-flex align-items-center mb-3'>
                                 <TextField
-                                    onChange={handlePasswordChange}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={password}
                                     name='password'
                                     id='password'
                                     type={!passwordShowing ? 'password' : 'text'}
@@ -134,12 +154,11 @@ export default function SignUp() {
                                     color='inherit'
                                     onClick={() => setPasswordShowing(!passwordShowing)}
                                 >
-                                    {
-                                        !passwordShowing ?
+                                    {!passwordShowing ? (
                                         <RiEyeCloseFill className='text-secondary fs-2 text-center'/>
-                                        :
+                                    ) : (
                                         <RiEyeFill className='text-dark fs-2 text-center'/>
-                                    }
+                                    )}
                                 </Button>
                             </li>
                             <li
@@ -160,44 +179,49 @@ export default function SignUp() {
                                     fullWidth
                                 >
                                     <MenuItem value="user">Aluno</MenuItem>
-                                    <MenuItem value="admin">Administrador</MenuItem>
+                                    {currentUser?.type === 'admin' && (
+                                        <MenuItem value="admin">Administrador</MenuItem>
+                                    )}
                                 </Select>
                             </li>
-                            {userType === 'user' &&
-                            <>
-                                <li
-                                className='list-group-item mt-3'
-                                style={{borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}>
-                                    <label htmlFor="rm" className='fs-5 mx-2 fw-bold'>
-                                        <RiLockPasswordFill className='me-2'/>
-                                        RM
-                                    </label>
-                                </li>
-                                <li className='list-group-item d-flex align-items-center mb-3'>
-                                    <TextField
-                                    onChange={handleRMChange}
-                                    name='rm'
-                                    id='rm'
-                                    required
-                                    type={!rmShowing ? 'password' : 'text'}
-                                    className='ms-2 my-2'
-                                    label='RM do aluno'
-                                    fullWidth/>
-                                    <Button
-                                    variant='outlined'
-                                    className='py-2'
-                                    color='inherit'
-                                    onClick={() => setRmShowing(!rmShowing)}>
-                                        {
-                                            !rmShowing ?
-                                            <RiEyeCloseFill className='text-secondary fs-2 text-center'/>
-                                            :
-                                            <RiEyeFill className='text-dark fs-2 text-center'/>
-                                        }
-                                    </Button>
-                                </li>
-                            </>
-                            }
+                            {userType === 'user' && (
+                                <>
+                                    <li
+                                        className='list-group-item mt-3'
+                                        style={{borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}
+                                    >
+                                        <label htmlFor="rm" className='fs-5 mx-2 fw-bold'>
+                                            <RiLockPasswordFill className='me-2'/>
+                                            RM
+                                        </label>
+                                    </li>
+                                    <li className='list-group-item d-flex align-items-center mb-3'>
+                                        <TextField
+                                            onChange={(e) => setRM(e.target.value)}
+                                            value={rm}
+                                            name='rm'
+                                            id='rm'
+                                            required
+                                            type={!rmShowing ? 'password' : 'text'}
+                                            className='ms-2 my-2'
+                                            label='RM do aluno'
+                                            fullWidth
+                                        />
+                                        <Button
+                                            variant='outlined'
+                                            className='py-2'
+                                            color='inherit'
+                                            onClick={() => setRmShowing(!rmShowing)}
+                                        >
+                                            {!rmShowing ? (
+                                                <RiEyeCloseFill className='text-secondary fs-2 text-center'/>
+                                            ) : (
+                                                <RiEyeFill className='text-dark fs-2 text-center'/>
+                                            )}
+                                        </Button>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </div>
 
@@ -221,6 +245,7 @@ export default function SignUp() {
                             onClick={() => {
                                 setUsername('');
                                 setPassword('');
+                                setRM('');
                                 setUserType('user');
                             }}
                         >
