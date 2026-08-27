@@ -32,7 +32,8 @@ export default function BuyPage() {
   return (
     <>
       <SearchField
-        setSearch={setSearch} />
+        setSearch={setSearch}
+        products={products} />
 
       <FilterTabs
         selectedFilterTab={filterTab.trim().toLowerCase()}
