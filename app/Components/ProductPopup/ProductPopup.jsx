@@ -85,7 +85,7 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
 
     return (
         <div
-            style={{ height: isMobile ? '25dvh' : '40dvh' }}
+            style={{ height: isMobile ? '25dvh' : '35dvh' }}
             className="d-flex justify-content-center align-items-center m-4">
             <Backdrop
                 open={productPopup.state}
