@@ -181,3 +181,8 @@
     border-radius: 1em;
 }
 
+.btnPending{
+    cursor: not-allowed;
+    background-color: blueviolet;
+}
+

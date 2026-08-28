@@ -1,5 +1,5 @@
 # AdmPage Tasks
-
+# ALWAYS DO ATOMIC COMMITS
 - [X] Prepare de AdmQuickButton 
 - [X] Create a Dialog component
 - [X] Test it's opening with one btn

@@ -1,34 +1,66 @@
 import supabase from "../../supabaseClient";
-import { use, useState } from "react";
+import { useState } from "react";
 
 export default function AdmDialog({ dialog, setDialog }) {
-    const [produto, setProduto] = useState("");
+    const [produto, setProduto] = useState(null);
     const [nameEdit, setNameEdit] = useState("");
-    
-    
-    async function searchEdit(formData) {
-        // if (!formData){ 
-        //     return;
-        // }
+    const [priceEdit, setPriceEdit] = useState("");
+    const [quantEdit, setQuantEdit] = useState(0);
+    const [kindEdit, setKindEdit] = useState("");
+    const [productSearchName, setProductSearchName] = useState("");
+    const [isDisabled, setIsDisabled] = useState(false);
 
-        // const { data, error } = await supabase.from('products').select('*').eq('name', formData.get("productSearchName"));
 
-        // if (error) {
-        //     console.log(`Erro ao buscar dados do Supabase na BuyPage: ${error.message}`);
-        //     return [];
-        // }
-        // setProduto(data.name);
-        
-        // PROVAVELMENTE ADICIONAREI UM MODO DE TER OS DADOS EM CACHE E BUSCAR DE MODO MAIS RÁPIDO
-        alert("hi");
+    async function searchEdit() {
+        setIsDisabled(true);
+        const productName = productSearchName.trim();
+
+        if (!productName) {
+            setIsDisabled(false);
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .eq('name', productName)
+            .maybeSingle();
+
+
+        if (error) {
+            console.error(`Erro ao buscar produto no Supabase: ${error.message}`);
+            setProduto("");
+            setNameEdit("");
+            setPriceEdit("");
+            setQuantEdit(0);
+            setKindEdit("");
+            setIsDisabled(false);
+            return;
+        }
+
+        if (!data) {
+            setProduto(null);
+            setNameEdit("");
+            alert("Produto não encontrado.");
+            setIsDisabled(false);
+            return;
+        }
+
+        setIsDisabled(false);
+        setProduto(data);
+        setNameEdit(data.name);
+        setPriceEdit(String(`R$${data.price}`));
+        setQuantEdit(data.stock);
+        setKindEdit(data.kind);
+
     }
 
     function addProduct(formData) {
         alert(formData.get("productAddName"));
     }
 
-    function editProduct(){
-        alert(`Form submitted ${produto}`);
+    function editProduct() {
+        alert(`Form submitted ${produto?.name ?? ""}`);
     }
 
     const addDialog = (
@@ -37,7 +69,7 @@ export default function AdmDialog({ dialog, setDialog }) {
                 <button onClick={closeDialog}> X </button>
             </section>
             <section>
-                <form className="addDialogInputs"    action={addProduct}>
+                <form className="addDialogInputs" action={addProduct}>
                     <div className="nameInputBlock">
                         <label htmlFor="productAddName"> Nome:
                             <input required type="text" name="productAddName" />
@@ -89,37 +121,37 @@ export default function AdmDialog({ dialog, setDialog }) {
                 <form action={editProduct}>
                     <section className="productSearch">
                         <label htmlFor="productSearchName">
-                            {nameEdit}
-                            <input type="text" name="productSearchName"/>
-                            <button formAction={searchEdit}> Pesquisar</button>
+                            Nome:
+                            <input required type="text" name="productSearchName" value={productSearchName} onChange={(e) => setProductSearchName(e.target.value)} />
+                            <button type="button" onClick={searchEdit} disabled={isDisabled} className={isDisabled ? "btnPending" : ""}> Pesquisar</button>
                         </label>
                     </section>
 
                     <section className="productSearch">
                         <div className="nameInputBlock">
                             <label htmlFor="productAddName"> Nome:
-                                <input type="text" name="productAddName" value={nameEdit} onChange={(e) => setNameEdit(e.target.value)}/>
+                                <input type="text" name="productAddName" value={nameEdit} onChange={(e) => setNameEdit(e.target.value)} />
                             </label>
                         </div>
 
                         <div className="priceInputBlock">
                             <label htmlFor="productEditPrice"> Preço: </label>
-                            <input type="text" name="productEditPrice" />
+                            <input type="text" name="productEditPrice" value={priceEdit} onChange={(e) => setPriceEdit(e.target.value)} />
                         </div>
 
                         <div className="quantInputBlock">
                             <label htmlFor="productEditQuant"> Quantidade: </label>
-                            <input type="number" name="productEditQuant" min={0} />
+                            <input type="number" name="productEditQuant" min={0} value={quantEdit} onChange={(e) => setQuantEdit(e.target.value)} />
                         </div>
 
                         <div className="typeSelectBlock">
                             <label htmlFor="productEditType"> Tipo: </label>
-                            <select name="productEditType">
-                                <option value="salgadosOpt"> Salgado </option>
-                                <option value="salgadinhosOpt"> Salgadinho </option>
-                                <option value="bebidasOpt"> Bebida </option>
-                                <option value="docesOpt"> Doce </option>
-                                <option value="sorvetesOpt"> Sorvete </option>
+                            <select name="productEditType" value={kindEdit} onChange={e => setKindEdit(e.target.value)}>
+                                <option value="salgados"> Salgado </option>
+                                <option value="salgadinhos"> Salgadinho </option>
+                                <option value="bebidas"> Bebida </option>
+                                <option value="doces"> Doce </option>
+                                <option value="sorvetes"> Sorvete </option>
                             </select>
                         </div>
                     </section>
