@@ -5,11 +5,20 @@ export default function AdmDialog({ dialog, setDialog }) {
     const [produto, setProduto] = useState(null);
     const [nameEdit, setNameEdit] = useState("");
     const [priceEdit, setPriceEdit] = useState("");
-    const [quantEdit, setQuantEdit] = useState(0);
+    const [quantEdit, setQuantEdit] = useState();
     const [kindEdit, setKindEdit] = useState("");
     const [productSearchName, setProductSearchName] = useState("");
     const [isDisabled, setIsDisabled] = useState(false);
 
+    function standard() {
+        setProduto("");
+        setNameEdit("");
+        setPriceEdit("");
+        setQuantEdit(0);
+        setKindEdit("");
+        setProductSearchName("");
+        setIsDisabled(false);
+    }
 
     async function searchEdit() {
         setIsDisabled(true);
@@ -29,27 +38,21 @@ export default function AdmDialog({ dialog, setDialog }) {
 
         if (error) {
             console.error(`Erro ao buscar produto no Supabase: ${error.message}`);
-            setProduto("");
-            setNameEdit("");
-            setPriceEdit("");
-            setQuantEdit(0);
-            setKindEdit("");
-            setIsDisabled(false);
+            standard();
             return;
         }
 
         if (!data) {
             setProduto(null);
-            setNameEdit("");
             alert("Produto não encontrado.");
-            setIsDisabled(false);
+            standard();
             return;
         }
 
         setIsDisabled(false);
         setProduto(data);
         setNameEdit(data.name);
-        setPriceEdit(String(`R$${data.price}`));
+        setPriceEdit(data.price);
         setQuantEdit(data.stock);
         setKindEdit(data.kind);
 
@@ -59,9 +62,46 @@ export default function AdmDialog({ dialog, setDialog }) {
         alert(formData.get("productAddName"));
     }
 
-    function editProduct() {
-        alert(`Form submitted ${produto?.name ?? ""}`);
+    async function editProduct(pvs) {
+        if (Object.keys(pvs).length === 0) {
+            alert("Nenhuma alteração detectada.");
+            return;
+        }
+        const { data, error } = await supabase
+            .from('products')
+            .update(pvs)
+            .eq('id', produto.id)
+            .select();
+
+        if (!data) {
+            alert("erro");
+            standard();
+            return;
+        }            
+
+        if (error) {
+            console.error(`Erro ao buscar produto no Supabase: ${error.message}`);
+            standard();
+            return;
+        }
+
+        alert("Produto Atualizado!");
+        standard();
     }
+
+    function prepareEditProduct(formData) {
+        const modifiedData = {};
+
+        formData.forEach((value, key) => {
+            if (!produto[key] || value == produto[key]) {
+                return;
+            }
+            modifiedData[key] = value;
+        });
+
+        editProduct(modifiedData);
+    }
+
 
     const addDialog = (
         <div open className="addDialog">
@@ -71,29 +111,29 @@ export default function AdmDialog({ dialog, setDialog }) {
             <section>
                 <form className="addDialogInputs" action={addProduct}>
                     <div className="nameInputBlock">
-                        <label htmlFor="productAddName"> Nome:
-                            <input required type="text" name="productAddName" />
+                        <label htmlFor="name"> Nome:
+                            <input required type="text" name="name" />
                         </label>
                     </div>
 
                     <div className="priceInputBlock">
-                        <label htmlFor="productAddPrice"> Preço: </label>
-                        <input required type="text" name="productAddPrice" />
+                        <label htmlFor="price"> Preço: </label>
+                        <input required type="text" name="price" />
                     </div>
 
                     <div className="quantInputBlock">
-                        <label htmlFor="productAddQuant"> Quantidade: </label>
-                        <input required type="number" name="productAddQuant" min={0} />
+                        <label htmlFor="stock"> Quantidade: </label>
+                        <input required type="number" name="stock" min={0} />
                     </div>
 
                     <div className="typeSelectBlock">
                         <label htmlFor="productAddType"> Tipo: </label>
                         <select name="productAddType">
-                            <option value="salgadosOpt"> Salgado </option>
-                            <option value="salgadinhosOpt"> Salgadinho </option>
-                            <option value="bebidasOpt"> Bebida </option>
-                            <option value="docesOpt"> Doce </option>
-                            <option value="sorvetesOpt"> Sorvete </option>
+                            <option value="salgados"> Salgado </option>
+                            <option value="salgadinhos"> Salgadinho </option>
+                            <option value="bebidas"> Bebida </option>
+                            <option value="doces"> Doce </option>
+                            <option value="sorvetes"> Sorvete </option>
                         </select>
                     </div>
 
@@ -118,35 +158,35 @@ export default function AdmDialog({ dialog, setDialog }) {
                 <button onClick={closeDialog}> X </button>
             </section>
             <section>
-                <form action={editProduct}>
+                <form action={searchEdit}>
                     <section className="productSearch">
                         <label htmlFor="productSearchName">
                             Nome:
-                            <input required type="text" name="productSearchName" value={productSearchName} onChange={(e) => setProductSearchName(e.target.value)} />
-                            <button type="button" onClick={searchEdit} disabled={isDisabled} className={isDisabled ? "btnPending" : ""}> Pesquisar</button>
+                            <input type="text" name="productSearchName" value={productSearchName} onChange={(e) => setProductSearchName(e.target.value)} />
+                            <button type="submit" disabled={isDisabled} className={isDisabled ? "btnPending" : ""}> Pesquisar</button>
                         </label>
                     </section>
 
                     <section className="productSearch">
                         <div className="nameInputBlock">
-                            <label htmlFor="productAddName"> Nome:
-                                <input type="text" name="productAddName" value={nameEdit} onChange={(e) => setNameEdit(e.target.value)} />
+                            <label htmlFor="name"> Nome:
+                                <input type="text" name="name" value={nameEdit} onChange={(e) => setNameEdit(e.target.value)} />
                             </label>
                         </div>
 
                         <div className="priceInputBlock">
-                            <label htmlFor="productEditPrice"> Preço: </label>
-                            <input type="text" name="productEditPrice" value={priceEdit} onChange={(e) => setPriceEdit(e.target.value)} />
+                            <label htmlFor="price"> Preço: </label>
+                            <input type="float" name="price" value={priceEdit} onChange={(e) => setPriceEdit(e.target.value)} />
                         </div>
 
                         <div className="quantInputBlock">
-                            <label htmlFor="productEditQuant"> Quantidade: </label>
-                            <input type="number" name="productEditQuant" min={0} value={quantEdit} onChange={(e) => setQuantEdit(e.target.value)} />
+                            <label htmlFor="stock"> Quantidade: </label>
+                            <input type="number" name="stock" min={0} value={quantEdit} onChange={(e) => setQuantEdit(e.target.value)} />
                         </div>
 
                         <div className="typeSelectBlock">
                             <label htmlFor="productEditType"> Tipo: </label>
-                            <select name="productEditType" value={kindEdit} onChange={e => setKindEdit(e.target.value)}>
+                            <select name="kind" value={kindEdit} onChange={e => setKindEdit(e.target.value)}>
                                 <option value="salgados"> Salgado </option>
                                 <option value="salgadinhos"> Salgadinho </option>
                                 <option value="bebidas"> Bebida </option>
@@ -154,6 +194,9 @@ export default function AdmDialog({ dialog, setDialog }) {
                                 <option value="sorvetes"> Sorvete </option>
                             </select>
                         </div>
+                        <section>
+                            <button type="submit" formAction={prepareEditProduct}> Atualizar Produto </button>
+                        </section>
                     </section>
                 </form>
             </section>
