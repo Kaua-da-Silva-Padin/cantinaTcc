@@ -20,7 +20,7 @@ const LOCKOUT_DURATION_MS = 90 * 60 * 1000; // 1.5 hours in milliseconds
 
 export const loadLoggedInUser = () => {
     try {
-        const raw = localStorage.getItem(AUTH_CACHE_KEY);
+        const raw = sessionStorage.getItem(AUTH_CACHE_KEY);
         return raw ? JSON.parse(raw) : null;
     } catch (err) {
         console.error('Erro ao ler cache de login:', err);
@@ -36,7 +36,7 @@ const cacheLoggedInUser = (user) => {
             type: user.type,
             loggedInAt: new Date().toISOString()
         };
-        localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify(cachedEntry));
+        sessionStorage.setItem(AUTH_CACHE_KEY, JSON.stringify(cachedEntry));
         window.dispatchEvent(new Event('userLoggedIn'));
         return cachedEntry;
     } catch (err) {
