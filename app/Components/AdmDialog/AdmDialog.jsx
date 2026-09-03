@@ -1,14 +1,29 @@
 import supabase from "../../supabaseClient";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AdmDialog({ dialog, setDialog }) {
     const [produto, setProduto] = useState(null);
+    const [produtos, setProdutos] = useState();
     const [nameEdit, setNameEdit] = useState("");
     const [priceEdit, setPriceEdit] = useState("");
     const [quantEdit, setQuantEdit] = useState();
     const [kindEdit, setKindEdit] = useState("");
     const [productSearchName, setProductSearchName] = useState("");
     const [isDisabled, setIsDisabled] = useState(false);
+
+    useEffect(() => {
+        const fetchAll = async () => {
+            try {
+                const { data, error } = await supabase.from('products').select('*'); //O dado retornado é um array de objetos
+                setProdutos(data); 
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+            }
+        };
+
+        fetchAll();
+
+    }, []);
 
     function standard() {
         setProduto("");
@@ -22,12 +37,10 @@ export default function AdmDialog({ dialog, setDialog }) {
 
     async function searchEdit() {
         setIsDisabled(true);
-        const productName = productSearchName.trim();
+        const productName = productSearchName.trim(); // talvez eu substitua o state(productSearchName) por um formData.get["name"];
+        const searchProduct = produtos.find(item => item.name == productName); // Procura o produto no produtos(proveniente de um select geral nos produtos do Supabase)
 
-        if (!productName) {
-            setIsDisabled(false);
-            return;
-        }
+        {/* 
 
         const { data, error } = await supabase
             .from('products')
@@ -41,20 +54,22 @@ export default function AdmDialog({ dialog, setDialog }) {
             standard();
             return;
         }
+        */} // Select do Supabase
 
-        if (!data) {
+        if (!searchProduct) {
             setProduto(null);
             alert("Produto não encontrado.");
             standard();
             return;
-        }
+        } // Se nada for achado, uma mensagem será retornada avisando o erro(provavelmnte não terá esse erro com o auto complete)
 
-        setIsDisabled(false);
-        setProduto(data);
-        setNameEdit(data.name);
-        setPriceEdit(data.price);
-        setQuantEdit(data.stock);
-        setKindEdit(data.kind);
+
+        setIsDisabled(false); // O Botão de pesquisa se torna utilizável novamente
+        setProduto(searchProduct);
+        setNameEdit(searchProduct.name);
+        setPriceEdit(searchProduct.price);
+        setQuantEdit(searchProduct.stock);
+        setKindEdit(searchProduct.kind);
 
     }
 
@@ -77,7 +92,7 @@ export default function AdmDialog({ dialog, setDialog }) {
             alert("erro");
             standard();
             return;
-        }            
+        }
 
         if (error) {
             console.error(`Erro ao buscar produto no Supabase: ${error.message}`);
