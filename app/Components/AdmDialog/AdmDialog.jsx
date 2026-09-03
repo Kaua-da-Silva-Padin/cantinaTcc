@@ -7,7 +7,7 @@ export default function AdmDialog({ dialog, setDialog }) {
     const [nameEdit, setNameEdit] = useState("");
     const [priceEdit, setPriceEdit] = useState("");
     const [quantEdit, setQuantEdit] = useState(0);
-    const [kindEdit, setKindEdit] = useState("standard");
+    const [kindEdit, setKindEdit] = useState("");
     const [productSearchName, setProductSearchName] = useState("");
     const [isDisabled, setIsDisabled] = useState(false);
 
@@ -94,10 +94,6 @@ export default function AdmDialog({ dialog, setDialog }) {
     }
 
     async function editProduct(pvs) {
-        if (Object.keys(pvs).length === 0) {
-            alert("Nenhuma alteração detectada.");
-            return;
-        }
         const { data, error } = await supabase
             .from('products')
             .update(pvs)
@@ -129,9 +125,13 @@ export default function AdmDialog({ dialog, setDialog }) {
             if (produto[key] == undefined || value == produto[key]) {
                 return;
             }
-            modifiedData[key] = value;
+            modifiedData[key] = value.trim();   
         });
 
+        if (Object.keys(modifiedData).length === 0) {
+            alert("Nenhuma alteração detectada!");
+            return;
+        }
         editProduct(modifiedData);
     }
 

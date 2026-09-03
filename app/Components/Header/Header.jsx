@@ -1,6 +1,6 @@
 // app/Components/Header/Header.jsx
 import { Avatar, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop, ScopedCssBaseline } from '@mui/material';
-import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiAdminFill, RiTableView, RiUserFill, RiUserAddFill } from 'react-icons/ri';
+import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiTableView, RiUserFill, RiUserAddFill } from 'react-icons/ri';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router'; 
 import SwipeableTemporaryDrawer from "../SwipeableDrawer/SwipeableDrawer";
@@ -69,7 +69,6 @@ export default function Header(props) {
         { icon: <RiUserAddFill />, name: 'Registrar', link: '/' },
         { icon: <RiUserFill />, name: 'Login', link: '/login' },
         { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' },
-        { icon: <RiAdminFill />, name: 'Admin', link: '/adm' },
         { icon: <RiTableView />, name: 'Pedidos', link: '/orders' },
         user ? { icon: <Avatar {...stringAvatar(user.name || 'User')} />, name: 'Perfil', link: '/profile' } : null
     ].filter(Boolean);

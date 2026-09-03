@@ -58,7 +58,9 @@ Quando a imagem já se tornar visível no Remover Produto
 - Fazer a operação de "remoção" do produto das tabelas(Supabase e Cloudinary)
 - Identificar possíveis erros
     
-
-
+## Adições futuras
+- Fazer com que os campos de pesquisa estejam indisponíveis enquanto os dados de todos os produtos não tenham chegado
+- Quando o sistema perceber que não houve alterações os states não devem mudar(atualmente o kind reseta)
+- Fazer com que o adm não possa atualiza um produto com as informações de outro(por engano)
 
 
