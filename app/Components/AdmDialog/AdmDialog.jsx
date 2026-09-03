@@ -1,36 +1,52 @@
 import supabase from "../../supabaseClient";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function AdmDialog({ dialog, setDialog }) {
     const [produto, setProduto] = useState(null);
     const [produtos, setProdutos] = useState();
     const [nameEdit, setNameEdit] = useState("");
     const [priceEdit, setPriceEdit] = useState("");
-    const [quantEdit, setQuantEdit] = useState();
-    const [kindEdit, setKindEdit] = useState("");
+    const [quantEdit, setQuantEdit] = useState(0);
+    const [kindEdit, setKindEdit] = useState("standard");
     const [productSearchName, setProductSearchName] = useState("");
     const [isDisabled, setIsDisabled] = useState(false);
 
-    useEffect(() => {
-        const fetchAll = async () => {
-            try {
-                const { data, error } = await supabase.from('products').select('*'); //O dado retornado é um array de objetos
-                setProdutos(data); 
-            } catch (error) {
-                console.error("Erro ao buscar dados:", error);
-            }
-        };
+    // async function fetchAll() {
+    //     const { data, error } = await supabase.from('products').select('*');
 
-        fetchAll();
+    //     if (error) {
+    //         console.error(`Erro ao buscar dados do Supabase na BuyPage: ${error.message}`);
+    //         return [];
+    //     }
 
+    //     setProdutos(data);
+    //     return;
+    // }
+
+
+    // 1. Defina a função de forma isolada e reutilizável
+    const fetchAll = useCallback(async () => {
+        try {
+            const { data, error } = await supabase.from('products').select('*'); //O dado retornado é um array de objetos
+            setProdutos(data);
+        } catch (error) {
+            console.error("Erro ao buscar dados:", error);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchAll();
+    }, [fetchAll]);
+
+
+    console.log(produtos);
 
     function standard() {
         setProduto("");
         setNameEdit("");
         setPriceEdit("");
         setQuantEdit(0);
-        setKindEdit("");
+        setKindEdit("standard");
         setProductSearchName("");
         setIsDisabled(false);
     }
@@ -100,6 +116,8 @@ export default function AdmDialog({ dialog, setDialog }) {
             return;
         }
 
+
+        fetchAll();
         alert("Produto Atualizado!");
         standard();
     }
@@ -108,7 +126,7 @@ export default function AdmDialog({ dialog, setDialog }) {
         const modifiedData = {};
 
         formData.forEach((value, key) => {
-            if (!produto[key] || value == produto[key]) {
+            if (produto[key] == undefined || value == produto[key]) {
                 return;
             }
             modifiedData[key] = value;
@@ -173,12 +191,12 @@ export default function AdmDialog({ dialog, setDialog }) {
                 <button onClick={closeDialog}> X </button>
             </section>
             <section>
-                <form action={searchEdit}>
+                    <form>
                     <section className="productSearch">
                         <label htmlFor="productSearchName">
                             Nome:
                             <input type="text" name="productSearchName" value={productSearchName} onChange={(e) => setProductSearchName(e.target.value)} />
-                            <button type="submit" disabled={isDisabled} className={isDisabled ? "btnPending" : ""}> Pesquisar</button>
+                            <button type="button" onClick={searchEdit} disabled={isDisabled} className={isDisabled ? "btnPending" : ""}> Pesquisar</button>
                         </label>
                     </section>
 
@@ -202,6 +220,7 @@ export default function AdmDialog({ dialog, setDialog }) {
                         <div className="typeSelectBlock">
                             <label htmlFor="productEditType"> Tipo: </label>
                             <select name="kind" value={kindEdit} onChange={e => setKindEdit(e.target.value)}>
+                                <option value="standard"> </option>
                                 <option value="salgados"> Salgado </option>
                                 <option value="salgadinhos"> Salgadinho </option>
                                 <option value="bebidas"> Bebida </option>
