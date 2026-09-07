@@ -14,6 +14,13 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
         image: "",
         url: ""
     });
+    const [productDelete, setProductDelete] = useState({
+        searchName: "",
+        name: "",
+        price: 0.00,
+        stock: 0,
+        kind: ""
+    });
 
     function standard() {
         setProduto("");
@@ -27,28 +34,13 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
 
     async function searchEdit() {
         if (!productSearchName) {
-            alert("Valor Indefinido");
+            alert("Nome Indefinido!");
             return;
         }
         setIsDisabled(true);
 
         const productName = productSearchName.name.trim();
         const searchProduct = produtos.find(item => item.name == productName); // Procura o produto no produtos(proveniente de um select geral nos produtos do Supabase)
-        {/* 
-
-        const { data, error } = await supabase
-            .from('products')
-            .select('*')
-            .eq('name', productName)
-            .maybeSingle();
-
-
-        if (error) {
-            console.error(`Erro ao buscar produto no Supabase: ${error.message}`);
-            standard();
-            return;
-        }
-        */} // Select do Supabase
 
         if (!searchProduct) {
             setProduto(null);
@@ -65,6 +57,25 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
         setQuantEdit(searchProduct.stock);
         setKindEdit(searchProduct.kind);
 
+    }
+
+    function searchDelete() {
+        if (!productDelete.searchName.trim()) {
+            alert("Nome Indefinido!");
+            return;
+        }
+
+        const productName = productDelete.searchName.trim();
+        const searchProduct = produtos.find(item => item.name == productName); // Procura o produto no produtos(proveniente de um select geral nos produtos do Supabase)
+
+        if (!searchProduct) {
+            setProduto(null);
+            alert("Produto não encontrado.");
+            standard();
+            return;
+        } // Se nada for achado, uma mensagem será retornada avisando o erro(provavelmnte não terá esse erro com o auto complete)
+
+        setProductDelete({ ...productDelete, name: searchProduct.name, price: searchProduct.price, stock: searchProduct.stock, kind: searchProduct.kind })
     }
 
     async function handleFile(event) {
@@ -175,7 +186,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
         if (!productSearchName && !produto) {
             alert("Nenhum produto foi pesquisado para alteração");
             return;
-        } 
+        }
 
         const allValues = Array.from(formData.values());
         const isSomeEmpty = allValues.some(valor => !valor?.toString().trim());
@@ -250,7 +261,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
 
                     <div className="actionButtons">
                         <button disabled type="submit"> Enviar </button>
-                        <button   type="reset"  onClick={() => {setImage({image: "", url: ""})}}> Limpar </button>
+                        <button type="reset" onClick={() => { setImage({ image: "", url: "" }) }}> Limpar </button>
                     </div>
                 </form>
             </section>
@@ -320,16 +331,16 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
             <section className="productRemove">
                 <label htmlFor="productRemoveName">
                     Nome:
-                    <input type="text" name="productRemoveName" required />
+                    <input type="text" name="productRemoveName" required value={productDelete.searchName} onChange={(e) => setProductDelete({ ...productDelete, searchName: e.target.value })} />
                 </label>
-                <button type="submit" id="productRemoveButton"> Pesquisar</button>
+                <button type="button" id="productRemoveButton" onClick={searchDelete}> Pesquisar </button>
             </section>
 
             <section className="productRemoveInfos">
-                <span className="productRemoveTitle"> Nome: </span> <span className="productRemoveLabel"> ... </span>
-                <span className="productRemoveTitle"> Preço: </span> <span className="productRemoveLabel"> ... </span>
-                <span className="productRemoveTitle"> Tipo: </span> <span className="productRemoveLabel"> ... </span>
-                <span className="productRemoveTitle"> Quantidade: </span> <span className="productRemoveLabel"> ... </span>
+                <span className="productRemoveTitle"> Nome: </span> <span className="productRemoveLabel"> {productDelete.name} </span>
+                <span className="productRemoveTitle"> Preço: </span> <span className="productRemoveLabel"> {productDelete.price} </span>
+                <span className="productRemoveTitle"> Quantidade: </span> <span className="productRemoveLabel"> {productDelete.stock} </span>
+                <span className="productRemoveTitle"> Tipo: </span> <span className="productRemoveLabel"> {productDelete.kind} </span>
             </section>
 
         </div>
