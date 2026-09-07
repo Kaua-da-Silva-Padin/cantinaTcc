@@ -6,33 +6,44 @@ import WeeklySales from "../../Components/WeeklySales/WeeklySales"
 import AdmQuickButton from "../../Components/AdmQuickButton/AdmQuickButton"
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar"
 import AdmDialog from "../../Components/AdmDialog/AdmDialog"
+import supabase from "../../supabaseClient";
 
 import '/./index.css';
 import { Link } from 'react-router';
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react";
 
 export default function AdmPage() {
-  {/*Query do input de pesquisa.*/ }
-  const [searchTxt, setSearch] = useState('');
-
-  {/*Filtro da barra selecionado atualmente.*/ }
-  const [filterTab, setFilterTab] = useState('todos');
-
-  {/*Preço total do carrinho a ser somado ou mostrado.*/ }
-  const [cartPrice, setCartPrice] = useState(0);
-
   const [dialog, setDialog] = useState("none");
-
   const [sideBarOn, setSideBarOn] = useState(true);
+  const [produtos, setProdutos] = useState();
 
+  const toolsAdmPageBar = [
+    { text: "Menu", link: "/adm" },
+    { text: "Pedidos", link: "/orders" },
+    { text: "Estoque", link: "/stock" },
+    { text: "Finanças", link: "/finance" },
+    { text: "Estatísticas", link: "/statistics" },
+    { text: "Funcionários", link: "/employees" },
+    { text: "Configurações", link: "/settings" }
+  ];
   const blocks = [
     { title: "ADICIONAR PRODUTO", action: "addDialog", backgroundColor: "#b0fcb7", primaryColor: "#08e600" },
     { title: "EDITAR PRODUTO", action: "editDialog", backgroundColor: "#b0f3ff", primaryColor: "#00aeff" },
     { title: "REMOVER PRODUTO", action: "removeDialog", backgroundColor: "#ffb5b5", primaryColor: "#ff0000" },
   ];
 
+  const fetchAll = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.from('products').select('*'); //O dado retornado é um array de objetos
+      setProdutos(data);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }, []);
 
-  const toolsAdmPageBar = [{ text: "Menu", link: "/adm" }, { text: "Pedidos", link: "/orders" }, { text: "Estoque", link: "/stock" }, { text: "Finanças", link: "/finance" }, { text: "Estatísticas", link: "/statistics" }, { text: "Funcionários", link: "/employees" }, { text: "Configurações", link: "/settings" }];
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   return (
     <>
@@ -57,11 +68,11 @@ export default function AdmPage() {
 
           {blocks.map((item, i) => {
             return (
-              <AdmQuickButton title={item.title} action={item.action} setDialog={setDialog} key={i} backgroundColor={item.backgroundColor} primaryColor={item.primaryColor} />
+              <AdmQuickButton title={item.title} action={item.action} setDialog={setDialog} key={i} backgroundColor={item.backgroundColor} primaryColor={item.primaryColor} produtos={produtos} />
             )
           })}
           <div className="admDialogScreen">
-            <AdmDialog dialog={dialog} setDialog={setDialog} />
+            <AdmDialog dialog={dialog} setDialog={setDialog} produtos={produtos} setProdutos={setProdutos} fetchAll={fetchAll}/>
           </div>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import supabase from "../../supabaseClient";
+import AdmAutoComplete from "../AdmAutoComplete/AdmAutoComplete";
 import { useState, useEffect, useCallback } from "react";
 
-export default function AdmDialog({ dialog, setDialog }) {
+export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fetchAll }) {
     const [produto, setProduto] = useState(null);
-    const [produtos, setProdutos] = useState();
     const [nameEdit, setNameEdit] = useState("");
     const [priceEdit, setPriceEdit] = useState("");
     const [quantEdit, setQuantEdit] = useState(0);
@@ -11,51 +11,25 @@ export default function AdmDialog({ dialog, setDialog }) {
     const [productSearchName, setProductSearchName] = useState("");
     const [isDisabled, setIsDisabled] = useState(false);
 
-    // async function fetchAll() {
-    //     const { data, error } = await supabase.from('products').select('*');
-
-    //     if (error) {
-    //         console.error(`Erro ao buscar dados do Supabase na BuyPage: ${error.message}`);
-    //         return [];
-    //     }
-
-    //     setProdutos(data);
-    //     return;
-    // }
-
-
-    // 1. Defina a função de forma isolada e reutilizável
-    const fetchAll = useCallback(async () => {
-        try {
-            const { data, error } = await supabase.from('products').select('*'); //O dado retornado é um array de objetos
-            setProdutos(data);
-        } catch (error) {
-            console.error("Erro ao buscar dados:", error);
-        }
-    }, []);
-
-    useEffect(() => {
-        fetchAll();
-    }, [fetchAll]);
-
-
-    console.log(produtos);
-
     function standard() {
         setProduto("");
         setNameEdit("");
         setPriceEdit("");
         setQuantEdit(0);
         setKindEdit("standard");
-        setProductSearchName("");
+        setProductSearchName(null);
         setIsDisabled(false);
     }
 
     async function searchEdit() {
+        if (!productSearchName) {
+            alert("Valor Indefinido");
+            return;
+        }
         setIsDisabled(true);
-        const productName = productSearchName.trim(); // talvez eu substitua o state(productSearchName) por um formData.get["name"];
-        const searchProduct = produtos.find(item => item.name == productName); // Procura o produto no produtos(proveniente de um select geral nos produtos do Supabase)
 
+        const productName = productSearchName.name.trim();
+        const searchProduct = produtos.find(item => item.name == productName); // Procura o produto no produtos(proveniente de um select geral nos produtos do Supabase)
         {/* 
 
         const { data, error } = await supabase
@@ -119,13 +93,17 @@ export default function AdmDialog({ dialog, setDialog }) {
     }
 
     function prepareEditProduct(formData) {
+        if (!productSearchName){
+            alert("Nenhum produto foi pesquisado para alteração");
+            return;
+        }
         const modifiedData = {};
 
         formData.forEach((value, key) => {
             if (produto[key] == undefined || value == produto[key]) {
                 return;
             }
-            modifiedData[key] = value.trim();   
+            modifiedData[key] = value.trim();
         });
 
         if (Object.keys(modifiedData).length === 0) {
@@ -191,11 +169,12 @@ export default function AdmDialog({ dialog, setDialog }) {
                 <button onClick={closeDialog}> X </button>
             </section>
             <section>
-                    <form>
+                <form>
                     <section className="productSearch">
                         <label htmlFor="productSearchName">
                             Nome:
-                            <input type="text" name="productSearchName" value={productSearchName} onChange={(e) => setProductSearchName(e.target.value)} />
+                            {/* <input type="text" name="productSearchName" value={productSearchName} onChange={(e) => setProductSearchName(e.target.value)} /> */}
+                            <AdmAutoComplete produtos={produtos} productSearchName={productSearchName} setProductSearchName={setProductSearchName} />
                             <button type="button" onClick={searchEdit} disabled={isDisabled} className={isDisabled ? "btnPending" : ""}> Pesquisar</button>
                         </label>
                     </section>
@@ -278,8 +257,9 @@ export default function AdmDialog({ dialog, setDialog }) {
             return removeDialog;
             break;
 
-        case "none":
-            return
+        case "none" && !produtos:
+            alert("Espere os dados carregarem...")
+            return;
 
         default:
             break;

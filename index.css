@@ -62,12 +62,15 @@
     grid-column: span 1;
     grid-row: span 3;
     border-radius: 1em;
-    cursor: pointer;
     /* Os outros estilos como: backgroundColor, color e border estão no arquivo do componente */
     
     & > *{ /* Remoção da decoração que é autoaplicada pelo componente <Link> e estilização do texto para branco*/
         text-decoration: none;
     }
+}
+
+.disabledQuickBtn{
+    filter: saturate(0);
 }
 
 #admPageSideBar { /* A barra lateral que contém o bloco de notificações(#admPageSideBarNotifications) e os atalhos para cada página e */

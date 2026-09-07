@@ -10,13 +10,13 @@
     - [X] Create a form with useState (not necessary with the action or even onSubmit. But probabbly the edit form will need useState)
     - [ ] Create the image input
 
-## Atualização da pesquisa de produtos (finalizado)
+## Atualização da pesquisa de produtos (finalizado 03/09)
 COMMIT: 
 - ~~Vou fazer uma função teste para ver como os dados são retornados, assim poderei manipulá-los.~~
 - ~~Depois disso, utilizarei um find com o nome do produto do form edit para percorrer o resultado da função que retorna todos os dados.~~
 - ~~Após este processo, atualizarei os produtos conforme os dados que foram achados no percorrer da lista.~~
 
-## Auto-Complete MUI (atualmente aqui)
+## Auto-Complete MUI (finalizado 07/09)
 COMMIT: 
 - Quando eu terminar de mudar o código, perguntarei a uma IA sobre o código do componente auto complete para que eu possa entender.
 - Quando eu entender, então realizarei modificações para que eu possa adaptar à necessidade do projeto.
@@ -61,6 +61,6 @@ Quando a imagem já se tornar visível no Remover Produto
 ## Adições futuras
 - Fazer com que os campos de pesquisa estejam indisponíveis enquanto os dados de todos os produtos não tenham chegado
 - Quando o sistema perceber que não houve alterações os states não devem mudar(atualmente o kind reseta)
-- Fazer com que o adm não possa atualiza um produto com as informações de outro(por engano)
+- Fazer com que o adm não possa atualiza um produto com o nome de outro
 
 
