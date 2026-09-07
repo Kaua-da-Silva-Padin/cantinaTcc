@@ -22,7 +22,7 @@ COMMIT:
 - Quando eu entender, então realizarei modificações para que eu possa adaptar à necessidade do projeto.
 - Depois de adaptar o componente, vou substituir o input dos dialogs pelo componente e testar
 
-## Input de Imagem (Cadastro de Produtos)
+## Input de Imagem (atualmente aqui)
 COMMIT: 
 Quando eu terminar o componente autocomplete, então farei o *input de imagem¹* para o cadastro de produto
 - Input para receber arquivo, apenas png

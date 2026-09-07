@@ -189,3 +189,7 @@
     background-color: blueviolet;
 }
 
+.imageVisBlock img{
+    width: 10%;
+    height: 10%;
+}
