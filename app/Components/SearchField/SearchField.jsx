@@ -22,7 +22,7 @@ export default function SearchField({ setSearch, products }) {
         <Autocomplete
           options={productNames}
           className='m-2 w-100'
-          // Track input changes cleanly through state
+          // Track input changes cleanly through state.
           inputValue={inputValue}
           onInputChange={(event, newInputValue) => {
             setInputValue(newInputValue);
