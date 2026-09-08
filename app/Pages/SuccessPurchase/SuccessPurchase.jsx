@@ -37,7 +37,7 @@ export default function SuccessPurchase() {
     };
 
     const formatPrice = (price) => {
-        return price.toFixed(2).replace('.', ',')
+        return Number(price).toFixed(2).replace('.', ',')
     }
 
     const isMobile = useMediaQuery('(max-width: 768px)');
@@ -49,7 +49,7 @@ export default function SuccessPurchase() {
         cartProducts.map((product)=>{
             totalPrice += product.price * product.quantity;
         });
-        return totalPrice;
+        return formatPrice(totalPrice);
     }
 
     const qrCodeTxt = JSON.stringify(cartProducts);
@@ -90,7 +90,6 @@ export default function SuccessPurchase() {
         </div>
         : cartProducts && cartProducts.length > 0 ? 
         <div className="d-flex align-items-center flex-column m-4">
-            <h1 className="text-center">Compra realizada com sucesso!</h1>
             
             <div className="rounded-2 m-2 p-2 border-darken">
             <h2>
@@ -159,9 +158,8 @@ export default function SuccessPurchase() {
             </ul>
 
             <h2 className="text-success text-center fw-bold my-3">
-            Total: R$ {formatPrice(getTotalPrice())}
+            Total: R$ {getTotalPrice()}
             </h2>
-            <h1 className="text-center">Muito obrigado pela compra!</h1>
         </div>
         : 
         <div className="d-flex align-items-center flex-column m-4">
