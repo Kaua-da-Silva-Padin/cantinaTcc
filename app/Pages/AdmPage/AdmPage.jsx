@@ -15,6 +15,11 @@ export default function AdmPage() {
 
   const toolsAdmPageBar = [
     { text: "Menu", link: "/adm" },
+    { text: "Home", link: "/home" },
+    { text: "Reg. Usuário", link: "/" },
+    { text: "Login", link: "/login" },
+    { text: "Comprar", link: "/buy" },
+    { text: "Perfil", link: "/profile" },
     { text: "Pedidos", link: "/orders" },
     { text: "Estoque", link: "/stock" },
     { text: "Finanças", link: "/finance" },
@@ -22,6 +27,7 @@ export default function AdmPage() {
     { text: "Funcionários", link: "/employees" },
     { text: "Configurações", link: "/settings" }
   ];
+  
   const blocks = [
     { title: "ADICIONAR PRODUTO", action: "addDialog", backgroundColor: "#b0fcb7", primaryColor: "#08e600" },
     { title: "EDITAR PRODUTO", action: "editDialog", backgroundColor: "#b0f3ff", primaryColor: "#00aeff" },

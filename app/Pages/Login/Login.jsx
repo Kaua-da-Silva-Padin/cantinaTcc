@@ -8,7 +8,7 @@ import supabase from '../../supabaseClient';
 export async function sha256(message) {
     const msgBuffer = new TextEncoder().encode(message);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer)); 
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     return hashHex;
 }
@@ -16,7 +16,7 @@ export async function sha256(message) {
 const AUTH_CACHE_KEY = 'loggedInUser';
 const LOCKOUT_CACHE_KEY = 'loginLockoutInfo';
 const MAX_ATTEMPTS = 5;
-const LOCKOUT_DURATION_MS = 90 * 60 * 1000; // 1.5 hours in milliseconds
+const LOCKOUT_DURATION_MS = 90 * 60 * 1000;
 
 export const loadLoggedInUser = () => {
     try {
@@ -47,14 +47,13 @@ const cacheLoggedInUser = (user) => {
 
 export const logoutUser = () => {
     try {
-        localStorage.removeItem(AUTH_CACHE_KEY);
+        sessionStorage.removeItem(AUTH_CACHE_KEY);
         window.dispatchEvent(new Event('userLoggedIn'));
     } catch (err) {
         console.error('Erro ao remover cache de login:', err);
     }
 };
 
-// Lockout tracking helpers
 const getLockoutInfo = () => {
     try {
         const data = localStorage.getItem(LOCKOUT_CACHE_KEY);
@@ -172,7 +171,6 @@ export default function Login() {
     };
 
     const loginUser = async () => {
-        // Check if user is currently locked out
         const lockoutInfo = getLockoutInfo();
         const now = Date.now();
 
@@ -191,17 +189,18 @@ export default function Login() {
             return { success: false };
         }
 
-        const hashedPassword = await sha256(password);
+        const trimmedUsername = username.trim();
+        const hashedPassword = await sha256(password.trim());
 
         let query = supabase
             .from('users')
             .select()
             .eq('type', userType)
-            .eq('name', username)
+            .eq('name', trimmedUsername)
             .eq('password', hashedPassword);
 
         if (userType === 'user') {
-            const hashedRM = await sha256(rm);
+            const hashedRM = await sha256(rm.trim());
             query = query.eq('rm', hashedRM);
         }
 
@@ -222,7 +221,6 @@ export default function Login() {
             return { success: false };
         }
 
-        // Handle invalid credentials & increment failure counter
         if (!data || data.length === 0) {
             const currentAttempts = (lockoutInfo.lockoutUntil && now >= lockoutInfo.lockoutUntil) ? 0 : lockoutInfo.attempts;
             const updatedAttempts = currentAttempts + 1;
@@ -261,35 +259,21 @@ export default function Login() {
 
         const authenticatedUser = data[0];
 
-        if (userType === 'admin' && authenticatedUser.type !== 'admin') {
-            setPopup({
-                content: 'Acesso negado. Esta conta não possui privilégios de administrador.',
-                header: (
-                    <h2 className='text-danger'>
-                        <RiCloseFill className='me-2'/>
-                        Acesso Negado
-                    </h2>
-                ),
-                state: true
-            });
-            return { success: false };
-        }
-
         if (!authenticatedUser.active) {
             setPopup({
                 content: (
                     <div>
                         <p className='mb-3'>Sua conta está inativa. Deseja ativá-la agora e acessar o perfil?</p>
                         <div className='d-flex justify-content-end gap-2'>
-                            <Button 
-                                variant='outlined' 
+                            <Button
+                                variant='outlined'
                                 color='inherit'
                                 onClick={() => setPopup(prev => ({ ...prev, state: false }))}
                             >
                                 Agora não
                             </Button>
-                            <Button 
-                                variant='contained' 
+                            <Button
+                                variant='contained'
                                 color='primary'
                                 onClick={() => handleActivateAccount(authenticatedUser)}
                             >
@@ -308,7 +292,6 @@ export default function Login() {
             return { success: false };
         }
 
-        // Clear failed login attempts upon successful login
         resetLockoutInfo();
         cacheLoggedInUser(authenticatedUser);
 

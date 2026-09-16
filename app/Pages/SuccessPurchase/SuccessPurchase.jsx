@@ -71,9 +71,6 @@ export default function SuccessPurchase() {
 
                 x.push(rndLetter);
             }
-
-            console.log(x);
-
             setRndCode(x.join(''));
         }
     }

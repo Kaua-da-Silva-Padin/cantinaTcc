@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import Header from "./Components/Header/Header";
 import bootstrapUrl from "../app/index.css?url";
+import MenuPageLinks from "./Components/MenuPageLinks/MenuPageLinks";
 
 export function Layout({ children }) {
   return (
@@ -38,6 +39,7 @@ export default function App() {
   return (
     <>
       <Header />
+      <MenuPageLinks/>
       <Outlet />
     </>
   );

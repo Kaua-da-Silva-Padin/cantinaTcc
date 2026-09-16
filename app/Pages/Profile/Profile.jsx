@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { loadLoggedInUser } from '../Login/Login';
-import { stringAvatar } from '../../Components/Header/Header';
+import { stringAvatar } from '../../Components/MenuPageLinks/MenuPageLinks';
 import { Avatar, Button, Checkbox, FormControlLabel } from '@mui/material';
 import { RiLogoutBoxRFill, RiUserUnfollowFill } from 'react-icons/ri';
 import { useNavigate } from 'react-router';
@@ -24,7 +24,7 @@ export default function Profile() {
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem('loggedInUser');
+        sessionStorage.removeItem('loggedInUser');
         window.dispatchEvent(new Event('userLoggedIn'));
         navigate('/login');
     };
