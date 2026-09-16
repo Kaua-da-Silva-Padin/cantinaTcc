@@ -29,25 +29,38 @@ export default function BuyPage() {
 
   const [cartProducts, setCartProducts] = useState([]);
 
+  const loggedInUser = typeof sessionStorage !== "undefined"
+    ? sessionStorage.getItem("loggedInUser")
+    : null;
+
   return (
     <>
-      <SearchField
-        setSearch={setSearch}
-        products={products} />
+      {
+        loggedInUser ?
+        <div>
+          <SearchField
+            setSearch={setSearch}
+            products={products} />
 
-      <FilterTabs
-        selectedFilterTab={filterTab.trim().toLowerCase()}
-        setFilterTab={setFilterTab} />
+          <FilterTabs
+            selectedFilterTab={filterTab.trim().toLowerCase()}
+            setFilterTab={setFilterTab} />
 
-      <FoodTable
-        products={products}
-        filterTab={filterTab.trim().toLowerCase()}
-        filterTxt={searchTxt.trim().toLowerCase()}
-        setCartPrice={setCartPrice}
-        cartPrice={parseFloat(cartPrice)}
-        cartProducts={cartProducts}
-        setCartProducts={setCartProducts}
-      />
+          <FoodTable
+            products={products}
+            filterTab={filterTab.trim().toLowerCase()}
+            filterTxt={searchTxt.trim().toLowerCase()}
+            setCartPrice={setCartPrice}
+            cartPrice={parseFloat(cartPrice)}
+            cartProducts={cartProducts}
+            setCartProducts={setCartProducts}
+          />
+        </div>
+        :
+        <h4 className="text-center text-danger">
+          Você <b>precisa</b> estar logado para fazer seu pedido!
+        </h4>
+      }
     </>
   )
 }

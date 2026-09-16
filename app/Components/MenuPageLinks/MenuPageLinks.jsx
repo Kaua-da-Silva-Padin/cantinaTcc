@@ -13,7 +13,7 @@ function stringToColor(string, n) {
     let color = '#';
     n = (n === undefined || n === 0) ? 1 : n;
     for (let i = 0; i < 3; i++) {
-        const value = (hash >> (i * 8 / n)) & 0xff;
+        const value = (hash >> (i * 2 / n)) & 0xff;
         color += value.toString(16).slice(-2);
     }
     return color;
@@ -69,7 +69,7 @@ export default function MenuPageLinks() {
         { icon: <RiUserFill />, name: 'Login', link: '/login' },
         user && { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' },
         { icon: <RiTableView />, name: 'Pedidos', link: '/orders' },
-        user === 'admin' && { icon: <RiSettings3Fill/>, name: 'Administrar', link: '/adm' },
+        user?.type === 'admin' && { icon: <RiSettings3Fill/>, name: 'Administrar', link: '/adm' },
         user ? { icon: <Avatar {...stringAvatar(user.name || 'User')} />, name: 'Perfil', link: '/profile' } : null
     ].filter(Boolean);
 

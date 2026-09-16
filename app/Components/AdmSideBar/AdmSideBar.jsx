@@ -5,7 +5,9 @@ export default function AdmSideBar(props){
     return(
          <div id="admPageSideBar"> 
             <div id="admPageSideBarHeader">
-              <b>ADMIN</b>
+              <b>
+                ADMIN
+              </b>
             </div>
 
             <div className="admPageSideBarLinks">
