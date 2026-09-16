@@ -11,10 +11,21 @@ export async function buyProducts(productName, productQuantity) {
     qty: productQuantity
   });
 
+  alert(JSON.stringify(data) + '  error?  ' + JSON.stringify(error));
+
   return !error;
 }
 
-export default function FoodList({ cartProducts, setCartProducts, setCartPrice, cartPrice }) {
+export async function registerUserNameOnBuy(userName) {
+  const { data, error } = await supabase.rpc('log_user_name_on_buy', {
+    user_name_to_log: userName
+  });
+
+  alert(JSON.stringify(data) + '  error?  ' + JSON.stringify(error));
+  return !error;
+}
+
+export default function FoodList({ cartProducts, setCartProducts, setCartPrice, cartPrice, user }) {
     const navigate = useNavigate();
     const cld = new Cloudinary({
         cloud: {
@@ -83,6 +94,9 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
         cartProducts.map((product, i)=>{
             buyProducts(product.title, product.quantity);
         })
+
+        registerUserNameOnBuy(user.name);
+
         clearCart();
         navigate('/afterPurchase', { state: { cartProducts: cartProducts } })
     }

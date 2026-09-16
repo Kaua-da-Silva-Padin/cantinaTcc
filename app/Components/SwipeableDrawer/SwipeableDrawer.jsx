@@ -4,7 +4,7 @@ import FoodList from '../FoodList/FoodList';
 import { FaCartShopping } from 'react-icons/fa6';
 import ProductBadge from '../ProductBadge/ProductBadge';
 
-export default function SwipeableTemporaryDrawer({ page, productPopup, cartProducts, setCartProducts, setCartPrice, cartPrice }) {
+export default function SwipeableTemporaryDrawer({ page, productPopup, cartProducts, setCartProducts, setCartPrice, cartPrice, user }) {
     const [state, setState] = React.useState({
         top: false,
         left: false,
@@ -27,7 +27,8 @@ export default function SwipeableTemporaryDrawer({ page, productPopup, cartProdu
             cartProducts={cartProducts}
             setCartProducts={setCartProducts}
             setCartPrice={setCartPrice} 
-            cartPrice={cartPrice} />
+            cartPrice={cartPrice} 
+            user={user}/>
         </Box>
     );
 
