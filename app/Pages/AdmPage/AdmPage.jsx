@@ -22,7 +22,12 @@ export default function AdmPage() {
 
   let loggedInUserName = loggedInUser;
 
-  const parsedUser = JSON.parse(loggedInUser);
+  let parsedUser = null;
+  try {
+    parsedUser = loggedInUser ? JSON.parse(loggedInUser) : null;
+  } catch {
+    parsedUser = null;
+  }
 
   loggedInUserName = parsedUser?.name ?? parsedUser?.nome ?? loggedInUser;
 
@@ -84,7 +89,7 @@ export default function AdmPage() {
   return (
     <>
       {
-      loggedInUser?.type === 'admin' ?
+      parsedUser?.type === 'admin' ?
       <div className={`groupAdmGeneral ${sideBarOn ? 'sideBarOn' : 'sideBarOff'} `}>
 
         <div id="subGroupAdmGeneralOne">
