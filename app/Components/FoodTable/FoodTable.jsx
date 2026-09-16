@@ -14,7 +14,7 @@ export async function productSelector() {
   return !error;
 }
 
-export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProducts, setCartProducts, setCartPrice }) {
+export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProducts, setCartProducts, setCartPrice, user }) {
     const products = useLoaderData();
     const location = useLocation();
 
@@ -230,6 +230,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
                 setCartProducts={setCartProducts}
                 setCartPrice={setCartPrice}
                 cartPrice={cartPrice}
+                user={user}
                 />
         </>
     )

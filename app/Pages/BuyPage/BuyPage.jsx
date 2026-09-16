@@ -4,6 +4,7 @@ import FoodTable from "../../Components/FoodTable/FoodTable"
 import { useState, useEffect } from "react"
 import { useLoaderData } from "react-router"
 import supabase from "../../supabaseClient"
+import { loadLoggedInUser } from '../Login/Login';
 
 export async function loader() {
   const { data, error } = await supabase.from('products').select('*');
@@ -16,6 +17,14 @@ export async function loader() {
 }
 
 export default function BuyPage() {
+
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    const cachedUser = loadLoggedInUser();
+    if (cachedUser) setUser(cachedUser);
+  }, []);
+
   const products = useLoaderData();
 
   {/*Query do input de pesquisa.*/ }
@@ -47,13 +56,14 @@ export default function BuyPage() {
             setFilterTab={setFilterTab} />
 
           <FoodTable
-            products={products}
-            filterTab={filterTab.trim().toLowerCase()}
-            filterTxt={searchTxt.trim().toLowerCase()}
-            setCartPrice={setCartPrice}
-            cartPrice={parseFloat(cartPrice)}
-            cartProducts={cartProducts}
-            setCartProducts={setCartProducts}
+          products={products}
+          filterTab={filterTab.trim().toLowerCase()}
+          filterTxt={searchTxt.trim().toLowerCase()}
+          setCartPrice={setCartPrice}
+          cartPrice={parseFloat(cartPrice)}
+          cartProducts={cartProducts}
+          setCartProducts={setCartProducts}
+          user={user}
           />
         </div>
         :
