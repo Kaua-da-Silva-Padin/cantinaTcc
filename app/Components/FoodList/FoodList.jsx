@@ -11,8 +11,6 @@ export async function buyProducts(productName, productQuantity) {
     qty: productQuantity
   });
 
-  alert(JSON.stringify(data) + '  error?  ' + JSON.stringify(error));
-
   return !error;
 }
 
@@ -21,7 +19,6 @@ export async function registerUserNameOnBuy(userName) {
     user_name_to_log: userName
   });
 
-  alert(JSON.stringify(data) + '  error?  ' + JSON.stringify(error));
   return !error;
 }
 
