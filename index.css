@@ -1,195 +1,307 @@
-.groupAdmGeneral { /* Estilização da tabela geral da pagina de admin */
-    width: 100%;
-    height: 100dvh;
-    background-color: rgb(5, 82, 63);
+:root {
+    --admin-orange: #ff8b08;
+    --admin-blue: #0b9eea;
+    --admin-green: #6bd05f;
+    --admin-ink: #111111;
 }
 
-.sideBarOn{
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: 1fr;
+body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
+    display: none;
 }
 
-.sideBarOff{
+.groupAdmGeneral {
+    min-height: 100dvh;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: 1fr;
-
-    #admPageSideBar{
-        display: none;
-    }
+    grid-template-columns: 17.5rem minmax(0, 1fr);
+    background: #f7f7f7;
+    color: var(--admin-ink);
+    font-family: "Space Grotesk", sans-serif;
 }
 
-#subGroupAdmGeneralTwo {  /* Estilização do subgrupo contido na tabela geral da pagina. Este subgrupo contém os btns e divs "atalhos"*/
+.groupAdmGeneral.sideBarOff {
+    grid-template-columns: 0 minmax(0, 1fr);
+}
+
+#subGroupAdmGeneralOne {
+    min-width: 0;
+    overflow: hidden;
+    transition: width .2s ease;
+}
+
+.sideBarOff #subGroupAdmGeneralOne {
+    width: 0;
+}
+
+#subGroupAdmGeneralTwo {
+    position: relative;
+    min-width: 0;
+    min-height: 100dvh;
     display: grid;
-    height: 100dvh;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows:  repeat(24, 1fr);
-    grid-column: span 4;
-    gap: 1em;
-} 
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: 4.5rem 7rem minmax(0, 1fr);
+    gap: 1.25rem;
+    padding-bottom: 1.25rem;
+}
 
-
-#admPageNavBar{ /* Esta é a navbar da pagina, ela só contém um btn para encolher e expandir a #admPageSideBar(barra lateral), e para conter o nome do usuário e um atalho para o perfil */
+#admPageNavBar {
+    grid-column: 1 / -1;
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    padding: 0 1.5rem;
     color: white;
-    align-items: center;
-    grid-column: span 4;
-    grid-row: span 2;
-    background-image: linear-gradient(135deg,  var(--orangenew), #ff850a);
-    background-repeat: no-repeat;
-
-    button{
-        background: none;
-        border: none;
-    }
-    
-    img{
-        width: 2em;
-        height: 2em;
-        filter: invert(100%); /* Um filtro para inverter a cor dos ícones(Hamburguer e User). A cor deles é o preto, mas para seguir o padrão de cores, precisei do branco */
-    }
+    background: linear-gradient(100deg, var(--admin-orange), #ff990b);
 }
-/* Existe também o #subGroupAdmGeneralOne, mas este não esta sendo estilizado no momento. Serve apenas para separar as áreas da página*/
 
+#admPageNavBar > button {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
 
-.admQuickButton { /* Uma classe para estilizar cada bloquinho dentro do #subGroupAdmGeneralTwo*/
+#admPageNavBar > button img {
+    width: 2rem;
+    height: 2rem;
+    filter: invert(1);
+}
+
+.admPageStatus {
     display: flex;
-    justify-content: center;
     align-items: center;
-    width: 95%;
-    grid-column: span 1;
-    grid-row: span 3;
-    border-radius: 1em;
-    /* Os outros estilos como: backgroundColor, color e border estão no arquivo do componente */
-    
-    & > *{ /* Remoção da decoração que é autoaplicada pelo componente <Link> e estilização do texto para branco*/
-        text-decoration: none;
-    }
+    gap: .45rem;
+    font-size: .9rem;
 }
 
-.disabledQuickBtn{
-    filter: saturate(0);
+.admPageStatus span {
+    padding: .25rem .55rem;
+    color: #111;
+    background: #fff4aa;
+    border: 1px solid #8f7e00;
+    border-radius: .5rem;
 }
 
-#admPageSideBar { /* A barra lateral que contém o bloco de notificações(#admPageSideBarNotifications) e os atalhos para cada página e */
-    background-image: linear-gradient(135deg, var(--orangenew), #ff850a);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    height: 100dvh;
-    padding: 0em 1em;
+.admPageStatus .systemStatus { background: #caffc0; border-color: #55a54d; }
+.admPageStatus b { margin-left: 1rem; }
+.admPageStatus img { width: 2rem; height: 2rem; filter: brightness(0) invert(1); }
+
+.admQuickButton {
+    width: auto;
+    min-width: 0;
+    min-height: 4.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .85rem;
+    box-shadow: 0 4px 10px #00000018;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.admQuickButton > *, .admQuickButton a { text-decoration: none; }
+.admQuickButton span { text-align: center; line-height: 1.05; }
+.admOrdersButton { grid-column: 1; }
+.disabledQuickBtn { filter: saturate(0); cursor: not-allowed; }
+
+.admContent {
+    grid-column: 1 / -1;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: white;
+    box-shadow: 0 8px 24px #00000012;
+}
+
+.admContent > div, .admContent iframe { width: 100%; height: 100%; margin: 0 !important; border: 0 !important; }
+
+#admPageSideBar {
+    height: 100%;
+    min-height: 100dvh;
+    padding: 1.25rem 1rem;
+    box-sizing: border-box;
+    background: linear-gradient(160deg, #ff990b, var(--admin-orange));
 }
 
 #admPageSideBarHeader {
     display: flex;
-    justify-content: end;
-    margin-bottom: 1em;
-    padding-bottom: 15%;
-    border-bottom: 1px white solid;
-    height: 1.9em;
-    b {
-        color: white;
-        font-size: 1.5em;
-    }
+    justify-content: flex-end;
+    align-items: center;
+    height: 4.5rem;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid #ffffffaa;
 }
 
-.admPageSideBarLinks { /* O bloco da barra lateral que contém todos os atalhos mencionados anteriormente */
+#admPageSideBarHeader b { color: white; font-size: 2.1rem; }
+.admPageSideBarLinks { display: grid; gap: .2rem; font-size: 1.35rem; }
+.admPageSideBarLinks a { width: max-content; color: white; text-decoration: none; }
+.admPageSideBarLinks span { display: inline-block; border-bottom: 2px solid transparent; }
+.admPageSideBarLinks span:hover, .admPageSideBarLinks span:focus-visible { border-bottom-color: white; }
+
+#admPageSideBarNotifications {
     display: grid;
-    grid-template-columns: 1fr;
-    border: none;
-    font-size: 1.3em;
-
-    * {
-        text-decoration: none;
-    }
-
-    span {
-        color: white;
-        font-weight: 400;
-        transition: 0.5s all ease;
-        &:hover {
-            font-weight: 600;
-        }
-    }
+    gap: .6rem;
+    margin-top: 1.2rem;
+    padding: .8rem;
+    background: white;
+    border-radius: .45rem;
 }
 
-#admPageSideBarNotifications { /* O bloco geral onde estão as notificações */
-    display: grid;
-    background-color: white;
-    border-radius: 0.5em;
+#admPageSideBarNotifications h5 { margin: 0; font-size: 1.15rem; }
+.admPageNotificationItem { padding: .7rem; background: #ffed8f; border: 3px solid #ffd600; border-radius: .55rem; }
+.admNotificationsTexts { display: grid; gap: .2rem; font-size: .78rem; line-height: 1.05; }
+
+.admDialogScreen {
+    position: absolute;
+    inset: 9.5rem 1.25rem 1.25rem;
+    z-index: 5;
+    display: none;
+    border-radius: 1.3rem;
     overflow: auto;
-    overflow-x: hidden;
-    grid-template-columns: 1fr;
-    margin-top: 1em;
-    padding: 1em;
-    box-sizing: border-box;
 }
 
-.admPageNotificationItem { /* O bloco de cada notificação contido no bloco geral das notificações */
-    background-color: #FFED8F;
-    border: 0.2em solid #FFD600;
-    border-radius: 1em;
-    padding: 1em;
-    display: flex;
+.admDialogScreen.isOpen { display: block; }
+.addDialog, .editDialog, .removeDialog { min-height: 100%; box-sizing: border-box; padding: 2rem 3.8rem; border: 2px solid; border-radius: 1.3rem; }
+.addDialog { background: #e5ffdb; border-color: var(--admin-green); --dialog-accent: var(--admin-green); }
+.editDialog { background: #d9f7ff; border-color: var(--admin-blue); --dialog-accent: var(--admin-blue); }
+.removeDialog { background: #ffd9d9; border-color: #ff1515; --dialog-accent: #ff1515; }
+.addDialogHeader, .editDialogHeader, .removeDialogHeader { display: flex; align-items: center; justify-content: space-between; min-height: 1.5rem; }
+.addDialogHeader h2, .editDialogHeader h2, .removeDialogHeader h2 { margin: 0; color: var(--dialog-accent); font-size: 1.15rem; font-weight: 500; }
+.addDialogHeader button, .editDialogHeader button, .removeDialogHeader button { padding: 0; border: 0; background: transparent; color: #111; font-size: 1.35rem; cursor: pointer; }
+.dialogBody { height: calc(100% - 1.5rem); }
+.addDialogInputs, .editDialog form, .removeDialog .dialogBody { display: grid; grid-template-columns: minmax(19rem, 1fr) minmax(22rem, 1.15fr); align-items: center; gap: 1rem 8%; height: 100%; }
+.dialogFields { display: grid; gap: 1.25rem; align-content: center; }
+.dialogFields > label { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); align-items: center; gap: .7rem; font-size: 1.35rem; }
+.dialogFields input, .dialogFields select, .dialogSearch input { width: 100%; min-width: 0; min-height: 2.65rem; box-sizing: border-box; padding: .35rem .65rem; border: 1px solid var(--dialog-accent); border-radius: .5rem; background: #fff; color: #444; font: inherit; font-size: 1rem; }
+.dialogFields select { appearance: auto; }
+.dialogActions { display: flex; gap: 1rem; margin-top: .25rem; }
+.addDialogInputs > .dialogActions, .editDialog form > .dialogActions, .removeDialog .dialogBody > .dialogActions { grid-column: 1; }
+.dialogActions button, .dialogSearch > button { min-width: 10.5rem; min-height: 2.65rem; padding: .35rem 1.4rem; border: 0; border-radius: .45rem; background: #888; color: white; font: inherit; font-size: 1.25rem; cursor: pointer; }
+.addDialog .dialogActions button:first-child { background: #79d954; }
+.editDialog .dialogActions button:first-child, .editDialog .dialogSearch > button { background: #3baef0; }
+.removeDialog .dialogActions .removeAction, .removeDialog .dialogSearch > button { background: #ff0808; }
+.dialogActions button:disabled { opacity: .55; cursor: not-allowed; }
+.dialogImageColumn { display: grid; gap: 1rem; align-content: center; }
+.dialogImagePreview { min-height: 15rem; display: grid; place-content: center; justify-items: center; gap: .25rem; padding: 1rem; box-sizing: border-box; border: 4px solid #d1d8cc; border-radius: 1rem; background: #f7fff4; color: #5c625c; text-align: center; }
+.editDialog .dialogImagePreview { background: #f2ffff; }
+.removeDialog .dialogImagePreview { min-height: 20rem; background: #fff; border-color: #ff6e6e; }
+.dialogImagePreview strong { font-size: 1.35rem; font-weight: 500; }
+.dialogImagePreview small { color: #999; font-size: 1rem; line-height: 1.05; }
+.dialogImagePreview img { max-width: 90%; max-height: 18rem; object-fit: contain; }
+.imagePlaceholderIcon { position: relative; width: 4rem; height: 3.7rem; border: 3px solid #b9c1b8; border-radius: .5rem; }
+.imagePlaceholderIcon::before { content: ''; position: absolute; top: .35rem; left: 1.45rem; width: .8rem; height: .8rem; border: 3px solid #b9c1b8; border-radius: 50%; }
+.imagePlaceholderIcon::after { content: ''; position: absolute; left: .2rem; right: .2rem; bottom: .45rem; height: 1.35rem; border-top: 3px solid #b9c1b8; transform: skewY(-25deg); }
+.imagePicker { display: grid; place-items: center; min-height: 2.65rem; box-sizing: border-box; border: 3px dashed var(--admin-blue); border-radius: .5rem; background: #b9e8ff; color: var(--admin-blue); font-size: 1.25rem; cursor: pointer; }
+.imagePicker input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.dialogSearch { grid-column: 1 / -1; display: grid; grid-template-columns: 7.2rem minmax(0, 1fr) auto; align-items: center; gap: .7rem; }
+.dialogSearch > span { color: var(--dialog-accent); font-size: 1.25rem; }
+.dialogSearch .MuiAutocomplete-root { min-width: 0; }
+.dialogSearch .MuiTextField-root { width: 100%; }
+.dialogSearch .MuiAutocomplete-inputRoot { min-height: 2.65rem; box-sizing: border-box; padding: 0 .65rem; background: white; border: 1px solid var(--dialog-accent); border-radius: .5rem; }
+.dialogSearch .MuiAutocomplete-inputRoot:hover { border-color: var(--dialog-accent); }
+.dialogSearch .MuiAutocomplete-inputRoot.Mui-focused { border: 2px solid var(--dialog-accent); box-shadow: 0 0 0 3px #3baef033; }
+.dialogSearch .MuiAutocomplete-inputRoot fieldset { display: none; }
+.dialogSearch .MuiAutocomplete-input { min-height: 2.1rem; padding: .25rem 0 !important; color: #444; font: inherit; font-size: 1rem; }
+.dialogSearch .MuiAutocomplete-input::placeholder { color: #8b8b8b; opacity: 1; }
+.dialogSearch .MuiAutocomplete-endAdornment { right: .35rem; }
+.dialogSearch .MuiAutocomplete-endAdornment button.MuiAutocomplete-popupIndicator,
+.dialogSearch .MuiAutocomplete-endAdornment button.MuiAutocomplete-clearIndicator {
+    width: 2.25rem;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    min-height: 2.25rem;
+    padding: .25rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent !important;
+    color: var(--dialog-accent) !important;
+    font-size: 1.35rem;
+}
+.dialogSearch .MuiAutocomplete-endAdornment button.MuiAutocomplete-popupIndicator:hover,
+.dialogSearch .MuiAutocomplete-endAdornment button.MuiAutocomplete-clearIndicator:hover { background: #d9f3ff; }
+.MuiAutocomplete-popper .MuiPaper-root { margin-top: .35rem; border: 1px solid #8bd5ff; border-radius: .55rem; box-shadow: 0 8px 20px #0000001f; }
+.MuiAutocomplete-popper .MuiAutocomplete-listbox { padding: .3rem; }
+.MuiAutocomplete-popper .MuiAutocomplete-option { display: flex; justify-content: space-between; gap: 1rem; min-height: 2.2rem; padding: .45rem .65rem; border-radius: .35rem; color: #1d3f51; font-size: .95rem; }
+.MuiAutocomplete-popper .MuiAutocomplete-option[aria-selected="true"], .MuiAutocomplete-popper .MuiAutocomplete-option:hover { background: #d9f3ff; }
+.admProductOptionName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admProductOptionName + small { color: #6a9aae; font-size: .75rem; text-transform: capitalize; }
+.dialogSearch > button { width: 9.25rem; min-width: 9.25rem; display: inline-flex; align-items: center; justify-content: center; gap: .45rem; }
+.dialogSearch > button svg { flex: 0 0 auto; font-size: 1.2em; }
+.dialogDivider { grid-column: 1 / -1; height: 2px; margin: .2rem 7% .4rem; background: var(--dialog-accent); opacity: .55; }
+.editDialog form, .removeDialog .dialogBody { grid-template-rows: auto 2px minmax(0, 1fr); }
+.editDialog .dialogFields, .removeDialog .dialogFields { grid-row: 3; }
+.editDialog .dialogImageColumn, .removeDialog .dialogImageColumn { grid-column: 2; grid-row: 3; }
 
-    .admNotificationsTexts {
-        display: flex;
-        flex-direction: column;
+.admLoading {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: grid;
+    place-content: center;
+    gap: 1rem;
+    color: #222;
+    background: #ffffffb8;
+    backdrop-filter: blur(8px);
+    font-size: 2rem;
+}
 
-        &> :nth-child(2) {
-            line-height: 1.1em;
-        }
+.admLoadingSpinner { width: 4rem; height: 4rem; margin: auto; border: .45rem solid #ffffff; border-top-color: var(--admin-blue); border-radius: 50%; animation: admin-spin .8s linear infinite; }
+@keyframes admin-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 900px) {
+    .groupAdmGeneral,
+    .groupAdmGeneral.sideBarOff {
+        display: block;
     }
+
+    #subGroupAdmGeneralTwo {
+        width: 100%;
+    }
+
+    #subGroupAdmGeneralOne {
+        position: absolute;
+        z-index: 8;
+        width: 0;
+        height: 0;
+    }
+
+    .sideBarOn #subGroupAdmGeneralOne { width: min(19rem, 78vw); height: auto; }
+    .sideBarOn #subGroupAdmGeneralOne::after { content: ''; position: fixed; inset: 0 0 0 min(19rem, 78vw); z-index: -1; background: #0005; backdrop-filter: blur(4px); }
+    #admPageNavBar { position: relative; z-index: 9; }
+    .admPageStatus span, .admPageStatus b { display: none; }
+    .admPageStatus img { display: block; }
 }
 
-.admDialogScreen{
-    grid-column: span 4;
-    grid-row: span 12;
-    background-color: white;
-    border-color: gray solid 2px;
-    border-radius: 1em;
-}
-
-.addDialog{
-    margin: auto;
-    width: 100%;
-    height: 100%;
-    padding: 1em;
-    background-color: #dfffdf;
-    border-color: #24b300;
-    color: black;
-    border-radius: 1em;
-}
-
-.editDialog{
-    margin: auto;
-    width: 100%;
-    height: 100%;
-    padding: 1em;
-    background-color: #ebf6ff;
-    border-color: #002ab3;
-    color: black;
-    border-radius: 1em;
-}
-
-.removeDialog{
-    margin: auto;
-    width: 100%;
-    height: 100%;
-    padding: 1em;
-    background-color: #ffdbdb;
-    border-color: #24b300;
-    color: black;
-    border-radius: 1em;
-}
-
-.btnPending{
-    cursor: not-allowed;
-    background-color: blueviolet;
-}
-
-.imageVisBlock img{
-    width: 10%;
-    height: 10%;
+@media (max-width: 600px) {
+    #subGroupAdmGeneralTwo { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: 4.3rem 4.8rem minmax(25rem, 1fr); gap: .65rem; padding-bottom: .65rem; }
+    #admPageNavBar { padding: 0 .6rem; }
+    .admQuickButton { min-height: 3.8rem; padding: .3rem; font-size: .72rem; }
+    .admContent { border-radius: .8rem; }
+    .admDialogScreen { inset: 9.9rem .65rem .65rem; }
+    .addDialog, .editDialog, .removeDialog { padding: .65rem .8rem .8rem; border-radius: .8rem; }
+    .dialogBody { height: auto; }
+    .addDialogInputs, .editDialog form, .removeDialog .dialogBody { display: flex; flex-direction: column; align-items: stretch; gap: .55rem; height: auto; }
+    .addDialogHeader h2, .editDialogHeader h2, .removeDialogHeader h2 { font-size: .85rem; }
+    .dialogFields { gap: .42rem; }
+    .dialogFields > label { grid-template-columns: 4.2rem minmax(0, 1fr); gap: .45rem; font-size: 1rem; }
+    .dialogFields input, .dialogFields select, .dialogSearch input { min-height: 1.8rem; padding: .15rem .4rem; font-size: .85rem; }
+    .dialogActions { display: grid; gap: .45rem; margin-top: .35rem; }
+    .dialogActions button, .dialogSearch > button { width: 100%; min-width: 0; min-height: 2.35rem; font-size: 1rem; }
+    .dialogImageColumn { gap: .45rem; }
+    .dialogImagePreview, .removeDialog .dialogImagePreview { min-height: 11.5rem; border-width: 3px; }
+    .dialogImagePreview strong { font-size: .9rem; }
+    .dialogImagePreview small { font-size: .7rem; }
+    .imagePlaceholderIcon { width: 3.3rem; height: 3rem; }
+    .imagePlaceholderIcon::before { left: 1.15rem; }
+    .imagePicker { min-height: 2.35rem; font-size: 1rem; }
+    .dialogSearch { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: .45rem; }
+    .dialogSearch > span { font-size: 1rem; }
+    .dialogSearch > button { grid-column: 1 / -1; }
+    .dialogDivider { width: 100%; margin: .25rem 0; }
+    .editDialog .dialogFields, .removeDialog .dialogFields { order: 0; }
+    .editDialog .dialogImageColumn, .removeDialog .dialogImageColumn { order: 1; }
+    .editDialog .dialogActions, .removeDialog .dialogActions { order: 2; }
+    .admLoading { font-size: 1.5rem; }
 }

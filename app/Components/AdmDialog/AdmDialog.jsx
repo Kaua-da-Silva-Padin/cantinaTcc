@@ -1,8 +1,9 @@
 import supabase from "../../supabaseClient";
 import AdmAutoComplete from "../AdmAutoComplete/AdmAutoComplete";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { RiSearchLine } from "react-icons/ri";
 
-export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fetchAll }) {
+export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
     const [produto, setProduto] = useState(null);
     const [nameEdit, setNameEdit] = useState("");
     const [priceEdit, setPriceEdit] = useState("");
@@ -215,54 +216,32 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
     const addDialog = (
         <div open className="addDialog">
             <section className="addDialogHeader">
-                <button onClick={closeDialog}> X </button>
+                <h2>ADICIONAR PRODUTO</h2>
+                <button onClick={closeDialog} aria-label="Fechar diálogo">X</button>
             </section>
-            <section>
+            <section className="dialogBody">
                 <form className="addDialogInputs" action={prepareAddProduct}>
-                    <div className="nameInputBlock">
-                        <label htmlFor="name"> Nome:
-                            <input required type="text" name="name" />
-                        </label>
-                    </div>
-
-                    <div className="priceInputBlock">
-                        <label htmlFor="price"> Preço:
-                            <input required type="number" name="price" />
-                        </label>
-                    </div>
-
-                    <div className="quantInputBlock">
-                        <label htmlFor="stock"> Quantidade:
-                            <input required type="number" name="stock" min={0} />
-                        </label>
-                    </div>
-
-                    <div className="typeSelectBlock">
-                        <label htmlFor="kind"> Tipo:
+                    <div className="dialogFields">
+                        <label>Nome:<input required type="text" name="name" /></label>
+                        <label>Preço:<input required type="number" name="price" placeholder="R$" /></label>
+                        <label>Quantidade:<input required type="number" name="stock" min={0} /></label>
+                        <label>Tipo:
                             <select name="kind">
-                                <option value="salgados"> Salgado </option>
-                                <option value="salgadinhos"> Salgadinho </option>
-                                <option value="bebidas"> Bebida </option>
-                                <option value="doces"> Doce </option>
-                                <option value="sorvetes"> Sorvete </option>
+                                <option value="salgados">Salgado</option>
+                                <option value="salgadinhos">Salgadinho</option>
+                                <option value="bebidas">Bebida</option>
+                                <option value="doces">Doce</option>
+                                <option value="sorvetes">Sorvete</option>
                             </select>
                         </label>
                     </div>
-
-                    <div className="imageInputBlock">
-                        <label htmlFor="productAddImg"> Imagem:
-                            <input required type="file" accept="image/png" name="productAddImg" onChange={handleFile} />
-                        </label>
+                    <div className="dialogImageColumn">
+                        <div className={`dialogImagePreview ${image.url ? "hasImage" : ""}`}>
+                            {image.url ? <img src={image.url} alt="Pré-visualização do produto" /> : <><span className="imagePlaceholderIcon" aria-hidden="true" /> <strong>Formato aceito: png</strong><small>Selecione uma imagem clicando<br />no botão abaixo</small></>}
+                        </div>
+                        <label className="imagePicker">Selecionar Imagem<input required type="file" accept="image/png" name="productAddImg" onChange={handleFile} /></label>
                     </div>
-
-                    <div className="imageVisBlock">
-                        <img src={image.url ? image.url : undefined} />
-                    </div>
-
-                    <div className="actionButtons">
-                        <button disabled type="submit"> Enviar </button>
-                        <button type="reset" onClick={() => { setImage({ image: "", url: "" }) }}> Limpar </button>
-                    </div>
+                    <div className="dialogActions"><button type="submit">Adicionar</button><button type="reset" onClick={() => { setImage({ image: "", url: "" }) }}>Limpar</button></div>
                 </form>
             </section>
         </div>
@@ -272,51 +251,29 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
     const editDialog = (
         <div open className="editDialog">
             <section className="editDialogHeader">
-                <button onClick={closeDialog}> X </button>
+                <h2>EDITAR PRODUTO</h2>
+                <button onClick={closeDialog} aria-label="Fechar diálogo">X</button>
             </section>
-            <section>
+            <section className="dialogBody">
                 <form>
-                    <section className="productSearch">
-                        <label htmlFor="productSearchName">
-                            Nome:
-                            {/* <input type="text" name="productSearchName" value={productSearchName} onChange={(e) => setProductSearchName(e.target.value)} /> */}
-                            <AdmAutoComplete produtos={produtos} productSearchName={productSearchName} setProductSearchName={setProductSearchName} />
-                            <button type="button" onClick={searchEdit} disabled={isDisabled} className={isDisabled ? "btnPending" : ""}> Pesquisar</button>
-                        </label>
-                    </section>
-
-                    <section className="productSearch">
-                        <div className="nameInputBlock">
-                            <label htmlFor="name"> Nome:
-                                <input type="text" name="name" value={nameEdit} onChange={(e) => setNameEdit(e.target.value)} />
-                            </label>
-                        </div>
-
-                        <div className="priceInputBlock">
-                            <label htmlFor="price"> Preço: </label>
-                            <input type="number" name="price" value={priceEdit} onChange={(e) => setPriceEdit(e.target.value)} />
-                        </div>
-
-                        <div className="quantInputBlock">
-                            <label htmlFor="stock"> Quantidade: </label>
-                            <input type="number" name="stock" min={0} value={quantEdit} onChange={(e) => setQuantEdit(e.target.value)} />
-                        </div>
-
-                        <div className="typeSelectBlock">
-                            <label htmlFor="productEditType"> Tipo: </label>
+                    <div className="dialogSearch">
+                        <span>Pesquisa:</span>
+                        <AdmAutoComplete produtos={produtos} productSearchName={productSearchName} setProductSearchName={setProductSearchName} />
+                        <button type="button" onClick={searchEdit} disabled={isDisabled} className={isDisabled ? "btnPending" : ""}><RiSearchLine aria-hidden="true" />Pesquisar</button>
+                    </div>
+                    <div className="dialogDivider" />
+                    <div className="dialogFields">
+                        <label>Nome:<input type="text" name="name" value={nameEdit} onChange={(e) => setNameEdit(e.target.value)} /></label>
+                        <label>Preço:<input type="number" name="price" placeholder="R$" value={priceEdit} onChange={(e) => setPriceEdit(e.target.value)} /></label>
+                        <label>Quantidade:<input type="number" name="stock" min={0} value={quantEdit} onChange={(e) => setQuantEdit(e.target.value)} /></label>
+                        <label>Tipo:
                             <select name="kind" value={kindEdit} onChange={e => setKindEdit(e.target.value)}>
-                                <option value="standard"> </option>
-                                <option value="salgados"> Salgado </option>
-                                <option value="salgadinhos"> Salgadinho </option>
-                                <option value="bebidas"> Bebida </option>
-                                <option value="doces"> Doce </option>
-                                <option value="sorvetes"> Sorvete </option>
+                                <option value="standard"> </option><option value="salgados">Salgado</option><option value="salgadinhos">Salgadinho</option><option value="bebidas">Bebida</option><option value="doces">Doce</option><option value="sorvetes">Sorvete</option>
                             </select>
-                        </div>
-                        <section>
-                            <button disabled={!produto} type="submit" formAction={prepareEditProduct}> Atualizar Produto </button>
-                        </section>
-                    </section>
+                        </label>
+                    </div>
+                    <div className="dialogImageColumn"><div className="dialogImagePreview"><span className="imagePlaceholderIcon" aria-hidden="true" /><strong>Formato aceito: png</strong><small>Selecione uma imagem clicando<br />no botão abaixo</small></div><label className="imagePicker">Selecionar Imagem<input type="file" accept="image/png" /></label></div>
+                    <div className="dialogActions"><button disabled={!produto} type="submit" formAction={prepareEditProduct}>Editar</button><button type="reset">Limpar</button></div>
                 </form>
             </section>
         </div>
@@ -325,24 +282,16 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
     const removeDialog = (
         <div open className="removeDialog">
             <section className="removeDialogHeader">
-                <button onClick={closeDialog}> X </button>
+                <h2>REMOVER PRODUTO</h2>
+                <button onClick={closeDialog} aria-label="Fechar diálogo">X</button>
             </section>
-
-            <section className="productRemove">
-                <label htmlFor="productRemoveName">
-                    Nome:
-                    <input type="text" name="productRemoveName" required value={productDelete.searchName} onChange={(e) => setProductDelete({ ...productDelete, searchName: e.target.value })} />
-                </label>
-                <button type="button" id="productRemoveButton" onClick={searchDelete}> Pesquisar </button>
+            <section className="dialogBody">
+                <div className="dialogSearch"><span>Pesquisa:</span><input type="text" name="productRemoveName" required value={productDelete.searchName} onChange={(e) => setProductDelete({ ...productDelete, searchName: e.target.value })} /><button type="button" onClick={searchDelete}>Pesquisar</button></div>
+                <div className="dialogDivider" />
+                <div className="dialogFields"><label>Nome:<input readOnly value={productDelete.name} placeholder="Frango Assado" /></label><label>Preço:<input readOnly value={productDelete.price || ""} placeholder="R$ 30,99" /></label><label>Quantidade:<input readOnly value={productDelete.stock || ""} placeholder="50" /></label><label>Tipo:<input readOnly value={productDelete.kind} placeholder="Alimento" /></label></div>
+                <div className="dialogImageColumn"><div className="dialogImagePreview"><span className="imagePlaceholderIcon" aria-hidden="true" /><strong>Imagem do produto</strong></div></div>
+                <div className="dialogActions"><button type="button" className="removeAction" disabled={!productDelete.name}>Excluir</button><button type="button">Limpar</button></div>
             </section>
-
-            <section className="productRemoveInfos">
-                <span className="productRemoveTitle"> Nome: </span> <span className="productRemoveLabel"> {productDelete.name} </span>
-                <span className="productRemoveTitle"> Preço: </span> <span className="productRemoveLabel"> {productDelete.price} </span>
-                <span className="productRemoveTitle"> Quantidade: </span> <span className="productRemoveLabel"> {productDelete.stock} </span>
-                <span className="productRemoveTitle"> Tipo: </span> <span className="productRemoveLabel"> {productDelete.kind} </span>
-            </section>
-
         </div>
     );
 
@@ -353,21 +302,14 @@ export default function AdmDialog({ dialog, setDialog, produtos, setProdutos, fe
     switch (dialog) {
         case "addDialog":
             return addDialog;
-            break;
 
         case "editDialog":
-            return editDialog
-            break;
+            return editDialog;
 
         case "removeDialog":
             return removeDialog;
-            break;
-
-        case "none" && !produtos:
-            alert("Espere os dados carregarem...")
-            return;
 
         default:
-            break;
+            return;
     }
 }

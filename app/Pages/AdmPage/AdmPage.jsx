@@ -1,7 +1,3 @@
-import Header from "../../Components/Header/Header"
-import useMediaQuery from '@mui/material/useMediaQuery';
-import FoodTable from "../../Components/FoodTable/FoodTable"
-import DBManage from "../../Components/DBManage/DBManage"
 import WeeklySales from "../../Components/WeeklySales/WeeklySales"
 import AdmQuickButton from "../../Components/AdmQuickButton/AdmQuickButton"
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar"
@@ -14,7 +10,7 @@ import { useState, useEffect, useCallback } from "react";
 
 export default function AdmPage() {
   const [dialog, setDialog] = useState("none");
-  const [sideBarOn, setSideBarOn] = useState(true);
+  const [sideBarOn, setSideBarOn] = useState(false);
   const [produtos, setProdutos] = useState();
 
   const toolsAdmPageBar = [
@@ -35,9 +31,11 @@ export default function AdmPage() {
   const fetchAll = useCallback(async () => {
     try {
       const { data, error } = await supabase.from('products').select('*'); //O dado retornado é um array de objetos
+      if (error) throw error;
       setProdutos(data);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
+      setProdutos([]);
     }
   }, []);
 
@@ -45,24 +43,36 @@ export default function AdmPage() {
     fetchAll();
   }, [fetchAll]);
 
+  useEffect(() => {
+    setSideBarOn(window.innerWidth > 900);
+  }, []);
+
   return (
     <>
-      <div className={`groupAdmGeneral ${sideBarOn ? 'sideBarOn' : 'sideBarOff'} `}> {/* Agrupamento geral de tudo que está na pagina adm */}
+      <div className={`groupAdmGeneral ${sideBarOn ? 'sideBarOn' : 'sideBarOff'} `}>
 
-        <div id="subGroupAdmGeneralOne"> {/* O primeiro subgrupo, que separa a barra lateral dos outros blocos exteriores */}
+        <div id="subGroupAdmGeneralOne">
           <AdmSideBar tools={toolsAdmPageBar} />
         </div>
 
-        <div id="subGroupAdmGeneralTwo"> {/*O segundo subgrupo, que separa os blocos e a navbar da barra lateral */}
+        <main id="subGroupAdmGeneralTwo">
 
           <div id="admPageNavBar">
-            <button onClick={() => sideBarOn ? setSideBarOn(false) : setSideBarOn(true)}> <img src={sideBarOn ? '/imgs/closeicon.png' : '/imgs/more.png'} /> </button>
-            <span> <b> Funcionário </b><img src="\.\public\imgs\user.png" /> </span>
+            <button aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"} onClick={() => setSideBarOn(current => !current)}>
+              <img src={sideBarOn ? '/imgs/closeicon.png' : '/imgs/more.png'} alt="" />
+            </button>
+            <div className="admPageStatus">
+              <span>7 de Agosto de 2026 08:39</span>
+              <span>Versão: X</span>
+              <span className="systemStatus">Status do Sistema: Ativo</span>
+              <b>Funcionário</b>
+              <img src="/imgs/user.png" alt="" />
+            </div>
           </div>
 
-          <div className="admQuickButton" style={{ backgroundColor: "#fff2b3", border: "0.17em solid #ffc400" }}>
+          <div className="admQuickButton admOrdersButton" style={{ backgroundColor: "#fff2b3", border: "0.17em solid #ffc400" }}>
             <Link to="/orders">
-              <span style={{ width: "100%", overflow: "wrap", color: "#ffc400", fontSize: "1em", fontWeight: "700" }}> PEDIDOS </span>
+              <span style={{ color: "#ffc400" }}>FILA<br />VIRTUAL</span>
             </Link>
           </div>
 
@@ -71,13 +81,21 @@ export default function AdmPage() {
               <AdmQuickButton title={item.title} action={item.action} setDialog={setDialog} key={i} backgroundColor={item.backgroundColor} primaryColor={item.primaryColor} produtos={produtos} />
             )
           })}
-          <div className="admDialogScreen">
+          <section className="admContent">
+            <WeeklySales />
+          </section>
+
+          <div className={`admDialogScreen ${dialog !== "none" ? "isOpen" : ""}`}>
             <AdmDialog dialog={dialog} setDialog={setDialog} produtos={produtos} setProdutos={setProdutos} fetchAll={fetchAll}/>
           </div>
-        </div>
+          {produtos === undefined && (
+            <div className="admLoading" role="status" aria-live="polite">
+              <div className="admLoadingSpinner" />
+              <span>Carregando...</span>
+            </div>
+          )}
+        </main>
       </div>
-      {/* <DBManage />
-      <WeeklySales/> */}
     </>
   )
 }
