@@ -57,15 +57,24 @@ export default function SignUp() {
                     rm: hashedRM
                 });
             error = result.error;
-        }
 
-        if (error) {
-            setPopup({
-                header: 'Erro no Cadastro',
-                content: `Não foi possível cadastrar o usuário: ${error.message}`,
-                state: true
-            });
-            return;
+            if (error) {
+                const isDuplicateRM = result.error.code === '23505';
+
+                setPopup({
+                    content: isDuplicateRM
+                        ? 'Já existe um aluno cadastrado com esse RM!'
+                        : 'Falha ao registrar aluno no banco de dados!',
+                    header: (
+                        <h2 className='text-danger'>
+                            <RiCloseFill className='me-2'/>
+                            {isDuplicateRM ? 'RM já cadastrado!' : 'Erro de Registro!'}
+                        </h2>
+                    ),
+                    state: true
+                });
+                return false;
+            }
         }
 
         setPopup({
@@ -90,9 +99,9 @@ export default function SignUp() {
     return (
         <div className="d-flex justify-content-center align-items-center">
             <Popup
-                state={popup.state}
-                setState={(state) => setPopup(prev => ({ ...prev, state }))}
-                header={popup.header}
+            state={popup.state}
+            setState={setPopup}
+            header={popup.header}
             >
                 {popup.content}
             </Popup>
@@ -179,9 +188,7 @@ export default function SignUp() {
                                     fullWidth
                                 >
                                     <MenuItem value="user">Aluno</MenuItem>
-                                    {currentUser?.type === 'admin' && (
-                                        <MenuItem value="admin">Administrador</MenuItem>
-                                    )}
+                                    <MenuItem value="admin">Administrador</MenuItem>
                                 </Select>
                             </li>
                             {userType === 'user' && (
