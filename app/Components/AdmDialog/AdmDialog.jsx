@@ -150,7 +150,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('products')
             .delete()
             .eq('id', productDelete.id);
@@ -161,7 +161,10 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        showSuccessPopup("Produto excluído com sucesso!");
+        if (data) {
+            showSuccessPopup(`Produto excluído com sucesso!`);
+        }
+        
         setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "" });
         fetchAll();
     }
