@@ -4,6 +4,7 @@ import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
 import supabase from '../../supabaseClient';
 import { useNavigate } from 'react-router';
+import { createCloudinaryImage } from '../../utils/cloudinaryImage';
 
 export async function buyProducts(productName, productQuantity) {
   const { data, error } = await supabase.rpc('decrement_stock', {
@@ -29,10 +30,6 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
             cloudName: 'dntfculcp'
         }
     })
-
-    const formatName = (name) => {
-        return name.trim().toLowerCase().replaceAll(' ', '')
-    };
 
     const formatPrice = (price) => {
         return price.toFixed(2).replace('.', ',')
@@ -121,7 +118,7 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
                         key={`${item.title}-${i}`}>
                         <div style={{ width: '60px', height: '60px' }}>
                             <AdvancedImage
-                                cldImg={cld.image(formatName(item.title))} 
+                                cldImg={createCloudinaryImage(cld, item.title)} 
                                 style={{
                                     width: '100%',
                                     height: '100%',

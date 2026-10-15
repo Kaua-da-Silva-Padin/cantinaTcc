@@ -5,6 +5,7 @@ import { RiSearchLine, RiCloseFill, RiCheckFill } from "react-icons/ri";
 import { Button } from "@mui/material";
 import Popup from "../../Components/Popup/Popup";
 import { Cloudinary } from '@cloudinary/url-gen';
+import { createCloudinaryImage, rememberCloudinaryVersion, toCloudinaryPublicId } from '../../utils/cloudinaryImage';
 
 const CLOUD_NAME = "dntfculcp";
 
@@ -13,22 +14,6 @@ const cloudinary = new Cloudinary({
         cloudName: CLOUD_NAME
     }
 });
-
-// Converte o nome em camelCase, mantendo acentos, sem espaços nas pontas nem duplicados
-function toCamelCasePublicId(name) {
-    const trimmed = name.trim();
-    const words = trimmed.split(/\s+/).filter(Boolean);
-
-    if (words.length === 0) return "";
-
-    return words
-        .map((word, index) => {
-            const lower = word.toLowerCase();
-            if (index === 0) return lower;
-            return lower.charAt(0).toUpperCase() + lower.slice(1);
-        })
-        .join("");
-}
 
 export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
     const [produto, setProduto] = useState(null);
@@ -125,7 +110,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
         setKindEdit(searchProduct.kind);
         setEditImage({
             image: "",
-            url: cloudinary.image(toCamelCasePublicId(searchProduct.name)).toURL()
+            url: createCloudinaryImage(cloudinary, searchProduct.name).toURL()
         });
     }
 
@@ -241,7 +226,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             throw new Error(data.error?.message || 'Erro no upload');
         }
 
-        return data.secure_url;
+        return data;
     }
 
     function prepareAddProduct(formData) {
@@ -263,7 +248,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        const publicId = toCamelCasePublicId(addData.name);
+        const publicId = toCloudinaryPublicId(addData.name);
 
         try {
             await uploadToCloudinary(addImage.image, publicId);
@@ -292,16 +277,32 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
     }
 
     async function editProduct(pvs) {
+        const hasImageChange = Boolean(editImage.image);
+
         if (editImage.image) {
             const finalName = nameEdit.trim();
-            const publicId = toCamelCasePublicId(finalName);
+            const publicId = toCloudinaryPublicId(finalName);
 
             try {
-                await uploadToCloudinary(editImage.image, publicId);
+                const uploadedImage = await uploadToCloudinary(editImage.image, publicId);
+                rememberCloudinaryVersion(publicId, uploadedImage.version);
+                setEditImage({
+                    image: "",
+                    url: `${uploadedImage.secure_url}?v=${uploadedImage.version}`
+                });
             } catch (error) {
                 showErrorPopup(`Falha no upload da imagem: ${error.message}`);
                 return;
             }
+        }
+
+        if (Object.keys(pvs).length === 0) {
+            if (hasImageChange) {
+                showSuccessPopup("Imagem atualizada com sucesso!");
+                fetchAll();
+                standard();
+            }
+            return;
         }
 
         if (pvs.name) pvs.name = pvs.name.trim();
