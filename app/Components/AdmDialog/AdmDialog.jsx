@@ -336,10 +336,15 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
         const modifiedData = {};
 
         formData.forEach((value, key) => {
-            if (produto[key] == undefined || produto[key] == "" || value == produto[key]) {
+            const newValue = value.trim();
+            const normalizedValue = key === "price" || key === "stock"
+                ? Number(newValue)
+                : newValue;
+
+            if (produto[key] === undefined || produto[key] === null || normalizedValue === produto[key]) {
                 return;
             }
-            modifiedData[key] = value.trim();
+            modifiedData[key] = normalizedValue;
         });
 
         if (Object.keys(modifiedData).length === 0 && !editImage.image) {
