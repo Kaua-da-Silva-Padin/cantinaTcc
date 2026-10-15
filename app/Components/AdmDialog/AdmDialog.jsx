@@ -4,8 +4,15 @@ import { useState } from "react";
 import { RiSearchLine, RiCloseFill, RiCheckFill } from "react-icons/ri";
 import { Button } from "@mui/material";
 import Popup from "../../Components/Popup/Popup";
+import { Cloudinary } from '@cloudinary/url-gen';
 
 const CLOUD_NAME = "dntfculcp";
+
+const cloudinary = new Cloudinary({
+    cloud: {
+        cloudName: CLOUD_NAME
+    }
+});
 
 // Converte o nome em camelCase, mantendo acentos, sem espaços nas pontas nem duplicados
 function toCamelCasePublicId(name) {
@@ -116,7 +123,10 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
         setPriceEdit(searchProduct.price);
         setQuantEdit(searchProduct.stock);
         setKindEdit(searchProduct.kind);
-        setEditImage({ image: "", url: "" });
+        setEditImage({
+            image: "",
+            url: cloudinary.image(toCamelCasePublicId(searchProduct.name)).toURL()
+        });
     }
 
     function searchDelete() {
