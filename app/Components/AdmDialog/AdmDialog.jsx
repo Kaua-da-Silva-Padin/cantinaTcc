@@ -148,14 +148,20 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('products')
             .delete()
-            .eq('id', productDelete.id);
+            .eq('id', productDelete.id)
+            .select('id');
 
         if (error) {
             console.error('Erro ao deletar produto:', error.message);
             showErrorPopup(`Falha ao excluir o produto: ${error.message}`);
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            showErrorPopup("Produto não encontrado para exclusão.");
             return;
         }
 
@@ -234,13 +240,15 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
     function prepareAddProduct(formData) {
         const allValues = Array.from(formData.values());
         const isSomeEmpty = allValues.some(valor => !valor?.toString().trim());
+        const price = Number(formData.get("price"));
+        const stock = Number(formData.get("stock"));
 
-        if (isSomeEmpty) {
+        if (isSomeEmpty || !Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
             showErrorPopup("O formulário precisa ser completamente preenchido");
             return;
         }
 
-        const addData = { name: formData.get("name").trim(), price: Number(formData.get("price")), kind: formData.get("kind"), stock: Number(formData.get("stock")) };
+        const addData = { name: formData.get("name").trim(), price, kind: formData.get("kind"), stock };
         addProduct(addData);
     }
 
@@ -341,8 +349,10 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
 
         const allValues = Array.from(formData.values());
         const isSomeEmpty = allValues.some(valor => !valor?.toString().trim());
+        const price = Number(formData.get("price"));
+        const stock = Number(formData.get("stock"));
 
-        if (isSomeEmpty) {
+        if (isSomeEmpty || !Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
             showErrorPopup("Você não pode deixar campos vazios!");
             return;
         }
@@ -350,8 +360,10 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
 
         formData.forEach((value, key) => {
             const newValue = value.trim();
-            const normalizedValue = key === "price" || key === "stock"
-                ? Number(newValue)
+            const normalizedValue = key === "price"
+                ? price
+                : key === "stock"
+                    ? stock
                 : newValue;
 
             if (produto[key] === undefined || produto[key] === null || normalizedValue === produto[key]) {
