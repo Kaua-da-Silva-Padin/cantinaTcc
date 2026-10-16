@@ -40,22 +40,21 @@ Depois de terminar o input de imagem vou fazer com que seja possível o insert n
 Quando o input de imagem for adicionado no cadastro de produtos, então farei a *imagem visível no Editar Produto²*
 - Fazer um select do Cloudinary para que a imagem possa ser visível na edição
 
-## Troca de Imagem no Editar produto
+## Troca de Imagem no Editar produto (finalizado 15/10)
 COMMIT: 
 Quando a imagem já se tornar visível no Editar Produto
 - Fazer com que a imagem possa ser trocada por outra(possível componetização do *input de imagem¹*)
 
-## Visualização de Imagens no Remover Produto
+## Visualização de Imagens no Remover Produto (finalizado 16/10)
 COMMIT: 
 Quando a imagem já se tornar visível no Editar Produto
 - Fazer a imagem ser visível no Remover Produto(possível componetização do visualizador de imagens²)
 
-## "Remover" o produto e a imagem no Remover Produto
+## "Remover" o produto e a imagem no Remover Produto (finalizado parcialmente 16/10)
 COMMIT:  
 Quando a imagem já se tornar visível no Remover Produto
-- Fazer uma pergunta ao kauã se o produto será desativado ou realmente removido
 - Fazer a operação de pesquisa do produto das tabelas(Supabase e Cloudinary)(possível reutilização da função de pesquisa)
-- Fazer a operação de "remoção" do produto das tabelas(Supabase e Cloudinary)
+- Fazer a operação de "remoção" do produto das tabelas(Supabase e Cloudinary)(é necessário uma função de borda(Edge Function))
 - Identificar possíveis erros
     
 ## Adições futuras

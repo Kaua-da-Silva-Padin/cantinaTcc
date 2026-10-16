@@ -39,8 +39,10 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
         name: "",
         price: 0.00,
         stock: 0,
-        kind: ""
+        kind: "",
+        imageUrl: ""
     });
+    const [productDeleteSearch, setProductDeleteSearch] = useState(null);
 
     const [popup, setPopup] = useState({
         content: '',
@@ -125,7 +127,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
 
         if (!searchProduct) {
             showErrorPopup("Produto não encontrado.");
-            setProductDelete({ searchName: productDelete.searchName, id: null, name: "", price: 0, stock: 0, kind: "" });
+            setProductDelete({ searchName: productDelete.searchName, id: null, name: "", price: 0, stock: 0, kind: "", imageUrl: "" });
             return;
         }
 
@@ -135,7 +137,8 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             name: searchProduct.name,
             price: searchProduct.price,
             stock: searchProduct.stock,
-            kind: searchProduct.kind
+            kind: searchProduct.kind,
+            imageUrl: createCloudinaryImage(cloudinary, searchProduct.name).toURL()
         });
     }
 
@@ -145,7 +148,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('products')
             .delete()
             .eq('id', productDelete.id);
@@ -156,11 +159,10 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        if (data) {
-            showSuccessPopup(`Produto excluído com sucesso!`);
-        }
+        showSuccessPopup(`Produto excluído com sucesso!`);
         
-        setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "" });
+        setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "", imageUrl: "" });
+        setProductDeleteSearch(null);
         fetchAll();
     }
 
@@ -515,11 +517,42 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
                 <button onClick={closeDialog} aria-label="Fechar diálogo">X</button>
             </section>
             <section className="dialogBody">
-                <div className="dialogSearch"><span>Pesquisa:</span><input type="text" name="productRemoveName" required value={productDelete.searchName} onChange={(e) => setProductDelete({ ...productDelete, searchName: e.target.value })} /><button type="button" onClick={searchDelete}>Pesquisar</button></div>
+                <div className="dialogSearch">
+                    <span>Pesquisa:</span>
+                    <AdmAutoComplete
+                        produtos={produtos}
+                        productSearchName={productDeleteSearch}
+                        setProductSearchName={(selectedProduct) => {
+                            setProductDeleteSearch(selectedProduct);
+                            setProductDelete({
+                                searchName: selectedProduct?.name ?? "",
+                                id: null,
+                                name: "",
+                                price: 0,
+                                stock: 0,
+                                kind: "",
+                                imageUrl: ""
+                            });
+                        }}
+                    />
+                    <button type="button" onClick={searchDelete}>Pesquisar</button>
+                </div>
                 <div className="dialogDivider" />
                 <div className="dialogFields"><label>Nome:<input readOnly value={productDelete.name} placeholder="Frango Assado" /></label><label>Preço:<input readOnly value={productDelete.price || ""} placeholder="R$ 30,99" /></label><label>Quantidade:<input readOnly value={productDelete.stock || ""} placeholder="50" /></label><label>Tipo:<input readOnly value={productDelete.kind} placeholder="Alimento" /></label></div>
-                <div className="dialogImageColumn"><div className="dialogImagePreview"><span className="imagePlaceholderIcon" aria-hidden="true" /><strong>Imagem do produto</strong></div></div>
-                <div className="dialogActions"><button type="button" className="removeAction" onClick={deleteProduct} disabled={!productDelete.id}>Excluir</button><button type="button" onClick={() => setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "" })}>Limpar</button></div>
+                <div className="dialogImageColumn">
+                    <div className={`dialogImagePreview ${productDelete.imageUrl ? "hasImage" : ""}`}>
+                        {productDelete.imageUrl ? (
+                            <img
+                                src={productDelete.imageUrl}
+                                alt="Pré-visualização do produto"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            />
+                        ) : (
+                            <><span className="imagePlaceholderIcon" aria-hidden="true" /><strong>Imagem do produto</strong></>
+                        )}
+                    </div>
+                </div>
+                <div className="dialogActions"><button type="button" className="removeAction" onClick={deleteProduct} disabled={!productDelete.id}>Excluir</button><button type="button" onClick={() => { setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "", imageUrl: "" }); setProductDeleteSearch(null); }}>Limpar</button></div>
             </section>
         </div>
     );
