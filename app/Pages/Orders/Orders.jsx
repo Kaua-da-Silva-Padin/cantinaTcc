@@ -1,7 +1,8 @@
 import OrdersList from "../../Components/OrdersList/OrdersList";
 import OrderInfo from "../../Components/OrdersInfo/OrdersInfo";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import "../../Pages/Orders/Orders.css";
+import supabase from "../../supabaseClient";
 
 function newOrder(orderData) {
   // This function will append an order to the end of the list when a new order appears.
@@ -9,7 +10,24 @@ function newOrder(orderData) {
 }
 
 export default function Orders() {
+  const [orders, setOrders] = useState(null);
   const [actualOrder, setActualOrder] = useState(0);
+  const [orderInfo, setOrderInfo] = useState();
+
+  const fetchOrders = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.from("sales").select("*"); //O dado retornado é um array de objetos
+      if (error) throw error;
+      console.log(data)
+      setOrders(data);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   let _orders = [
   {
@@ -161,8 +179,8 @@ export default function Orders() {
   return (
     <>
       <div className="orders-container">
-          <OrdersList orders={_orders} setActualOrder={setActualOrder}/>
-          <OrderInfo order={_orders[actualOrder]} /> {/* The first order of the list. */}
+          <OrdersList orders={orders} setActualOrder={setActualOrder} setOrderInfo={setOrderInfo}/>
+          <OrderInfo order={orderInfo} /> {/* The first order of the list. */}
       </div>
     </>
   );
