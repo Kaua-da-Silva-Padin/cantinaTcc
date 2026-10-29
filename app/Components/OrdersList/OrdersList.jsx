@@ -1,5 +1,3 @@
-import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,9 +6,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import "../../Pages/Orders/Orders.css";
 import supabase from "../../supabaseClient";
-import { useEffect, useCallback, useState } from "react";
+import { useState } from "react";
 
 export default function OrdersList({ orders, setActualOrder, setOrderInfo }) {
+
   function convertTime(a) {
     const date = new Date(a);
 
@@ -37,6 +36,12 @@ export default function OrdersList({ orders, setActualOrder, setOrderInfo }) {
     }
   }
 
+  // Helper function to calculate total items for a specific order
+  const getTotalItems = (items) => {
+    if (!items || !Array.isArray(items)) return 0;
+    return items.reduce((total, item) => total + (item.qty || 0), 0);
+  };
+
   return (
     <>
       <TableContainer
@@ -51,13 +56,14 @@ export default function OrdersList({ orders, setActualOrder, setOrderInfo }) {
               overflow: "auto",
             }}
           >
-            {orders ? orders.map((order) => (
+            {orders && orders.length > 0 ? (
+              orders.map((order) => (
                 <TableRow
                   key={order.id}
                   className="bg-white ordersRow"
                   onClick={() => {
                     setActualOrder(order.id - 1);
-                    setOrderInfo(orders ? orders.find((item) => item.id == order.id) : "");
+                    setOrderInfo(orders.find((item) => item.id == order.id));
                   }}
                 >
                   <TableCell align="center" className="fw-bold fs-6">
@@ -74,20 +80,24 @@ export default function OrdersList({ orders, setActualOrder, setOrderInfo }) {
                   </TableCell>
                   <TableCell align="center" className="fw-bold fs-6">
                     <span className="d-block text-muted small">Itens</span>
-                    {order.items[0].qty}
+                    {getTotalItems(order.items)}
                   </TableCell>
                   <TableCell align="center" className="fw-bold fs-6">
                     <span className="d-block text-muted small">Valor</span>
                     R$ {order.total_price}
                   </TableCell>
-                  <TableCell align="center" className="fw-bold fs-6" sx={{color: order.progress.payment ? paymentMessage(order.progress.payment)[1] : "null"}}>
+                  <TableCell align="center" className="fw-bold fs-6" sx={{color: order.progress?.payment ? paymentMessage(order.progress.payment)[1] : "inherit"}}>
                     <span className="d-block text-muted small">Pagamento</span>
-                    {order.progress.payment ? paymentMessage(order.progress.payment)[0] : "null"}
+                    {order.progress?.payment ? paymentMessage(order.progress.payment)[0] : "null"}
                   </TableCell>
                 </TableRow>
               ))
-             : (
-              <div> Nenhum Pedido Ainda </div>
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} align="center" className="text-white">
+                  Nenhum Pedido Ainda
+                </TableCell>
+              </TableRow>
             )}
           </TableBody>
         </Table>

@@ -6,7 +6,7 @@ import supabase from '../../supabaseClient';
 import { useNavigate } from 'react-router';
 import { createCloudinaryImage } from '../../utils/cloudinaryImage';
 
-export async function buyProducts(productName, productQuantity) {
+async function buyProducts(productName, productQuantity) {
   const { data, error } = await supabase.rpc('decrement_stock', {
     product_name: productName,
     qty: productQuantity
@@ -15,7 +15,7 @@ export async function buyProducts(productName, productQuantity) {
   return !error;
 }
 
-export async function registerUserNameOnBuy(userName) {
+async function registerUserNameOnBuy(userName) {
   const { data, error } = await supabase.rpc('log_user_name_on_buy', {
     user_name_to_log: userName
   });
@@ -58,7 +58,6 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
                     ...item,
                     quantity: item.quantity + 1
                 };
-                setCartPrice(prev => prev + product.price);
             });
         });
     };
