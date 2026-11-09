@@ -68,7 +68,7 @@ export default function MenuPageLinks() {
         { icon: <RiUserAddFill />, name: 'Registrar', link: '/' },
         { icon: <RiUserFill />, name: 'Login', link: '/login' },
         user && { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' },
-        { icon: <RiTableView />, name: 'Pedidos', link: '/orders' },
+        user?.type === 'admin' && { icon: <RiTableView />, name: 'Pedidos', link: '/orders' },
         user?.type === 'admin' && { icon: <RiSettings3Fill/>, name: 'Administrar', link: '/adm' },
         user ? { icon: <Avatar {...stringAvatar(user.name || 'User')} />, name: 'Perfil', link: '/profile' } : null
     ].filter(Boolean);

@@ -7,6 +7,7 @@ import supabase from '../../supabaseClient';
 import { useLoaderData, useLocation } from 'react-router';
 import ProductPopup from '../ProductPopup/ProductPopup';
 import SwipeableTemporaryDrawer from "../SwipeableDrawer/SwipeableDrawer";
+import { createCloudinaryImage } from '../../utils/cloudinaryImage';
 
 export async function productSelector() {
   const { data, error } = await supabase.from('products').select();
@@ -37,10 +38,6 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
     })
     const foodData = [];
 
-    // Formata o nome do item para um nome minusculo e sem espaços (utilizado para acessar a imagem do cloudinary).
-    const formatName = (name) => {
-        return name.trim().toLowerCase().replaceAll(' ', '')
-    }
     // Utilizado para quando queremos apenas formatar o preço de um item para mostra-lo para o usuário e não fazer operações com ele.
     const formatPrice = (price) => {
         return price.toFixed(2).replace('.', ',')
@@ -82,7 +79,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
         let foodStock = item.stock;
 
         foodData.push({
-            img: cld.image(formatName(foodName)),
+            img: createCloudinaryImage(cld, foodName),
             title: foodName,
             kind: foodKind,
             price: foodPrice,

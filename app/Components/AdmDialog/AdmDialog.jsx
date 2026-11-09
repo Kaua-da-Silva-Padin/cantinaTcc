@@ -4,24 +4,16 @@ import { useState } from "react";
 import { RiSearchLine, RiCloseFill, RiCheckFill } from "react-icons/ri";
 import { Button } from "@mui/material";
 import Popup from "../../Components/Popup/Popup";
+import { Cloudinary } from '@cloudinary/url-gen';
+import { createCloudinaryImage, rememberCloudinaryVersion, toCloudinaryPublicId } from '../../utils/cloudinaryImage';
 
 const CLOUD_NAME = "dntfculcp";
 
-// Converte o nome em camelCase, mantendo acentos, sem espaços nas pontas nem duplicados
-function toCamelCasePublicId(name) {
-    const trimmed = name.trim();
-    const words = trimmed.split(/\s+/).filter(Boolean);
-
-    if (words.length === 0) return "";
-
-    return words
-        .map((word, index) => {
-            const lower = word.toLowerCase();
-            if (index === 0) return lower;
-            return lower.charAt(0).toUpperCase() + lower.slice(1);
-        })
-        .join("");
-}
+const cloudinary = new Cloudinary({
+    cloud: {
+        cloudName: CLOUD_NAME
+    }
+});
 
 export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
     const [produto, setProduto] = useState(null);
@@ -47,8 +39,10 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
         name: "",
         price: 0.00,
         stock: 0,
-        kind: ""
+        kind: "",
+        imageUrl: ""
     });
+    const [productDeleteSearch, setProductDeleteSearch] = useState(null);
 
     const [popup, setPopup] = useState({
         content: '',
@@ -116,7 +110,10 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
         setPriceEdit(searchProduct.price);
         setQuantEdit(searchProduct.stock);
         setKindEdit(searchProduct.kind);
-        setEditImage({ image: "", url: "" });
+        setEditImage({
+            image: "",
+            url: createCloudinaryImage(cloudinary, searchProduct.name).toURL()
+        });
     }
 
     function searchDelete() {
@@ -130,7 +127,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
 
         if (!searchProduct) {
             showErrorPopup("Produto não encontrado.");
-            setProductDelete({ searchName: productDelete.searchName, id: null, name: "", price: 0, stock: 0, kind: "" });
+            setProductDelete({ searchName: productDelete.searchName, id: null, name: "", price: 0, stock: 0, kind: "", imageUrl: "" });
             return;
         }
 
@@ -140,7 +137,8 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             name: searchProduct.name,
             price: searchProduct.price,
             stock: searchProduct.stock,
-            kind: searchProduct.kind
+            kind: searchProduct.kind,
+            imageUrl: createCloudinaryImage(cloudinary, searchProduct.name).toURL()
         });
     }
 
@@ -150,10 +148,11 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('products')
             .delete()
-            .eq('id', productDelete.id);
+            .eq('id', productDelete.id)
+            .select('id');
 
         if (error) {
             console.error('Erro ao deletar produto:', error.message);
@@ -161,8 +160,15 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        showSuccessPopup("Produto excluído com sucesso!");
-        setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "" });
+        if (!data || data.length === 0) {
+            showErrorPopup("Produto não encontrado para exclusão.");
+            return;
+        }
+
+        showSuccessPopup(`Produto excluído com sucesso!`);
+        
+        setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "", imageUrl: "" });
+        setProductDeleteSearch(null);
         fetchAll();
     }
 
@@ -228,19 +234,21 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             throw new Error(data.error?.message || 'Erro no upload');
         }
 
-        return data.secure_url;
+        return data;
     }
 
     function prepareAddProduct(formData) {
         const allValues = Array.from(formData.values());
         const isSomeEmpty = allValues.some(valor => !valor?.toString().trim());
+        const price = Number(formData.get("price"));
+        const stock = Number(formData.get("stock"));
 
-        if (isSomeEmpty) {
+        if (isSomeEmpty || !Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
             showErrorPopup("O formulário precisa ser completamente preenchido");
             return;
         }
 
-        const addData = { name: formData.get("name").trim(), price: Number(formData.get("price")), kind: formData.get("kind"), stock: Number(formData.get("stock")) };
+        const addData = { name: formData.get("name").trim(), price, kind: formData.get("kind"), stock };
         addProduct(addData);
     }
 
@@ -250,7 +258,7 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
             return;
         }
 
-        const publicId = toCamelCasePublicId(addData.name);
+        const publicId = toCloudinaryPublicId(addData.name);
 
         try {
             await uploadToCloudinary(addImage.image, publicId);
@@ -279,16 +287,32 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
     }
 
     async function editProduct(pvs) {
+        const hasImageChange = Boolean(editImage.image);
+
         if (editImage.image) {
             const finalName = nameEdit.trim();
-            const publicId = toCamelCasePublicId(finalName);
+            const publicId = toCloudinaryPublicId(finalName);
 
             try {
-                await uploadToCloudinary(editImage.image, publicId);
+                const uploadedImage = await uploadToCloudinary(editImage.image, publicId);
+                rememberCloudinaryVersion(publicId, uploadedImage.version);
+                setEditImage({
+                    image: "",
+                    url: `${uploadedImage.secure_url}?v=${uploadedImage.version}`
+                });
             } catch (error) {
                 showErrorPopup(`Falha no upload da imagem: ${error.message}`);
                 return;
             }
+        }
+
+        if (Object.keys(pvs).length === 0) {
+            if (hasImageChange) {
+                showSuccessPopup("Imagem atualizada com sucesso!");
+                fetchAll();
+                standard();
+            }
+            return;
         }
 
         if (pvs.name) pvs.name = pvs.name.trim();
@@ -325,18 +349,27 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
 
         const allValues = Array.from(formData.values());
         const isSomeEmpty = allValues.some(valor => !valor?.toString().trim());
+        const price = Number(formData.get("price"));
+        const stock = Number(formData.get("stock"));
 
-        if (isSomeEmpty) {
+        if (isSomeEmpty || !Number.isFinite(price) || price < 0 || !Number.isInteger(stock) || stock < 0) {
             showErrorPopup("Você não pode deixar campos vazios!");
             return;
         }
         const modifiedData = {};
 
         formData.forEach((value, key) => {
-            if (produto[key] == undefined || produto[key] == "" || value == produto[key]) {
+            const newValue = value.trim();
+            const normalizedValue = key === "price"
+                ? price
+                : key === "stock"
+                    ? stock
+                : newValue;
+
+            if (produto[key] === undefined || produto[key] === null || normalizedValue === produto[key]) {
                 return;
             }
-            modifiedData[key] = value.trim();
+            modifiedData[key] = normalizedValue;
         });
 
         if (Object.keys(modifiedData).length === 0 && !editImage.image) {
@@ -496,11 +529,42 @@ export default function AdmDialog({ dialog, setDialog, produtos, fetchAll }) {
                 <button onClick={closeDialog} aria-label="Fechar diálogo">X</button>
             </section>
             <section className="dialogBody">
-                <div className="dialogSearch"><span>Pesquisa:</span><input type="text" name="productRemoveName" required value={productDelete.searchName} onChange={(e) => setProductDelete({ ...productDelete, searchName: e.target.value })} /><button type="button" onClick={searchDelete}>Pesquisar</button></div>
+                <div className="dialogSearch">
+                    <span>Pesquisa:</span>
+                    <AdmAutoComplete
+                        produtos={produtos}
+                        productSearchName={productDeleteSearch}
+                        setProductSearchName={(selectedProduct) => {
+                            setProductDeleteSearch(selectedProduct);
+                            setProductDelete({
+                                searchName: selectedProduct?.name ?? "",
+                                id: null,
+                                name: "",
+                                price: 0,
+                                stock: 0,
+                                kind: "",
+                                imageUrl: ""
+                            });
+                        }}
+                    />
+                    <button type="button" onClick={searchDelete}>Pesquisar</button>
+                </div>
                 <div className="dialogDivider" />
                 <div className="dialogFields"><label>Nome:<input readOnly value={productDelete.name} placeholder="Frango Assado" /></label><label>Preço:<input readOnly value={productDelete.price || ""} placeholder="R$ 30,99" /></label><label>Quantidade:<input readOnly value={productDelete.stock || ""} placeholder="50" /></label><label>Tipo:<input readOnly value={productDelete.kind} placeholder="Alimento" /></label></div>
-                <div className="dialogImageColumn"><div className="dialogImagePreview"><span className="imagePlaceholderIcon" aria-hidden="true" /><strong>Imagem do produto</strong></div></div>
-                <div className="dialogActions"><button type="button" className="removeAction" onClick={deleteProduct} disabled={!productDelete.id}>Excluir</button><button type="button" onClick={() => setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "" })}>Limpar</button></div>
+                <div className="dialogImageColumn">
+                    <div className={`dialogImagePreview ${productDelete.imageUrl ? "hasImage" : ""}`}>
+                        {productDelete.imageUrl ? (
+                            <img
+                                src={productDelete.imageUrl}
+                                alt="Pré-visualização do produto"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            />
+                        ) : (
+                            <><span className="imagePlaceholderIcon" aria-hidden="true" /><strong>Imagem do produto</strong></>
+                        )}
+                    </div>
+                </div>
+                <div className="dialogActions"><button type="button" className="removeAction" onClick={deleteProduct} disabled={!productDelete.id}>Excluir</button><button type="button" onClick={() => { setProductDelete({ searchName: "", id: null, name: "", price: 0, stock: 0, kind: "", imageUrl: "" }); setProductDeleteSearch(null); }}>Limpar</button></div>
             </section>
         </div>
     );

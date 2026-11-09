@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router';
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
+import { createCloudinaryImage } from '../../utils/cloudinaryImage';
 import { useMediaQuery } from '@mui/material';
 import { FaClock, FaCartShopping } from 'react-icons/fa6';
 import { useEffect, useState } from 'react';
@@ -32,9 +33,6 @@ export default function SuccessPurchase() {
         }
     })
 
-    const formatName = (name) => {
-        return name.trim().toLowerCase().replaceAll(' ', '')
-    };
 
     const formatPrice = (price) => {
         return Number(price).toFixed(2).replace('.', ',')
@@ -131,7 +129,7 @@ export default function SuccessPurchase() {
                 className="list-group-item bg-new-orange rounded-2 border-darken d-flex flex-row align-items-center p-2"
                 >
                 <AdvancedImage
-                    cldImg={cld.image(formatName(product.title))}
+                    cldImg={createCloudinaryImage(cld, product.title)}
                     style={{
                     width: '120px',
                     height: '120px',

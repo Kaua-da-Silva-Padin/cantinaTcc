@@ -4,23 +4,34 @@ import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
 import supabase from '../../supabaseClient';
 import { useNavigate } from 'react-router';
+import { createCloudinaryImage } from '../../utils/cloudinaryImage';
 
-export async function buyProducts(productName, productQuantity) {
-  const { data, error } = await supabase.rpc('decrement_stock', {
-    product_name: productName,
-    qty: productQuantity
+// export async function buyProducts(productName, productQuantity) {
+//   const { data, error } = await supabase.rpc('decrement_stock', {
+//     product_name: productName,
+//     qty: productQuantity
+//   });
+
+//   return !error;
+// }
+
+export async function registerSale(buyData) {
+  const { data, error } = await supabase.rpc('register_sale', {
+    payload: buyData
   });
+
+  console.log('registerSale error:', error);
 
   return !error;
 }
 
-export async function registerUserNameOnBuy(userName) {
-  const { data, error } = await supabase.rpc('log_user_name_on_buy', {
-    user_name_to_log: userName
-  });
+// export async function registerUserNameOnBuy(userName) {
+//   const { data, error } = await supabase.rpc('log_user_name_on_buy', {
+//     user_name_to_log: userName
+//   });
 
-  return !error;
-}
+//   return !error;
+// }
 
 export default function FoodList({ cartProducts, setCartProducts, setCartPrice, cartPrice, user }) {
     const navigate = useNavigate();
@@ -29,10 +40,6 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
             cloudName: 'dntfculcp'
         }
     })
-
-    const formatName = (name) => {
-        return name.trim().toLowerCase().replaceAll(' ', '')
-    };
 
     const formatPrice = (price) => {
         return price.toFixed(2).replace('.', ',')
@@ -88,14 +95,35 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
     };
 
     const buyCart = ()=> {
+
+        // Para o back end usar 
+        const buyData = {
+            user: user,
+            total_price: cartProducts.reduce((acc, item) => acc + (item.price * item.quantity), 0),
+            products: cartProducts.map((product) => {
+                return {
+                    qty: product.quantity,
+                    price_unit: product.price,
+                    price_total: product.price * product.quantity,
+                    product_name: product.title,
+                };
+            })
+        }
+
+        registerSale(buyData);
+
+        /*
         cartProducts.map((product, i)=>{
             buyProducts(product.title, product.quantity);
         })
 
         registerUserNameOnBuy(user.name);
+        */
 
         clearCart();
         navigate('/afterPurchase', { state: { cartProducts: cartProducts } })
+
+        //console.log('buyData', JSON.stringify(buyData, null, 2));
     }
 
     if (!cartProducts || cartProducts.length === 0) {
@@ -121,7 +149,7 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
                         key={`${item.title}-${i}`}>
                         <div style={{ width: '60px', height: '60px' }}>
                             <AdvancedImage
-                                cldImg={cld.image(formatName(item.title))} 
+                                cldImg={createCloudinaryImage(cld, item.title)} 
                                 style={{
                                     width: '100%',
                                     height: '100%',

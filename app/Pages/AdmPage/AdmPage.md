@@ -22,40 +22,39 @@ COMMIT:
 - Quando eu entender, então realizarei modificações para que eu possa adaptar à necessidade do projeto.
 - Depois de adaptar o componente, vou substituir o input dos dialogs pelo componente e testar
 
-## Input de Imagem (atualmente aqui)
+## Input de Imagem (finalizado)
 COMMIT: 
 Quando eu terminar o componente autocomplete, então farei o *input de imagem¹* para o cadastro de produto
 - Input para receber arquivo, apenas png
 - Fazer a imagem que foi enviada para o cadastro se tornar visível²
 
-## Insert de produtos no Supabase e no Cloudinary
+## Insert de produtos no Supabase e no Cloudinary (finalizado)
 COMMIT:  
 Depois de terminar o input de imagem vou fazer com que seja possível o insert no Supabase e no Cloudinary
 - Fazer um insert na tabela de produtos(Supabase)
 - Fazer um insert na tabela de imagens(Cloudinary) com os parametros(camelCase)
 - Diagnosticar possíveis erros no envio dos dados e corrigir
 
-## Visualização de Imagens no Editar Produto
+## Visualização de Imagens no Editar Produto(finalizado 15/10)
 - COMMIT: 
 Quando o input de imagem for adicionado no cadastro de produtos, então farei a *imagem visível no Editar Produto²*
 - Fazer um select do Cloudinary para que a imagem possa ser visível na edição
 
-## Troca de Imagem no Editar produto
+## Troca de Imagem no Editar produto (finalizado 15/10)
 COMMIT: 
 Quando a imagem já se tornar visível no Editar Produto
 - Fazer com que a imagem possa ser trocada por outra(possível componetização do *input de imagem¹*)
 
-## Visualização de Imagens no Remover Produto
+## Visualização de Imagens no Remover Produto (finalizado 16/10)
 COMMIT: 
 Quando a imagem já se tornar visível no Editar Produto
 - Fazer a imagem ser visível no Remover Produto(possível componetização do visualizador de imagens²)
 
-## "Remover" o produto e a imagem no Remover Produto
+## "Remover" o produto e a imagem no Remover Produto (finalizado parcialmente 16/10)
 COMMIT:  
 Quando a imagem já se tornar visível no Remover Produto
-- Fazer uma pergunta ao kauã se o produto será desativado ou realmente removido
 - Fazer a operação de pesquisa do produto das tabelas(Supabase e Cloudinary)(possível reutilização da função de pesquisa)
-- Fazer a operação de "remoção" do produto das tabelas(Supabase e Cloudinary)
+- Fazer a operação de "remoção" do produto das tabelas(Supabase e Cloudinary)(é necessário uma função de borda(Edge Function))
 - Identificar possíveis erros
     
 ## Adições futuras
