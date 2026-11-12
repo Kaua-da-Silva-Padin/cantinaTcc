@@ -1,4 +1,4 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from "react-router";
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import Header from "./Components/Header/Header";
@@ -37,10 +37,16 @@ export function Layout({ children }) {
 }
 
 export default function App() {
+  const { pathname } = useLocation();
+  const adminRoutes = ["/adm", "/orders", "/stock", "/finance", "/statistics", "/employees", "/settings"];
+  const isAdminPage = adminRoutes.some((route) => (
+    pathname === route || pathname.startsWith(`${route}/`)
+  ));
+
   return (
     <>
-      <Header />
-      <MenuPageLinks/>
+      {!isAdminPage && <Header />}
+      {!isAdminPage && <MenuPageLinks />}
       <Outlet />
     </>
   );

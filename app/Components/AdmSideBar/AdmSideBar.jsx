@@ -1,33 +1,42 @@
-import { Link } from 'react-router';
+import { NavLink } from 'react-router';
 
 export default function AdmSideBar(props){
     const tools = props.tools;
+    const renderLinks = (links) => links.map((item) => (
+      <NavLink to={item.link} key={item.link} end={item.link === "/"}>
+        <span>{item.text}</span>
+      </NavLink>
+    ));
+
     return(
-         <div id="admPageSideBar"> 
+         <div id="admPageSideBar">
             <div id="admPageSideBarHeader">
-              <b>
-                ADMIN
-              </b>
+              <b>ADMIN</b>
             </div>
 
-            <div className="admPageSideBarLinks">
-              {tools.map((item, i) => {
-                return (
-                  <Link to={item.link} key={i}> <span> {item.text}</span> </Link>
-                )
-              })}
-            </div>
+            {props.navigationGroups ? (
+              <nav className="admPageSideBarNavigation" aria-label="Navegação administrativa">
+                <div className="admPageSideBarSpeedDialGroup">
+                  <div className="admPageSideBarLinks">
+                    {renderLinks(props.navigationGroups.speedDial)}
+                  </div>
+                </div>
+                <div className="admPageSideBarLinks admPageSideBarAdminLinks">
+                  {renderLinks(props.navigationGroups.admin)}
+                </div>
+              </nav>
+            ) : (
+              <nav className="admPageSideBarLinks" aria-label="Navegação administrativa">
+                {renderLinks(tools)}
+              </nav>
+            )}
 
             <div id="admPageSideBarNotifications">
-              <h5> Notificações </h5>
+              <h5>Notificações</h5>
               <div className="admPageNotificationItem">
                 <div className="admNotificationsTexts">
-                  <span>
-                    <b> Notificação </b>
-                  </span>
-                  <span> Nova notificação que não tem nenhuma utilidade além de placeholder</span>
+                  <span>Nenhuma notificação nova.</span>
                 </div>
-                <span> ... </span>
               </div>
             </div>
           </div>

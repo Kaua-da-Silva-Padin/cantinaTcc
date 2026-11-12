@@ -15,6 +15,7 @@ import OrderInfo from "../../Components/OrdersInfo/OrdersInfo";
 import { stringAvatar } from "../../Components/MenuPageLinks/MenuPageLinks";
 import packageJson from "../../../package.json";
 import supabase from "../../supabaseClient";
+import "../../../index.css";
 import "./Orders.css";
 
 const REFRESH_COOLDOWN_MS = 7000;
@@ -22,19 +23,25 @@ const REFRESH_LOCKOUT_MS = 40000;
 const MAX_FAILED_REFRESHES = 5;
 
 const adminLinks = [
-  { text: "Menu", link: "/adm" },
-  { text: "Home", link: "/home" },
-  { text: "Reg. Usuário", link: "/" },
-  { text: "Login", link: "/login" },
-  { text: "Comprar", link: "/buy" },
-  { text: "Perfil", link: "/profile" },
-  { text: "Pedidos", link: "/orders" },
   { text: "Estoque", link: "/stock" },
   { text: "Finanças", link: "/finance" },
   { text: "Estatísticas", link: "/statistics" },
   { text: "Funcionários", link: "/employees" },
   { text: "Configurações", link: "/settings" },
 ];
+
+const ordersNavigationGroups = {
+  speedDial: [
+    { text: "Home", link: "/home" },
+    { text: "Registrar", link: "/" },
+    { text: "Login", link: "/login" },
+    { text: "Cantina", link: "/buy" },
+    { text: "Pedidos", link: "/orders" },
+    { text: "Administrar", link: "/adm" },
+    { text: "Perfil", link: "/profile" },
+  ],
+  admin: adminLinks,
+};
 
 function getErrorCode(error) {
   return error?.code ?? error?.message ?? "UNKNOWN";
@@ -237,7 +244,7 @@ export default function Orders() {
   return (
     <div className={`orders-admin-shell ${sideBarOn ? "sideBarOn" : "sideBarOff"}`}>
       <aside className="orders-sidebar">
-        <AdmSideBar tools={adminLinks} />
+        <AdmSideBar tools={adminLinks} navigationGroups={ordersNavigationGroups} />
       </aside>
       <main className="orders-main">
         <header className="orders-navbar">

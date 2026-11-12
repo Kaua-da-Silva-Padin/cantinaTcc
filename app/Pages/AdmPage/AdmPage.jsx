@@ -47,19 +47,24 @@ export default function AdmPage() {
   }
 
   const toolsAdmPageBar = [
-    { text: "Menu", link: "/adm" },
-    { text: "Home", link: "/home" },
-    { text: "Reg. Usuário", link: "/" },
-    { text: "Login", link: "/login" },
-    { text: "Comprar", link: "/buy" },
-    { text: "Perfil", link: "/profile" },
-    { text: "Pedidos", link: "/orders" },
     { text: "Estoque", link: "/stock" },
     { text: "Finanças", link: "/finance" },
     { text: "Estatísticas", link: "/statistics" },
     { text: "Funcionários", link: "/employees" },
     { text: "Configurações", link: "/settings" }
   ];
+  const navigationGroups = {
+    speedDial: [
+      { text: "Home", link: "/home" },
+      { text: "Reg. Usuário", link: "/" },
+      { text: "Login", link: "/login" },
+      { text: "Comprar", link: "/buy" },
+      { text: "Pedidos", link: "/orders" },
+      { text: "Administrar", link: "/adm" },
+      { text: "Perfil", link: "/profile" },
+    ],
+    admin: toolsAdmPageBar,
+  };
   
   const blocks = [
     { title: "ADICIONAR PRODUTO", action: "addDialog", backgroundColor: "#b0fcb7", primaryColor: "#08e600" },
@@ -93,7 +98,7 @@ export default function AdmPage() {
       <div className={`groupAdmGeneral ${sideBarOn ? 'sideBarOn' : 'sideBarOff'} `}>
 
         <div id="subGroupAdmGeneralOne">
-          <AdmSideBar tools={toolsAdmPageBar} />
+          <AdmSideBar tools={toolsAdmPageBar} navigationGroups={navigationGroups} />
         </div>
 
         <main id="subGroupAdmGeneralTwo">

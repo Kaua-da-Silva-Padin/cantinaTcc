@@ -135,10 +135,18 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
 }
 
 #admPageSideBarHeader b { color: white; font-size: 2.1rem; }
+.admPageSideBarNavigation { display: grid; gap: .75rem; }
 .admPageSideBarLinks { display: grid; gap: .2rem; font-size: 1.35rem; }
 .admPageSideBarLinks a { width: max-content; color: white; text-decoration: none; }
 .admPageSideBarLinks span { display: inline-block; border-bottom: 2px solid transparent; }
-.admPageSideBarLinks span:hover, .admPageSideBarLinks span:focus-visible { border-bottom-color: white; }
+.admPageSideBarLinks a:hover span, .admPageSideBarLinks a:focus-visible span,
+.admPageSideBarLinks a.active span { border-bottom-color: white; }
+.admPageSideBarSpeedDialGroup { padding: .65rem .55rem; border-radius: .65rem; background: #1976d2; }
+.admPageSideBarSpeedDialGroup .admPageSideBarLinks { font-size: 1.15rem; }
+.admPageSideBarSpeedDialGroup .admPageSideBarLinks a { width: 100%; box-sizing: border-box; }
+.admPageSideBarSpeedDialGroup .admPageSideBarLinks a:hover span,
+.admPageSideBarSpeedDialGroup .admPageSideBarLinks a:focus-visible span,
+.admPageSideBarSpeedDialGroup .admPageSideBarLinks a.active span { border-bottom-color: white; }
 
 #admPageSideBarNotifications {
     display: grid;
@@ -148,9 +156,8 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
     background: white;
     border-radius: .45rem;
 }
-
 #admPageSideBarNotifications h5 { margin: 0; font-size: 1.15rem; }
-.admPageNotificationItem { padding: .7rem; background: #ffed8f; border: 3px solid #ffd600; border-radius: .55rem; }
+.admPageNotificationItem { padding: .7rem; border: 1px solid #e6e6e6; border-radius: .45rem; color: #555; font-size: .85rem; }
 .admNotificationsTexts { display: grid; gap: .2rem; font-size: .78rem; line-height: 1.05; }
 
 .admDialogScreen {
