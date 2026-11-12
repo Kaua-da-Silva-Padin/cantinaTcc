@@ -53,6 +53,8 @@ export default function Orders() {
   const [refreshIndicator, setRefreshIndicator] = useState(null);
   const [refreshErrorCode, setRefreshErrorCode] = useState("");
   const [failedRefreshes, setFailedRefreshes] = useState(0);
+  const [pendingOrderAction, setPendingOrderAction] = useState(false);
+  const [orderActionError, setOrderActionError] = useState("");
   const [sideBarOn, setSideBarOn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const cooldownTimer = useRef(null);
@@ -193,6 +195,45 @@ export default function Orders() {
     setOrderInfo(order);
   };
 
+  const runOrderAction = async (action, parameters) => {
+    if (!orderInfo || pendingOrderAction) return false;
+
+    setPendingOrderAction(true);
+    setOrderActionError("");
+    try {
+      const { error } = await supabase.rpc(action, parameters);
+      if (error) throw error;
+
+      setOrderInfo(null);
+      setSelectedOrderId(null);
+      try {
+        await fetchOrders();
+      } catch (error) {
+        console.error("A ação foi concluída, mas não foi possível atualizar a lista:", error);
+        setOrderActionError(
+          `A ação foi concluída, mas não foi possível atualizar a lista. Erro: ${getErrorCode(error)}`
+        );
+      }
+      return true;
+    } catch (error) {
+      console.error(`Erro ao executar ${action}:`, error);
+      setOrderActionError(`Não foi possível concluir a ação. Erro: ${getErrorCode(error)}`);
+      return false;
+    } finally {
+      setPendingOrderAction(false);
+    }
+  };
+
+  const handleCancelOrder = (cancellationMessage) => runOrderAction("cancel_sale", {
+    prd_sale_id: orderInfo.id,
+    prd_cancellation_msg: cancellationMessage,
+  });
+
+  const handleUpdateProgress = (finalidade) => runOrderAction("update_sale_progress", {
+    ac_sale_id: orderInfo.id,
+    ac_finalidade: finalidade,
+  });
+
   return (
     <div className={`orders-admin-shell ${sideBarOn ? "sideBarOn" : "sideBarOff"}`}>
       <aside className="orders-sidebar">
@@ -235,7 +276,12 @@ export default function Orders() {
             refreshIndicator={refreshIndicator}
             failedRefreshes={failedRefreshes}
           />
-          <OrderInfo order={orderInfo} />
+          <OrderInfo
+            order={orderInfo}
+            actionLoading={pendingOrderAction}
+            onCancelOrder={handleCancelOrder}
+            onUpdateProgress={handleUpdateProgress}
+          />
         </section>
       </main>
 
@@ -255,6 +301,24 @@ export default function Orders() {
         <DialogActions>
           <Button
             onClick={() => setRefreshErrorCode("")}
+            variant="contained"
+            sx={{ backgroundColor: "black", color: "white", "&:hover": { backgroundColor: "#333" } }}
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={Boolean(orderActionError)}
+        onClose={() => setOrderActionError("")}
+        aria-labelledby="orders-action-error-title"
+      >
+        <DialogTitle id="orders-action-error-title">Erro ao atualizar pedido</DialogTitle>
+        <DialogContent>{orderActionError}</DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOrderActionError("")}
             variant="contained"
             sx={{ backgroundColor: "black", color: "white", "&:hover": { backgroundColor: "#333" } }}
           >

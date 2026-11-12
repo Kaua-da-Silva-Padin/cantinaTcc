@@ -1,15 +1,35 @@
 import { useState } from "react";
 import {
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
   IconButton,
+  Radio,
+  RadioGroup,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
 } from "@mui/material";
 import { RiEyeLine, RiEyeOffLine } from "react-icons/ri";
 import { paymentMessage } from "../OrdersList/paymentMessage";
+
+const cancellationOptions = [
+  "Não Pagou",
+  "Não Compareceu",
+  "Pagamento Recusado",
+  "Não autorizado a retirar o pedido",
+  "Outro",
+  "Responder Depois",
+];
 
 function parseItems(items) {
   if (typeof items === "string") {
@@ -91,11 +111,7 @@ function OrderHeader({ order, payment }) {
             backgroundColor: `color-mix(in srgb, ${paymentColor} 24%, white)`,
           }}
         >
-          <strong>
-            {isVerificationVisible
-              ? order.verification_code || "—"
-              : "*****"}
-          </strong>
+          <strong>{isVerificationVisible ? order.verification_code || "—" : "*****"}</strong>
           <IconButton
             size="small"
             aria-label={isVerificationVisible ? "Ocultar código de verificação" : "Mostrar código de verificação"}
@@ -112,7 +128,142 @@ function OrderHeader({ order, payment }) {
   );
 }
 
-export default function OrderInfo({ order }) {
+function CancellationDialog({ order, open, loading, onClose, onConfirm }) {
+  const [reason, setReason] = useState("");
+  const [otherReason, setOtherReason] = useState("");
+  const otherReasonInvalid = reason === "Outro" && !otherReason.trim();
+
+  const close = () => {
+    setReason("");
+    setOtherReason("");
+    onClose();
+  };
+
+  const confirm = async () => {
+    if (!reason || otherReasonInvalid || loading) return;
+    const message = reason === "Outro"
+      ? otherReason.trim()
+      : reason === "Responder Depois"
+        ? "Waiting"
+        : reason;
+    if (await onConfirm(message)) close();
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={loading ? undefined : close}
+      aria-labelledby="cancel-order-title"
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle id="cancel-order-title">Cancelamento do pedido #{order.id}</DialogTitle>
+      <DialogContent>
+        <p>Qual o motivo do cancelamento?</p>
+        <FormControl>
+          <RadioGroup value={reason} onChange={(event) => setReason(event.target.value)}>
+            {cancellationOptions.map((option) => (
+              <FormControlLabel
+                key={option}
+                value={option}
+                control={<Radio />}
+                label={option}
+                disabled={loading}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+        {reason === "Outro" && (
+          <TextField
+            autoFocus
+            fullWidth
+            margin="dense"
+            label="Motivo do cancelamento"
+            value={otherReason}
+            onChange={(event) => setOtherReason(event.target.value)}
+            error={otherReasonInvalid}
+            helperText={otherReasonInvalid ? "Informe o motivo antes de confirmar." : ""}
+            disabled={loading}
+          />
+        )}
+      </DialogContent>
+      <DialogActions className="order-dialog-actions">
+        <Button
+          variant="contained"
+          onClick={confirm}
+          disabled={!reason || otherReasonInvalid || loading}
+          sx={{ backgroundColor: "black", color: "white", "&:hover": { backgroundColor: "#333" } }}
+        >
+          {loading ? <CircularProgress size={22} color="inherit" /> : "Confirmar cancelamento"}
+        </Button>
+        <Button variant="contained" color="error" onClick={close} disabled={loading}>
+          Não cancelar
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+function ProgressDialog({ order, action, open, loading, onClose, onConfirm }) {
+  const waitingForPayment = order.progress?.payment === "waiting";
+  const actionText = action === "close" ? "FECHAR" : "FINALIZAR";
+  const confirm = async () => {
+    if (loading) return;
+    const finalidade = action === "close" ? "Fechar" : "Finalizar";
+    if (await onConfirm(finalidade)) onClose();
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={loading ? undefined : onClose}
+      aria-labelledby="update-order-title"
+      fullWidth
+      maxWidth="xs"
+    >
+      <DialogTitle id="update-order-title">Atenção!</DialogTitle>
+      <DialogContent>
+        {waitingForPayment ? (
+          action === "close" ? (
+            <span>Este cliente ainda <b>não</b> realizou o pagamento online. Você quer realmente <b>{actionText}</b> este pedido?</span>
+          ) : (
+            <span>Este cliente ainda não realizou o pagamento online. Você quer realmente <b>{actionText}</b> este pedido?</span>
+          )
+        ) : (
+          <span>Você realmente deseja {action === "close" ? "fechar" : "FINALIZAR"} este pedido?</span>
+        )}
+      </DialogContent>
+      <DialogActions className="order-dialog-actions">
+        <Button
+          variant="contained"
+          onClick={confirm}
+          disabled={loading}
+          sx={{ backgroundColor: "#39b54a", color: "white", "&:hover": { backgroundColor: "#2e963c" } }}
+        >
+          {loading ? <CircularProgress size={22} color="inherit" /> : "Sim"}
+        </Button>
+        <Button
+          variant="contained"
+          onClick={onClose}
+          disabled={loading}
+          sx={{ backgroundColor: "#39b54a", color: "white", "&:hover": { backgroundColor: "#2e963c" } }}
+        >
+          Não
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+export default function OrderInfo({
+  order,
+  actionLoading = false,
+  onCancelOrder,
+  onUpdateProgress,
+}) {
+  const [cancellationOpen, setCancellationOpen] = useState(false);
+  const [progressAction, setProgressAction] = useState(null);
+
   if (!order) {
     return (
       <section className="order-info order-info-empty" aria-label="Detalhes do pedido">
@@ -122,6 +273,9 @@ export default function OrderInfo({ order }) {
   }
 
   const items = parseItems(order.items);
+  const preparation = order.progress?.preparation;
+  const orderClosed = ["received", "canceled"].includes(preparation);
+  const isInProgress = preparation === "in progress";
 
   return (
     <section className="order-info" aria-label={`Detalhes do pedido número ${order.id}`}>
@@ -160,7 +314,50 @@ export default function OrderInfo({ order }) {
         <div className="order-info-total">
           TOTAL: {formatCurrency(order.total_price)}
         </div>
+        <div className="order-info-actions">
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => setCancellationOpen(true)}
+            disabled={orderClosed || actionLoading}
+          >
+            CANCELAR
+          </Button>
+          <Button
+            variant="contained"
+            className="order-action-finish"
+            onClick={() => setProgressAction("finish")}
+            disabled={orderClosed || actionLoading}
+          >
+            FINALIZAR
+          </Button>
+          <Button
+            variant="contained"
+            className={`order-action-close ${progressAction === "close" ? "is-confirming" : ""}`}
+            onClick={() => setProgressAction("close")}
+            disabled={isInProgress || orderClosed || actionLoading}
+          >
+            FECHAR PEDIDO
+          </Button>
+        </div>
       </div>
+
+      <CancellationDialog
+        key={`cancel-${order.id}`}
+        order={order}
+        open={cancellationOpen}
+        loading={actionLoading}
+        onClose={() => setCancellationOpen(false)}
+        onConfirm={onCancelOrder}
+      />
+      <ProgressDialog
+        order={order}
+        action={progressAction}
+        open={Boolean(progressAction)}
+        loading={actionLoading}
+        onClose={() => setProgressAction(null)}
+        onConfirm={onUpdateProgress}
+      />
     </section>
   );
 }
