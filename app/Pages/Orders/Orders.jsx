@@ -109,7 +109,7 @@ export default function Orders() {
 
   useEffect(() => {
     const clock = window.setInterval(() => setCurrentTime(new Date()), 1000);
-    setSideBarOn(window.innerWidth > 900);
+    setSideBarOn(window.innerWidth > 1024);
     return () => window.clearInterval(clock);
   }, []);
 
