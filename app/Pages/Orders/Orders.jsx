@@ -33,11 +33,11 @@ const adminLinks = [
 const ordersNavigationGroups = {
   speedDial: [
     { text: "Home", link: "/home" },
-    { text: "Registrar", link: "/" },
-    { text: "Login", link: "/login" },
     { text: "Cantina", link: "/buy" },
-    { text: "Pedidos", link: "/orders" },
     { text: "Administrar", link: "/adm" },
+    { text: "Pedidos", link: "/orders" },
+    { text: "Login", link: "/login" },
+    { text: "Registrar", link: "/" },
     { text: "Perfil", link: "/profile" },
   ],
   admin: adminLinks,

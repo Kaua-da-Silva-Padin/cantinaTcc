@@ -63,15 +63,23 @@ export default function MenuPageLinks() {
         };
     }, []);
 
-    const actions = [
-        { icon: <RiHomeFill />, name: 'Home', link: '/home' },
-        { icon: <RiUserAddFill />, name: 'Registrar', link: '/' },
-        { icon: <RiUserFill />, name: 'Login', link: '/login' },
-        user && { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' },
-        user?.type === 'admin' && { icon: <RiTableView />, name: 'Pedidos', link: '/orders' },
-        user?.type === 'admin' && { icon: <RiSettings3Fill/>, name: 'Administrar', link: '/adm' },
-        user ? { icon: <Avatar {...stringAvatar(user.name || 'User')} />, name: 'Perfil', link: '/profile' } : null
-    ].filter(Boolean);
+    const homeAction = { icon: <RiHomeFill />, name: 'Home', link: '/home' };
+    const cantinaAction = { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' };
+    const adminActions = [
+        { icon: <RiSettings3Fill />, name: 'Administrar', link: '/adm' },
+        { icon: <RiTableView />, name: 'Pedidos', link: '/orders' },
+    ];
+    const loginAction = { icon: <RiUserFill />, name: 'Login', link: '/login' };
+    const registerAction = { icon: <RiUserAddFill />, name: 'Registrar', link: '/' };
+    const profileAction = user
+        ? { icon: <Avatar {...stringAvatar(user.name || 'User')} />, name: 'Perfil', link: '/profile' }
+        : null;
+
+    const actions = user?.type === 'admin'
+        ? [homeAction, cantinaAction, ...adminActions, loginAction, registerAction, profileAction]
+        : user
+            ? [homeAction, cantinaAction, profileAction]
+            : [homeAction, loginAction, registerAction];
 
     return(
         <ScopedCssBaseline>

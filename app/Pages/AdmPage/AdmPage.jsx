@@ -56,11 +56,11 @@ export default function AdmPage() {
   const navigationGroups = {
     speedDial: [
       { text: "Home", link: "/home" },
-      { text: "Reg. Usuário", link: "/" },
-      { text: "Login", link: "/login" },
-      { text: "Comprar", link: "/buy" },
-      { text: "Pedidos", link: "/orders" },
+      { text: "Cantina", link: "/buy" },
       { text: "Administrar", link: "/adm" },
+      { text: "Pedidos", link: "/orders" },
+      { text: "Login", link: "/login" },
+      { text: "Registrar", link: "/" },
       { text: "Perfil", link: "/profile" },
     ],
     admin: toolsAdmPageBar,
