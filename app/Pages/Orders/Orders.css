@@ -107,6 +107,9 @@
 }
 
 .orders-admin-shell .order-info {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: .75rem;
   min-width: 0;
   min-height: 0;
   padding: .75rem;
@@ -116,14 +119,146 @@
   color: #111;
 }
 
-.orders-admin-shell .order-info .data-display {
-  color: #111;
-  background: white;
+.orders-admin-shell .order-info-empty {
+  place-content: center;
+  text-align: center;
 }
 
-.orders-admin-shell .order-info > div:last-child > div:last-child .MuiButton-root {
-  background-color: #111;
-  color: white;
+.order-info-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: stretch;
+  gap: .5rem;
+  min-width: 0;
+}
+
+.order-info-summary {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem;
+  border: 1px solid #bbb;
+  border-radius: .65rem;
+  background: #fafafa;
+}
+
+.order-info-summary-field {
+  min-width: 0;
+  display: grid;
+  gap: .15rem;
+  text-align: center;
+}
+
+.order-info-summary-field > span,
+.order-info-items .MuiTableHead-root .MuiTableCell-root {
+  color: rgb(0 0 0 / 60%);
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.order-info-summary-field > strong {
+  overflow-wrap: anywhere;
+  color: #111;
+  font-size: .95rem;
+  line-height: 1.1;
+}
+
+.order-info-number {
+  display: grid;
+  place-items: center;
+  min-width: 4.5rem;
+  padding: .5rem;
+  border: 1px solid #bbb;
+  border-radius: .65rem;
+  background: #fafafa;
+  color: #111;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.order-info-payment {
+  min-width: 6rem;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: .35rem;
+}
+
+.order-info-payment-label,
+.order-info-verification {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: .6rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.order-info-payment-label {
+  padding: .35rem;
+  font-size: .85rem;
+  line-height: 1.1;
+}
+
+.order-info-verification {
+  justify-content: space-between;
+  gap: .25rem;
+  min-width: 0;
+  padding: .1rem .25rem .1rem .6rem;
+  font-size: 1rem;
+}
+
+.order-info-verification > strong {
+  overflow-wrap: anywhere;
+}
+
+.order-info-verification .MuiIconButton-root {
+  flex: 0 0 auto;
+  color: inherit;
+}
+
+.orders-admin-shell .order-info-items {
+  min-height: 0;
+  overflow: auto;
+}
+
+.order-info-items .MuiTable-root {
+  font-family: Poppins, sans-serif;
+}
+
+.order-info-items .MuiTableCell-root {
+  padding: .65rem .4rem;
+  border-bottom: 0;
+  color: #111;
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+.order-info-items .MuiTableHead-root .MuiTableCell-root {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.order-info-items .MuiTableBody-root .MuiTableRow-root + .MuiTableRow-root .MuiTableCell-root {
+  border-top: 2px solid #ddd;
+}
+
+.order-info-footer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.order-info-total {
+  padding: .3rem .6rem;
+  border: 1px solid #111;
+  border-radius: .45rem;
+  background: #f7f7f7;
+  color: #111;
+  font-size: 1.45rem;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 @media (max-width: 900px) {
@@ -169,6 +304,16 @@
     padding: .75rem;
   }
 
+  .order-info-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .order-info-payment {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, .8fr);
+    grid-template-rows: auto;
+  }
+
   .orders-loading-overlay {
     top: 5.2rem;
   }
@@ -188,6 +333,73 @@
     grid-template-columns: minmax(0, 1fr);
     gap: .5rem;
     padding: .65rem;
+  }
+
+  .orders-admin-shell .order-info {
+    min-height: 45dvh;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    padding: .5rem;
+  }
+
+  .order-info-header {
+    grid-template-columns: minmax(0, 1fr) auto minmax(4.5rem, .7fr);
+    gap: .3rem;
+  }
+
+  .order-info-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .2rem;
+    padding: .25rem;
+  }
+
+  .order-info-summary-field > span {
+    font-size: .62rem;
+  }
+
+  .order-info-summary-field > strong {
+    font-size: .65rem;
+  }
+
+  .order-info-number {
+    min-width: 2.8rem;
+    padding: .25rem;
+    font-size: 1.2rem;
+  }
+
+  .order-info-payment {
+    grid-column: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: .2rem;
+  }
+
+  .order-info-payment-label {
+    padding: .2rem;
+    font-size: .62rem;
+  }
+
+  .order-info-verification {
+    padding: .05rem .1rem .05rem .25rem;
+    font-size: .7rem;
+  }
+
+  .order-info-verification .MuiIconButton-root {
+    padding: .2rem;
+    font-size: .9rem;
+  }
+
+  .order-info-items .MuiTableCell-root {
+    padding: .4rem .2rem;
+    font-size: .65rem;
+  }
+
+  .order-info-items .MuiTableHead-root .MuiTableCell-root {
+    font-size: .62rem;
+  }
+
+  .order-info-total {
+    padding: .2rem .35rem;
+    font-size: .8rem;
   }
 
   .orders-loading-overlay {

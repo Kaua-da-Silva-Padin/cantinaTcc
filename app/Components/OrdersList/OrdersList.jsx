@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { FaArrowsRotate } from "react-icons/fa6";
+import { paymentMessage } from "./paymentMessage";
 import "./OrdersList.css";
 
 function convertTime(timestamp) {
@@ -22,13 +23,6 @@ function convertTime(timestamp) {
     minute: "2-digit",
     hour12: false,
   });
-}
-
-function paymentMessage(payment) {
-  if (payment === "waiting") return ["Não Pago", "#ff0000"];
-  if (payment === "paid") return ["Pago", "#36a900"];
-  if (payment === "local") return ["No Local", "#ff751f"];
-  return ["—", "#111111"];
 }
 
 function getTotalItems(items) {
