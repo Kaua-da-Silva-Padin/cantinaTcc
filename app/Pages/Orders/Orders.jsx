@@ -1,223 +1,274 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Avatar,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+} from "@mui/material";
+import { Link } from "react-router";
+import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
 import OrdersList from "../../Components/OrdersList/OrdersList";
 import OrderInfo from "../../Components/OrdersInfo/OrdersInfo";
-import { useState, useCallback, useEffect } from "react";
-import "../../Pages/Orders/Orders.css";
+import { stringAvatar } from "../../Components/MenuPageLinks/MenuPageLinks";
+import packageJson from "../../../package.json";
 import supabase from "../../supabaseClient";
+import "./Orders.css";
 
-function newOrder(orderData) {
-  // This function will append an order to the end of the list when a new order appears.
-  //     - Upon the NewOrderEvent() webhook - Or something like that
+const REFRESH_COOLDOWN_MS = 7000;
+const REFRESH_LOCKOUT_MS = 40000;
+const MAX_FAILED_REFRESHES = 5;
+
+const adminLinks = [
+  { text: "Menu", link: "/adm" },
+  { text: "Home", link: "/home" },
+  { text: "Reg. Usuário", link: "/" },
+  { text: "Login", link: "/login" },
+  { text: "Comprar", link: "/buy" },
+  { text: "Perfil", link: "/profile" },
+  { text: "Pedidos", link: "/orders" },
+  { text: "Estoque", link: "/stock" },
+  { text: "Finanças", link: "/finance" },
+  { text: "Estatísticas", link: "/statistics" },
+  { text: "Funcionários", link: "/employees" },
+  { text: "Configurações", link: "/settings" },
+];
+
+function getErrorCode(error) {
+  return error?.code ?? error?.message ?? "UNKNOWN";
 }
 
 export default function Orders() {
   const [orders, setOrders] = useState(null);
-  const [activeOrders, setActiveOrders] = useState({}); // State para lista de ordens que estão com o progress.preparation != received
-  const [endedOrders, setEndedOrders] = useState(); // State dos pedidos preparados mas ainda não retirados
-  const [actualOrder, setActualOrder] = useState(0);
-  const [orderInfo, setOrderInfo] = useState();
-  const time = new Date();
+  const [orderInfo, setOrderInfo] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [initialError, setInitialError] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isCoolingDown, setIsCoolingDown] = useState(false);
+  const [isLockedOut, setIsLockedOut] = useState(false);
+  const [refreshIndicator, setRefreshIndicator] = useState(null);
+  const [refreshErrorCode, setRefreshErrorCode] = useState("");
+  const [failedRefreshes, setFailedRefreshes] = useState(0);
+  const [sideBarOn, setSideBarOn] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const cooldownTimer = useRef(null);
+  const indicatorTimer = useRef(null);
+  const lockoutTimer = useRef(null);
+  const failedRefreshesRef = useRef(0);
 
-  const getToday = (timestamp) => {
-    let orderDate = timestamp;
-    orderDate = new Date(timestamp);
-    let today = new Date();
-
-    return (
-      orderDate.getDate() === today.getDate() &&
-      orderDate.getMonth() === today.getMonth() &&
-      orderDate.getYear() === today.getYear()
-    );
-  };
+  const loggedInUser = typeof sessionStorage !== "undefined"
+    ? sessionStorage.getItem("loggedInUser")
+    : null;
+  let parsedUser = null;
+  try {
+    parsedUser = loggedInUser ? JSON.parse(loggedInUser) : null;
+  } catch {
+    parsedUser = null;
+  }
+  const loggedInUserName = parsedUser?.name ?? parsedUser?.nome ?? loggedInUser ?? "Funcionário";
 
   const fetchOrders = useCallback(async () => {
-    try {
-      const { data, error } = await supabase.from("sales").select("*").order('bought_at', { ascending: false }); //O dado retornado é um array de objetos
-      if (error) throw error;
-      console.log(data);
-      setOrders(data);
-    } catch (error) {
-      console.error("Erro ao buscar dados:", error);
-    }
+    const { data, error } = await supabase
+      .from("sales")
+      .select("*")
+      .order("bought_at", { ascending: true })
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+
+    const visibleOrders = (data ?? []).filter((order) => (
+      ["in progress", "ready"].includes(order.progress?.preparation)
+    ));
+    setOrders(visibleOrders);
+    setInitialError("");
   }, []);
-  
-   const ordersSeparator = (params) => {
-    if (!params){
-      return
-    }
-
-    const orders1 = params.map((param) => {
-      if (!getToday(param?.bought_at)){
-        return
-      }
-      return param
-    })
-
-    setActiveOrders(orders1)
-   }
-
 
   useEffect(() => {
-    fetchOrders();
-    ordersSeparator(orders);
+    let active = true;
+    const loadInitialOrders = async () => {
+      try {
+        await fetchOrders();
+      } catch (error) {
+        console.error("Erro ao buscar pedidos:", error);
+        if (active) {
+          setOrders([]);
+          setInitialError(`Não foi possível carregar os pedidos. Erro: ${getErrorCode(error)}`);
+        }
+      }
+    };
+
+    loadInitialOrders();
+    return () => { active = false; };
   }, [fetchOrders]);
 
-  let _orders = [
-    {
-      id: 1,
-      entrance: "09:10",
-      customer: {
-        name: "João Pedro",
-        id: "26905",
-      },
-      items: [
-        { id: 5, quantity: 1 },
-        { id: 10, quantity: 2 },
-        { id: 40, quantity: 1 },
-      ],
-      price: 10,
-    },
-    {
-      id: 2,
-      entrance: "09:15",
-      customer: {
-        name: "Maria Silva",
-        id: "26906",
-      },
-      items: [
-        { id: 2, quantity: 1 },
-        { id: 15, quantity: 1 },
-      ],
-      price: 24.5,
-    },
-    {
-      id: 3,
-      entrance: "09:22",
-      customer: {
-        name: "Carlos Eduardo",
-        id: "26907",
-      },
-      items: [{ id: 8, quantity: 3 }],
-      price: 18.0,
-    },
-    {
-      id: 4,
-      entrance: "09:30",
-      customer: {
-        name: "Ana Beatris",
-        id: "26908",
-      },
-      items: [
-        { id: 1, quantity: 1 },
-        { id: 12, quantity: 2 },
-        { id: 30, quantity: 1 },
-      ],
-      price: 42.0,
-    },
-    {
-      id: 5,
-      entrance: "09:45",
-      customer: {
-        name: "Lucas Santos",
-        id: "26909",
-      },
-      items: [{ id: 5, quantity: 2 }],
-      price: 15.0,
-    },
-    {
-      id: 6,
-      entrance: "10:02",
-      customer: {
-        name: "Fernanda Lima",
-        id: "26910",
-      },
-      items: [
-        { id: 3, quantity: 1 },
-        { id: 20, quantity: 1 },
-        { id: 22, quantity: 1 },
-        { id: 40, quantity: 2 },
-      ],
-      price: 58.9,
-    },
-    {
-      id: 7,
-      entrance: "10:15",
-      customer: {
-        name: "Gabriel Costa",
-        id: "26911",
-      },
-      items: [{ id: 10, quantity: 1 }],
-      price: 8.5,
-    },
-    {
-      id: 8,
-      entrance: "10:20",
-      customer: {
-        name: "Juliana Oliveira",
-        id: "26912",
-      },
-      items: [
-        { id: 7, quantity: 2 },
-        { id: 14, quantity: 1 },
-      ],
-      price: 31.0,
-    },
-    {
-      id: 9,
-      entrance: "10:35",
-      customer: {
-        name: "Rodrigo Alves",
-        id: "26913",
-      },
-      items: [
-        { id: 4, quantity: 1 },
-        { id: 18, quantity: 3 },
-      ],
-      price: 27.5,
-    },
-    {
-      id: 10,
-      entrance: "10:42",
-      customer: {
-        name: "Camila Rocha",
-        id: "26914",
-      },
-      items: [
-        { id: 9, quantity: 1 },
-        { id: 11, quantity: 1 },
-        { id: 25, quantity: 1 },
-      ],
-      price: 36.0,
-    },
-    {
-      id: 11,
-      entrance: "11:00",
-      customer: {
-        name: "Mateus Ferreira",
-        id: "26915",
-      },
-      items: [{ id: 16, quantity: 2 }],
-      price: 19.9,
-    },
-  ];
+  useEffect(() => {
+    const clock = window.setInterval(() => setCurrentTime(new Date()), 1000);
+    setSideBarOn(window.innerWidth > 900);
+    return () => window.clearInterval(clock);
+  }, []);
 
-  // setOrders([...orders, exampleOrder]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setActiveSearch(searchText.trim()), 1000);
+    return () => window.clearTimeout(timer);
+  }, [searchText]);
+
+  useEffect(() => () => {
+    window.clearTimeout(cooldownTimer.current);
+    window.clearTimeout(indicatorTimer.current);
+    window.clearTimeout(lockoutTimer.current);
+  }, []);
+
+  const handleRefresh = async () => {
+    if (isRefreshing || isCoolingDown || isLockedOut) return;
+
+    setIsRefreshing(true);
+    setRefreshIndicator(null);
+    setRefreshErrorCode("");
+
+    let succeeded = false;
+    let errorCode = "";
+    try {
+      await fetchOrders();
+      succeeded = true;
+      failedRefreshesRef.current = 0;
+      setFailedRefreshes(0);
+    } catch (error) {
+      console.error("Erro ao atualizar pedidos:", error);
+      errorCode = getErrorCode(error);
+      setRefreshErrorCode(errorCode);
+      setRefreshIndicator("error");
+      const attempts = failedRefreshesRef.current + 1;
+      failedRefreshesRef.current = attempts;
+      setFailedRefreshes(attempts);
+    } finally {
+      setIsRefreshing(false);
+      if (succeeded) {
+        setRefreshIndicator("success");
+        setIsCoolingDown(true);
+        window.clearTimeout(indicatorTimer.current);
+        indicatorTimer.current = window.setTimeout(() => setRefreshIndicator(null), REFRESH_COOLDOWN_MS);
+        window.clearTimeout(cooldownTimer.current);
+        cooldownTimer.current = window.setTimeout(() => setIsCoolingDown(false), REFRESH_COOLDOWN_MS);
+      } else if (failedRefreshesRef.current >= MAX_FAILED_REFRESHES) {
+        setIsLockedOut(true);
+        window.clearTimeout(lockoutTimer.current);
+        lockoutTimer.current = window.setTimeout(() => {
+          failedRefreshesRef.current = 0;
+          setFailedRefreshes(0);
+          setIsLockedOut(false);
+        }, REFRESH_LOCKOUT_MS);
+      } else {
+        setIsCoolingDown(true);
+        window.clearTimeout(cooldownTimer.current);
+        cooldownTimer.current = window.setTimeout(() => setIsCoolingDown(false), REFRESH_COOLDOWN_MS);
+      }
+    }
+
+    if (errorCode) setRefreshErrorCode(errorCode);
+  };
+
+  const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
+  const visibleOrders = (orders ?? []).filter((order) => {
+    if (!activeSearch) return true;
+    if (activeSearch.startsWith("##")) {
+      const customerId = order.user_id
+        ?? order.client_id
+        ?? order.customer_id
+        ?? order.user?.id
+        ?? order.customer?.id;
+      return String(customerId ?? "") === activeSearch.slice(2);
+    }
+    if (activeSearch.startsWith("#")) {
+      return String(order.id) === activeSearch.slice(1);
+    }
+    return false;
+  });
+
+  const handleSelectOrder = (order) => {
+    setSelectedOrderId(order.id);
+    setOrderInfo(order);
+  };
+
   return (
-    <>
-      <button onClick={fetchOrders}> HI </button>
-      <div className="orders-container">
-        <OrdersList
-          orders={orders}
-          setActualOrder={setActualOrder}
-          setOrderInfo={setOrderInfo}
-        />
-        <OrderInfo order={orderInfo} /> {/* The first order of the list. */}
-      </div>
-    </>
+    <div className={`orders-admin-shell ${sideBarOn ? "sideBarOn" : "sideBarOff"}`}>
+      <aside className="orders-sidebar">
+        <AdmSideBar tools={adminLinks} />
+      </aside>
+      <main className="orders-main">
+        <header className="orders-navbar">
+          <button
+            type="button"
+            aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"}
+            onClick={() => setSideBarOn((current) => !current)}
+          >
+            <img src={sideBarOn ? "/imgs/closeicon.png" : "/imgs/more.png"} alt="" />
+          </button>
+          <div className="orders-navbar-status">
+            <span>
+              {`${currentTime.getDate()} de ${capitalize(currentTime.toLocaleDateString("pt-BR", { month: "long" }))} de ${currentTime.getFullYear()} ${currentTime.toLocaleTimeString("pt-BR")}`}
+            </span>
+            <span>Versão: {packageJson.version}</span>
+            <span className="orders-system-status">Status do Sistema: Ativo</span>
+            <Link to="/profile" className="orders-user-link">
+              <b>{loggedInUserName}</b>
+              <Avatar {...stringAvatar(loggedInUserName || "User")} />
+            </Link>
+          </div>
+        </header>
+
+        <section className="orders-workspace" aria-label="Pedidos">
+          <OrdersList
+            orders={visibleOrders}
+            loading={orders === null}
+            error={initialError}
+            selectedOrderId={selectedOrderId}
+            searchText={searchText}
+            onSearchTextChange={setSearchText}
+            onSelectOrder={handleSelectOrder}
+            onRefresh={handleRefresh}
+            refreshDisabled={isRefreshing || isCoolingDown || isLockedOut}
+            refreshLoading={isRefreshing}
+            refreshIndicator={refreshIndicator}
+            failedRefreshes={failedRefreshes}
+          />
+          <OrderInfo order={orderInfo} />
+        </section>
+      </main>
+
+      <Dialog
+        open={Boolean(refreshErrorCode)}
+        onClose={() => setRefreshErrorCode("")}
+        aria-labelledby="orders-refresh-error-title"
+      >
+        <DialogTitle id="orders-refresh-error-title">Erro!</DialogTitle>
+        <DialogContent>
+          Não foi possível procurar novos pedidos.
+          <br />
+          <b>Erro: {refreshErrorCode}</b>
+          <br />
+          CONTATE O TI O MAIS RÁPIDO POSSÍVEL!
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setRefreshErrorCode("")}
+            variant="contained"
+            sx={{ backgroundColor: "black", color: "white", "&:hover": { backgroundColor: "#333" } }}
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {orders === null && (
+        <div className="orders-loading-overlay" role="status" aria-live="polite">
+          <CircularProgress aria-label="Carregando pedidos" />
+          <span>Carregando pedidos...</span>
+        </div>
+      )}
+    </div>
   );
 }
-
-/*
-IDEAS:
-    - Try with <Table> element structure instead of <Stack>
-        It has the sticky title feature, and probably better to align.
-*/

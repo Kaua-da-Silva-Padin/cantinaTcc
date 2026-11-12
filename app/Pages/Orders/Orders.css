@@ -1,44 +1,196 @@
-:root {
-    --data-display-bg: #fff;
-    --data-display-color: #000;
-    --border-radius: .2em;
-    --grid-gap: .5em;
+.orders-admin-shell {
+  --orders-orange: #ff751f;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 17.5rem minmax(0, 1fr);
+  color: #111;
+  background: #f7f7f7;
+  font-family: Poppins, sans-serif;
 }
 
-.orders-container {
-    border: 2px solid red;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    gap: var(--grid-gap);
-    margin: auto 2rem;
-
-    & {
-        min-height: 10rem;
-    }
+.orders-admin-shell.sideBarOff {
+  grid-template-columns: 0 minmax(0, 1fr);
 }
 
-.data-display {
-    font-weight: bold;
-    background-color: var(--data-display-bg);
-    color: var(--data-display-color);
-    border-radius: var(--border-radius);
+.orders-sidebar {
+  min-width: 0;
+  overflow: hidden;
 }
 
-.order-info {
-    display: grid;
-    gap: var(--grid-gap);
-    grid-template-rows: 1fr 3fr 1fr;
-    
-
-    > .first-row {
-        display: grid;
-        gap: var(--grid-gap);
-        grid-template-columns: 3fr 1fr;
-    }
+.sideBarOff .orders-sidebar {
+  width: 0;
 }
 
-.ordersRow{
-    border: orange solid 0.2em;
+.orders-main {
+  position: relative;
+  min-width: 0;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 5.2rem minmax(0, 1fr);
+}
+
+.orders-navbar {
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  color: white;
+  background: linear-gradient(100deg, #ff8b08, #ff990b);
+}
+
+.orders-navbar > button {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.orders-navbar > button img {
+  width: 2rem;
+  height: 2rem;
+  filter: invert(1);
+}
+
+.orders-navbar-status {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .9rem;
+}
+
+.orders-navbar-status > span {
+  padding: .25rem .55rem;
+  color: #111;
+  background: #fff4aa;
+  border: 1px solid #8f7e00;
+  border-radius: .5rem;
+}
+
+.orders-navbar-status > .orders-system-status {
+  background: #caffc0;
+  border-color: #55a54d;
+}
+
+.orders-user-link {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-left: .5rem;
+  color: white;
+  text-decoration: none;
+}
+
+.orders-workspace {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(18rem, .8fr) minmax(0, 1.2fr);
+  gap: .5rem;
+  padding: 1rem;
+}
+
+.orders-loading-overlay {
+  position: fixed;
+  inset: 5.2rem 0 0;
+  z-index: 10;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+  color: #222;
+  background: #ffffffb8;
+  backdrop-filter: blur(8px);
+  font-size: 1.25rem;
+}
+
+.orders-admin-shell .order-info {
+  min-width: 0;
+  min-height: 0;
+  padding: .75rem;
+  border: 2px solid var(--orders-orange);
+  border-radius: 1em;
+  background: white;
+  color: #111;
+}
+
+.orders-admin-shell .order-info .data-display {
+  color: #111;
+  background: white;
+}
+
+.orders-admin-shell .order-info > div:last-child > div:last-child .MuiButton-root {
+  background-color: #111;
+  color: white;
+}
+
+@media (max-width: 900px) {
+  .orders-admin-shell,
+  .orders-admin-shell.sideBarOff {
+    display: block;
+  }
+
+  .orders-sidebar {
+    position: absolute;
+    z-index: 8;
+    width: 0;
+    height: 0;
+  }
+
+  .sideBarOn .orders-sidebar {
+    width: min(19rem, 78vw);
+    height: auto;
+  }
+
+  .sideBarOn .orders-sidebar::after {
+    content: "";
+    position: fixed;
+    inset: 0 0 0 min(19rem, 78vw);
+    z-index: -1;
+    background: #0005;
+    backdrop-filter: blur(4px);
+  }
+
+  .orders-navbar {
+    position: relative;
+    padding: 0 .75rem;
+  }
+
+  .orders-navbar-status > span,
+  .orders-navbar-status > b {
+    display: none;
+  }
+
+  .orders-workspace {
+    min-height: calc(100dvh - 5.2rem);
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    padding: .75rem;
+  }
+
+  .orders-loading-overlay {
+    top: 5.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .orders-main {
+    grid-template-rows: 4.3rem minmax(0, 1fr);
+  }
+
+  .orders-navbar {
+    padding: 0 .6rem;
+  }
+
+  .orders-workspace {
+    align-content: start;
+    grid-template-columns: minmax(0, 1fr);
+    gap: .5rem;
+    padding: .65rem;
+  }
+
+  .orders-loading-overlay {
+    top: 4.3rem;
+  }
 }

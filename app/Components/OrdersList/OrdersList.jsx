@@ -1,107 +1,151 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import "../../Pages/Orders/Orders.css";
-import supabase from "../../supabaseClient";
-import { useState } from "react";
+import {
+  CircularProgress,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Tooltip,
+} from "@mui/material";
+import { FaArrowsRotate } from "react-icons/fa6";
+import "./OrdersList.css";
 
-export default function OrdersList({ orders, setActualOrder, setOrderInfo }) {
+function convertTime(timestamp) {
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return "—";
 
-  function convertTime(a) {
-    const date = new Date(a);
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+}
 
-    const time = date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
+function paymentMessage(payment) {
+  if (payment === "waiting") return ["Não Pago", "#ff0000"];
+  if (payment === "paid") return ["Pago", "#36a900"];
+  if (payment === "local") return ["No Local", "#ff751f"];
+  return ["—", "#111111"];
+}
 
-    return time;
-  }
+function getTotalItems(items) {
+  if (!Array.isArray(items)) return 0;
+  return items.reduce((total, item) => total + (Number(item.qty) || 0), 0);
+}
 
-  function paymentMessage(message){
-    if (message == "waiting"){
-      return ["Não Pago", "red"];
-    }
-
-    if (message == "paid"){
-      return ["Pago", "green"];
-    }
-
-    if (message == "local"){
-      return ["No Local", "#0073c0"];
-    }
-  }
-
-  // Helper function to calculate total items for a specific order
-  const getTotalItems = (items) => {
-    if (!items || !Array.isArray(items)) return 0;
-    return items.reduce((total, item) => total + (item.qty || 0), 0);
-  };
-
+export default function OrdersList({
+  orders,
+  loading,
+  error,
+  selectedOrderId,
+  searchText,
+  onSearchTextChange,
+  onSelectOrder,
+  onRefresh,
+  refreshDisabled,
+  refreshLoading,
+  refreshIndicator,
+  failedRefreshes,
+}) {
   return (
-    <>
-      <TableContainer
-        className="bg-dark rounded-2 p-2"
-        sx={{
-          maxHeight: "80dvh",
-        }}
-      >
-        <Table>
-          <TableBody
-            sx={{
-              overflow: "auto",
-            }}
-          >
-            {orders && orders.length > 0 ? (
-              orders.map((order) => (
-                <TableRow
-                  key={order.id}
-                  className="bg-white ordersRow"
-                  onClick={() => {
-                    setActualOrder(order.id - 1);
-                    setOrderInfo(orders.find((item) => item.id == order.id));
-                  }}
-                >
-                  <TableCell align="center" className="fw-bold fs-6">
-                    <span className="d-block text-muted small">ID</span>#
-                    {order.id}
-                  </TableCell>
-                  <TableCell align="center" className="fw-bold fs-6">
-                    <span className="d-block text-muted small">Entrada</span>
-                    {order.bought_at ? convertTime(order.bought_at) : "00:00"}
-                  </TableCell>
-                  <TableCell align="center" className="fw-bold fs-6">
-                    <span className="d-block text-muted small">Cliente</span>
-                    {order.user_name ? order.user_name : "null"}
-                  </TableCell>
-                  <TableCell align="center" className="fw-bold fs-6">
-                    <span className="d-block text-muted small">Itens</span>
-                    {getTotalItems(order.items)}
-                  </TableCell>
-                  <TableCell align="center" className="fw-bold fs-6">
-                    <span className="d-block text-muted small">Valor</span>
-                    R$ {order.total_price}
-                  </TableCell>
-                  <TableCell align="center" className="fw-bold fs-6" sx={{color: order.progress?.payment ? paymentMessage(order.progress.payment)[1] : "inherit"}}>
-                    <span className="d-block text-muted small">Pagamento</span>
-                    {order.progress?.payment ? paymentMessage(order.progress.payment)[0] : "null"}
-                  </TableCell>
-                </TableRow>
-              ))
+    <section className="orders-list-panel" aria-label="Lista de pedidos">
+      <div className="orders-list-toolbar">
+        <h1>Pedidos</h1>
+        <TextField
+          className="orders-search"
+          size="small"
+          value={searchText}
+          onChange={(event) => onSearchTextChange(event.target.value)}
+          placeholder="Ex: #8 ou ##9"
+          inputProps={{ "aria-label": "Pesquisar por pedido ou cliente" }}
+        />
+        <Tooltip title={refreshLoading ? "Buscando pedidos..." : "Atualizar pedidos"}>
+          <span className="orders-refresh-wrap">
+            <IconButton
+              className="orders-refresh-button"
+              aria-label="Atualizar pedidos"
+              onClick={onRefresh}
+              disabled={refreshDisabled}
+            >
+              {refreshLoading
+                ? <CircularProgress size={19} color="inherit" />
+                : <FaArrowsRotate aria-hidden="true" />}
+              {!refreshLoading && refreshIndicator && (
+                <span
+                  className={`orders-refresh-indicator ${refreshIndicator === "error" ? "is-error" : "is-success"}`}
+                  aria-label={refreshIndicator === "error"
+                    ? `Falha na atualização. ${failedRefreshes} tentativas`
+                    : "Atualização concluída"}
+                />
+              )}
+            </IconButton>
+          </span>
+        </Tooltip>
+      </div>
+
+      <TableContainer className="orders-table-container">
+        <Table size="small" stickyHeader aria-label="Pedidos em andamento ou prontos">
+          <TableHead>
+            <TableRow>
+              <TableCell>IDP</TableCell>
+              <TableCell>Cliente</TableCell>
+              <TableCell>Entrada</TableCell>
+              <TableCell>Itens</TableCell>
+              <TableCell>Valor</TableCell>
+              <TableCell>Pagamento</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center">Carregando pedidos...</TableCell>
+              </TableRow>
+            ) : error ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center" className="orders-list-error">
+                  {error}
+                </TableCell>
+              </TableRow>
+            ) : orders.length > 0 ? (
+              orders.map((order) => {
+                const [paymentLabel, paymentColor] = paymentMessage(order.progress?.payment);
+                return (
+                  <TableRow
+                    key={order.id}
+                    className={`orders-row ${selectedOrderId === order.id ? "is-selected" : ""}`}
+                    hover
+                    onClick={() => onSelectOrder(order)}
+                    aria-selected={selectedOrderId === order.id}
+                  >
+                    <TableCell align="center">#{order.id}</TableCell>
+                    <TableCell align="center">{order.user_name || "—"}</TableCell>
+                    <TableCell align="center">{order.bought_at ? convertTime(order.bought_at) : "—"}</TableCell>
+                    <TableCell align="center">{getTotalItems(order.items)}</TableCell>
+                    <TableCell align="center">
+                      {Number(order.total_price).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </TableCell>
+                    <TableCell align="center" sx={{ color: paymentColor, fontWeight: 700 }}>
+                      {paymentLabel}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
-                <TableCell colSpan={6} align="center" className="text-white">
-                  Nenhum Pedido Ainda
+                <TableCell colSpan={6} align="center">
+                  {searchText.trim() ? "Nenhum pedido encontrado." : "Nenhum pedido em andamento ou pronto."}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </TableContainer>
-    </>
+    </section>
   );
 }

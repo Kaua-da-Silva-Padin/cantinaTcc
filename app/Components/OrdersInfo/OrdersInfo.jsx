@@ -8,13 +8,6 @@ import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 // Make it a table!!!
 function FirstRow({ order }) {
-    const classes="data-display fs-3";
-    const style={
-        display: "grid",
-        gridTemplateRows: "1fr 1fr",
-        gridTemplateColumns: "1fr 3fr"
-    };
-
     return (
         <div className="first-row">
             <TableContainer className="data-display">
@@ -83,9 +76,9 @@ export default function OrderInfo({ order }){
                 R$ {order?.total_price}
             </div>
             <div className="d-flex justify-content-center align-items-center fs-2">
-                <Button variant="containted" className="fs-2 p-3 fw-bold" sx={{
-                    bgcolor: "pink",
-                    color: "black",
+                <Button variant="contained" className="fs-2 p-3 fw-bold" sx={{
+                    bgcolor: "black",
+                    color: "white",
                     width: "90%"
                 }}>Finalizar</Button>
             </div>
