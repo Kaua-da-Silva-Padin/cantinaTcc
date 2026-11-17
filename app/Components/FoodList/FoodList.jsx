@@ -101,6 +101,7 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
             total_price: cartProducts.reduce((acc, item) => acc + (item.price * item.quantity), 0),
             products: cartProducts.map((product) => {
                 return {
+                    id: product.id,
                     qty: product.quantity,
                     price_unit: product.price,
                     price_total: product.price * product.quantity,
