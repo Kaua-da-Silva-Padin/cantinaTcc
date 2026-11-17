@@ -68,6 +68,7 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
                     );
                 }
                 return [...prev, { 
+                    id: product.id,
                     title: product.title, 
                     quantity: value, 
                     price: product.price, 
