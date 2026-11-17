@@ -73,6 +73,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
 
     // Mapeia a lista de produtos e a coloca em uma nova lista porém agora com sua imagem, tirada do Cloudinary.
     products.map(item => {
+        let foodId = item.id;
         let foodName = item.name;
         let foodKind = item.kind;
         let foodPrice = item.price;
@@ -80,6 +81,7 @@ export default function FoodTable({ filterTxt, filterTab, cartPrice, cartProduct
 
         foodData.push({
             img: createCloudinaryImage(cld, foodName),
+            id: foodId,
             title: foodName,
             kind: foodKind,
             price: foodPrice,
