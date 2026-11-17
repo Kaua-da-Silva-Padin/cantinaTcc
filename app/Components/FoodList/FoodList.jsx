@@ -99,6 +99,7 @@ export default function FoodList({ cartProducts, setCartProducts, setCartPrice, 
         const buyData = {
             user: user,
             total_price: cartProducts.reduce((acc, item) => acc + (item.price * item.quantity), 0),
+            progress: null,
             products: cartProducts.map((product) => {
                 return {
                     id: product.id,
