@@ -295,7 +295,7 @@ export default function OrderInfo({
           <TableBody>
             {items.length > 0 ? items.map((item, index) => (
               <TableRow key={`${item.product_name ?? item.id ?? "item"}-${index}`}>
-                <TableCell align="center">{item.product_id ?? item.id ?? "—"}</TableCell>
+                <TableCell align="center">{item.id}</TableCell>
                 <TableCell align="center">{item.product_name || "—"}</TableCell>
                 <TableCell align="center">{formatCurrency(item.price_unit)}</TableCell>
                 <TableCell align="center">{item.qty ?? 0}</TableCell>
