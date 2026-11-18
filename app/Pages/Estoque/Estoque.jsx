@@ -3,6 +3,7 @@ import { Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Button } fro
 import { Link } from "react-router";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { FaTrash } from "react-icons/fa6";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
 import AdmDialog from "../../Components/AdmDialog/AdmDialog";
 import { createCloudinaryImage } from "../../utils/cloudinaryImage";
@@ -67,6 +68,7 @@ export default function Estoque() {
   const [actionSuccess, setActionSuccess] = useState("");
   const [sideBarOn, setSideBarOn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isMobileLayout, setIsMobileLayout] = useState(false);
 
   const loggedInUser = typeof sessionStorage !== "undefined"
     ? sessionStorage.getItem("loggedInUser")
@@ -96,6 +98,14 @@ export default function Estoque() {
     const clock = window.setInterval(() => setCurrentTime(new Date()), 1000);
     setSideBarOn(false);
     return () => window.clearInterval(clock);
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 1024px)");
+    const updateMobileLayout = () => setIsMobileLayout(mediaQuery.matches);
+    updateMobileLayout();
+    mediaQuery.addEventListener("change", updateMobileLayout);
+    return () => mediaQuery.removeEventListener("change", updateMobileLayout);
   }, []);
 
   useEffect(() => {
@@ -171,6 +181,19 @@ export default function Estoque() {
       if (nextQty === 0) delete modeSelection[product.id];
       else modeSelection[product.id] = nextQty;
       return { ...previous, [mode]: modeSelection };
+    });
+  };
+
+  const setStockTarget = (product, targetValue) => {
+    const targetStock = Number(targetValue);
+    if (!Number.isInteger(targetStock) || targetStock < 0) return;
+
+    setSelections((previous) => {
+      const modeSelection = { ...previous.Estoque };
+      const adjustment = targetStock - Number(product.stock);
+      if (adjustment === 0) delete modeSelection[product.id];
+      else modeSelection[product.id] = adjustment;
+      return { ...previous, Estoque: modeSelection };
     });
   };
 
@@ -314,21 +337,22 @@ export default function Estoque() {
               <i><b /></i>
               <span className={mode === "Vendas" ? "active" : ""}>Vendas</span>
             </button>
+            {mode === "Estoque" && (
+              <div className="stock-db-actions">
+                <button type="button" className="stock-add-db" onClick={() => openProductDialog("addDialog")} aria-label="Adicionar produto">+</button>
+                <button type="button" className="stock-edit-db" onClick={() => openProductDialog("editDialog")} aria-label="Editar produto">✎</button>
+                <button type="button" className="stock-delete-db" onClick={() => openProductDialog("removeDialog")} aria-label="Excluir produto"><FaTrash aria-hidden="true" /></button>
+              </div>
+            )}
           </div>
-
-          {mode === "Estoque" && (
-            <div className="stock-db-actions">
-              <button type="button" className="stock-add-db" onClick={() => openProductDialog("addDialog")} aria-label="Adicionar produto">+</button>
-              <button type="button" className="stock-edit-db" onClick={() => openProductDialog("editDialog")} aria-label="Editar produto">✎</button>
-              <button type="button" className="stock-delete-db" onClick={() => openProductDialog("removeDialog")} aria-label="Excluir produto">⌫</button>
-            </div>
-          )}
 
           <div className="stock-categories">
             {Object.entries(categoryNames).map(([kind, title]) => {
               const categoryProducts = visibleProducts(kind);
               if (activeSearch && categoryProducts.length === 0) return null;
-              const isExpanded = !activeSearch || expandedCategories[kind];
+              const isExpanded = activeSearch
+                ? Boolean(expandedCategories[kind])
+                : expandedCategories[kind] ?? !isMobileLayout;
               return (
                 <section className={`stock-category ${isExpanded ? "expanded" : ""}`} key={kind}>
                   <button type="button" className="stock-category-header" onClick={() => setExpandedCategories((previous) => ({ ...previous, [kind]: !isExpanded }))}>
@@ -355,7 +379,19 @@ export default function Estoque() {
                               <button type="button" className="stock-minus" disabled={minusDisabled || unavailable} onClick={() => updateSelection(product, -1)} aria-label={`Remover uma unidade de ${product.name}`}>
                                 {mode === "Estoque" ? "-" : "↓"}
                               </button>
-                              <span>{qty}</span>
+                              <input
+                                type="number"
+                                min="0"
+                                step="1"
+                                value={mode === "Estoque" ? Number(product.stock) + qty : Number(product.stock)}
+                                readOnly={mode === "Vendas"}
+                                onFocus={(event) => event.target.select()}
+                                onChange={(event) => {
+                                  if (event.target.value !== "") setStockTarget(product, event.target.value);
+                                }}
+                                aria-label={`${mode === "Estoque" ? "Estoque previsto de" : "Estoque atual de"} ${product.name}`}
+                                title={mode === "Estoque" ? "Estoque previsto após as alterações pendentes" : "Estoque atual"}
+                              />
                               <button type="button" className="stock-plus" disabled={plusDisabled || unavailable} onClick={() => updateSelection(product, 1)} aria-label={`Adicionar uma unidade de ${product.name}`}>
                                 {mode === "Estoque" ? "+" : "↑"}
                               </button>

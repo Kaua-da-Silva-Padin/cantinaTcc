@@ -74,7 +74,7 @@
 .stock-search-field { height: 3.5rem; display: flex; align-items: center; padding: 0 .8rem; background: white; border: 1px solid #ddd; border-radius: .9rem; }
 .stock-search-field input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; font-size: 1.05rem; }
 .stock-clear-search { border: 0; background: transparent; font-weight: 800; cursor: pointer; }
-.stock-suggestions { display: flex; align-items: center; gap: .7rem; padding: .7rem .25rem; white-space: nowrap; overflow-x: auto; }
+.stock-suggestions { display: flex; align-items: center; gap: .7rem; padding: .7rem .6rem; border-radius: 0 0 .75rem .75rem; background: #f0f0f0; white-space: nowrap; overflow-x: auto; }
 .stock-suggestions button { border: 0; background: transparent; color: #ff751f; cursor: pointer; }
 
 .stock-selection-panel {
@@ -111,11 +111,12 @@
 .stock-switch.vendas i b { transform: translateX(1.95rem); }
 .stock-switch span.active { font-weight: 900; }
 
-.stock-db-actions { grid-column: 3; grid-row: 3; position: absolute; right: .9rem; top: 8.8rem; display: flex; gap: .45rem; z-index: 3; }
-.stock-db-actions button { width: 3.2rem; height: 3.2rem; border-radius: .65rem; background: white; font-size: 1.6rem; cursor: pointer; }
-.stock-add-db { border: 2px solid #61cd68; color: #20a52b; }
-.stock-edit-db { border: 2px solid #44a9ef; color: #168bd1; }
-.stock-delete-db { border: 2px solid #f45a5a; color: #df2828; }
+.stock-db-actions { display: flex; justify-content: flex-end; gap: .45rem; }
+.stock-db-actions button { width: 3.2rem; height: 3.2rem; border-radius: .65rem; font-size: 1.6rem; cursor: pointer; }
+.stock-add-db { border: 2px solid #61cd68; background: #dcffd9; color: #20a52b; }
+.stock-edit-db { border: 2px solid #44a9ef; background: #d9f3ff; color: #168bd1; }
+.stock-delete-db { border: 2px solid #f45a5a; background: #ffdede; color: #df2828; }
+.stock-delete-db svg { font-size: 1.35rem; }
 
 .stock-categories { grid-column: 1 / -1; grid-row: 3; min-width: 0; min-height: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(16rem, 1fr); gap: .65rem; overflow-x: auto; overflow-y: hidden; padding: .1rem .1rem .45rem; }
 .stock-category { min-width: 0; min-height: 0; display: grid; grid-template-rows: 3.6rem minmax(0, 1fr); padding: .35rem; background: #fff; border: 1px solid #ddd; border-radius: 1.1rem; }
@@ -128,6 +129,10 @@
 .stock-product-info b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .stock-product-controls { display: grid; grid-template-columns: 2.6rem 1.8rem 2.6rem; align-items: center; text-align: center; }
 .stock-product-controls button { width: 2.6rem; height: 2.6rem; border: 0; border-radius: .5rem; color: white; font-size: 1.35rem; font-weight: 800; cursor: pointer; }
+.stock-product-controls input { width: 1.8rem; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; font-size: .95rem; text-align: center; }
+.stock-product-controls input[readonly] { cursor: default; }
+.stock-product-controls input::-webkit-inner-spin-button,
+.stock-product-controls input::-webkit-outer-spin-button { margin: 0; appearance: none; }
 .stock-minus { background: #d22; }
 .stock-plus { background: #51bb30; }
 .stock-product-controls button:disabled { background: #ddd; color: #999; cursor: not-allowed; }
@@ -151,9 +156,9 @@
   .stock-workspace { grid-template-columns: 1fr; grid-template-rows: auto auto auto minmax(0, 1fr); overflow-y: auto; }
   .stock-search-area { grid-column: 1; grid-row: 1; }
   .stock-selection-panel { grid-column: 1; grid-row: 2; grid-template-columns: minmax(0, 1fr) 1px 5rem 7rem; }
-  .stock-selection-controls { grid-column: 1; grid-row: 3; flex-direction: row; }
+  .stock-selection-controls { grid-column: 1; grid-row: 3; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stock-selection-controls > * { flex: 1; }
-  .stock-db-actions { position: static; grid-column: 1; grid-row: 4; justify-self: end; margin: .2rem 0; }
+  .stock-selection-controls .stock-db-actions { grid-column: 1 / -1; margin: 0; }
   .stock-categories { grid-column: 1; grid-row: 5; display: block; overflow: visible; padding: 0; }
   .stock-category { min-height: 4.2rem; margin-bottom: .6rem; }
   .stock-category:not(.expanded) .stock-category-header b { display: block; }
@@ -161,6 +166,7 @@
   .stock-category-header { justify-content: space-between; padding: 0 1.1rem; }
   .stock-category-header b { display: block; }
   .stock-category-list { grid-auto-flow: row; }
+  .stock-category:not(.expanded) { display: block; height: auto; }
 }
 
 @media (max-width: 600px) {
@@ -174,14 +180,15 @@
   .stock-selection-divider { grid-column: 2; grid-row: 1; height: 4.5rem; }
   .stock-total { grid-column: 3; grid-row: 1; }
   .stock-action-button { grid-column: 1 / -1; grid-row: 2; }
-  .stock-selection-controls { flex-wrap: wrap; }
+  .stock-selection-controls { grid-template-columns: 1fr; }
   .stock-clear-button, .stock-switch { width: 100%; }
-  .stock-db-actions { justify-self: stretch; }
+  .stock-selection-controls .stock-db-actions { justify-content: flex-end; }
   .stock-db-actions button { flex: 1; }
-  .stock-categories { grid-row: 5; }
+  .stock-categories { grid-row: 4; }
   .stock-category.expanded { height: 20rem; }
   .stock-product { grid-template-columns: 3.6rem minmax(0, 1fr) auto; }
   .stock-product img { width: 3.6rem; height: 3.6rem; }
   .stock-product-controls { grid-template-columns: 2.3rem 1.5rem 2.3rem; }
   .stock-product-controls button { width: 2.3rem; height: 2.3rem; }
+  .stock-product-controls input { width: 1.5rem; font-size: .85rem; }
 }
