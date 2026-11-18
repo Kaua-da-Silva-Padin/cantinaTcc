@@ -392,14 +392,14 @@ export default function Estoque() {
                                 type="number"
                                 min="0"
                                 step="1"
-                                value={mode === "Estoque" ? Number(product.stock) + qty : Number(product.stock)}
+                                value={Number(product.stock) + (mode === "Estoque" ? qty : -qty)}
                                 readOnly={mode === "Vendas"}
                                 onFocus={(event) => event.target.select()}
                                 onChange={(event) => {
                                   if (event.target.value !== "") setStockTarget(product, event.target.value);
                                 }}
-                                aria-label={`${mode === "Estoque" ? "Estoque previsto de" : "Estoque atual de"} ${product.name}`}
-                                title={mode === "Estoque" ? "Estoque previsto após as alterações pendentes" : "Estoque atual"}
+                                aria-label={`${mode === "Estoque" ? "Estoque previsto de" : "Estoque restante após a venda de"} ${product.name}`}
+                                title={mode === "Estoque" ? "Estoque previsto após as alterações pendentes" : "Estoque restante após as vendas selecionadas"}
                               />
                               <button type="button" className="stock-plus" disabled={plusDisabled || unavailable} onClick={() => updateSelection(product, 1)} aria-label={`Adicionar uma unidade de ${product.name}`}>
                                 {mode === "Estoque" ? "+" : "↑"}
