@@ -36,7 +36,8 @@
 .stock-main {
   grid-column: 2;
   min-width: 0;
-  min-height: 100dvh;
+  height: 100dvh;
+  min-height: 0;
   display: grid;
   grid-template-rows: 5.2rem minmax(0, 1fr);
 }
@@ -63,10 +64,11 @@
   position: relative;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(17rem, 1.25fr) minmax(30rem, 1.45fr) minmax(11rem, .75fr);
+  grid-template-columns: minmax(17rem, 1.25fr) minmax(30rem, 1.45fr) minmax(9.35rem, .6375fr);
   grid-template-rows: 3.5rem auto minmax(0, 1fr);
   gap: .7rem;
-  padding: .9rem;
+  box-sizing: border-box;
+  padding: .9rem .9rem 5vh;
   overflow: hidden;
 }
 
@@ -104,21 +106,21 @@
 
 .stock-selection-controls { grid-column: 3; grid-row: 1 / 3; display: flex; flex-direction: column; align-items: stretch; gap: .45rem; }
 .stock-clear-button { height: 3.2rem; border: 1px solid #f35a5a; border-radius: .6rem; background: #fff6f6; color: #e02020; font-weight: 800; }
-.stock-switch { height: 3.2rem; display: grid; grid-template-columns: 1fr 3.2rem 1fr; align-items: center; gap: .25rem; border: 0; border-radius: .6rem; background: #c9f2c2; cursor: pointer; }
+.stock-switch { height: 3.2rem; display: grid; grid-template-columns: minmax(0, 1fr) 2.72rem minmax(0, 1fr); align-items: center; gap: .1rem; padding: 0 .15rem; border: 0; border-radius: .6rem; background: #c9f2c2; font-size: .88rem; cursor: pointer; }
 .stock-switch.vendas { background: #ffd38d; }
 .stock-switch i { position: relative; height: 1.25rem; border-radius: 1rem; background: #777; }
 .stock-switch i b { position: absolute; top: .15rem; left: .15rem; width: .95rem; height: .95rem; border-radius: 50%; background: white; transition: transform .2s; }
-.stock-switch.vendas i b { transform: translateX(1.95rem); }
+.stock-switch.vendas i b { transform: translateX(1.47rem); }
 .stock-switch span.active { font-weight: 900; }
 
 .stock-db-actions { display: flex; justify-content: flex-end; gap: .45rem; }
-.stock-db-actions button { width: 3.2rem; height: 3.2rem; border-radius: .65rem; font-size: 1.6rem; cursor: pointer; }
+.stock-db-actions button { width: 2.72rem; height: 2.72rem; border-radius: .65rem; font-size: 1.45rem; cursor: pointer; }
 .stock-add-db { border: 2px solid #61cd68; background: #dcffd9; color: #20a52b; }
 .stock-edit-db { border: 2px solid #44a9ef; background: #d9f3ff; color: #168bd1; }
 .stock-delete-db { border: 2px solid #f45a5a; background: #ffdede; color: #df2828; }
 .stock-delete-db svg { font-size: 1.35rem; }
 
-.stock-categories { grid-column: 1 / -1; grid-row: 3; min-width: 0; min-height: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(16rem, 1fr); gap: .65rem; overflow-x: auto; overflow-y: hidden; padding: .1rem .1rem .45rem; }
+.stock-categories { grid-column: 1 / -1; grid-row: 3; min-width: 0; min-height: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(28rem, 1fr); gap: .65rem; overflow-x: auto; overflow-y: hidden; padding: .1rem .1rem .45rem; }
 .stock-category { min-width: 0; min-height: 0; display: grid; grid-template-rows: 3.6rem minmax(0, 1fr); padding: .35rem; background: #fff; border: 1px solid #ddd; border-radius: 1.1rem; }
 .stock-category-header { display: flex; align-items: center; justify-content: center; gap: .5rem; border: 0; background: transparent; font-weight: 800; cursor: pointer; }
 .stock-category-header b { display: none; }
@@ -127,9 +129,9 @@
 .stock-product img { width: 4.2rem; height: 4.2rem; object-fit: contain; }
 .stock-product-info { min-width: 0; display: grid; }
 .stock-product-info b { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.stock-product-controls { display: grid; grid-template-columns: 2.6rem 1.8rem 2.6rem; align-items: center; text-align: center; }
-.stock-product-controls button { width: 2.6rem; height: 2.6rem; border: 0; border-radius: .5rem; color: white; font-size: 1.35rem; font-weight: 800; cursor: pointer; }
-.stock-product-controls input { width: 1.8rem; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; font-size: .95rem; text-align: center; }
+.stock-product-controls { display: grid; grid-template-columns: 2.8rem 2.2rem 2.8rem; align-items: center; gap: .5rem; text-align: center; }
+.stock-product-controls button { width: 2.8rem; height: 2.8rem; border: 0; border-radius: .5rem; color: white; font-size: 1.4rem; font-weight: 800; cursor: pointer; }
+.stock-product-controls input { width: 2.2rem; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; font-size: 1rem; text-align: center; }
 .stock-product-controls input[readonly] { cursor: default; }
 .stock-product-controls input::-webkit-inner-spin-button,
 .stock-product-controls input::-webkit-outer-spin-button { margin: 0; appearance: none; }
@@ -153,7 +155,7 @@
   .stock-sidebar { position: fixed; z-index: 20; width: 17.5rem; height: 100dvh; transform: translateX(-100%); }
   .stock-admin-shell.sideBarOn .stock-sidebar { transform: translateX(0); }
   .stock-navbar-status > span:not(.stock-system-status) { display: none; }
-  .stock-workspace { grid-template-columns: 1fr; grid-template-rows: auto auto auto minmax(0, 1fr); overflow-y: auto; }
+  .stock-workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto minmax(0, 1fr); overflow-y: auto; padding-bottom: .9rem; }
   .stock-search-area { grid-column: 1; grid-row: 1; }
   .stock-selection-panel { grid-column: 1; grid-row: 2; grid-template-columns: minmax(0, 1fr) 1px 5rem 7rem; }
   .stock-selection-controls { grid-column: 1; grid-row: 3; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
