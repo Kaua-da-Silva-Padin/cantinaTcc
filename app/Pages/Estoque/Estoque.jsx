@@ -204,7 +204,7 @@ export default function Estoque() {
           .map(({ product, qty }) => ({ id: product.id, qty }));
 
         if (increaseStock.length === 0 && decreaseStock.length === 0) return;
-        const { error } = await supabase.rpc("update_product_stock", {
+        const { error } = await supabase.rpc("update_products_stock", {
           increase_stock: increaseStock,
           decrease_stock: decreaseStock,
         });
@@ -213,7 +213,7 @@ export default function Estoque() {
         const salePayload = {
           user: "local",
           total_price: total,
-          progress: { preparation: "local", payment: "local" },
+          progress: { preparation: "local", payment: "paid" },
           products: selectedEntries.map(({ product, qty }) => ({
             qty,
             price_unit: product.price,
