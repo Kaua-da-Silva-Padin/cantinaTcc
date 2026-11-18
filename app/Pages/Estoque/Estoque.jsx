@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
+import AdmDialog from "../../Components/AdmDialog/AdmDialog";
 import { createCloudinaryImage } from "../../utils/cloudinaryImage";
 import packageJson from "../../../package.json";
 import supabase from "../../supabaseClient";
@@ -61,6 +62,9 @@ export default function Estoque() {
   const [expandedCategories, setExpandedCategories] = useState({});
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
+  const [dialog, setDialog] = useState("none");
+  const [actionError, setActionError] = useState("");
+  const [actionSuccess, setActionSuccess] = useState("");
   const [sideBarOn, setSideBarOn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -90,7 +94,7 @@ export default function Estoque() {
 
   useEffect(() => {
     const clock = window.setInterval(() => setCurrentTime(new Date()), 1000);
-    setSideBarOn(window.innerWidth > 1024);
+    setSideBarOn(false);
     return () => window.clearInterval(clock);
   }, []);
 
@@ -98,6 +102,17 @@ export default function Estoque() {
     const timer = window.setTimeout(() => setActiveSearch(searchText.trim()), 1000);
     return () => window.clearTimeout(timer);
   }, [searchText]);
+
+  useEffect(() => {
+    const handleModeShortcut = (event) => {
+      if (event.ctrlKey && event.key === ".") {
+        event.preventDefault();
+        switchMode();
+      }
+    };
+    window.addEventListener("keydown", handleModeShortcut);
+    return () => window.removeEventListener("keydown", handleModeShortcut);
+  }, []);
 
   useEffect(() => {
     if (!activeSearch) {
@@ -150,7 +165,7 @@ export default function Estoque() {
       if (mode === "Vendas") {
         nextQty = Math.max(0, Math.min(product.stock, nextQty));
       } else {
-        nextQty = Math.max(0, nextQty);
+        nextQty = nextQty === 0 ? 0 : nextQty;
       }
       if (nextQty === 0) delete modeSelection[product.id];
       else modeSelection[product.id] = nextQty;
@@ -173,9 +188,54 @@ export default function Estoque() {
 
   const switchMode = () => setMode((current) => (current === "Estoque" ? "Vendas" : "Estoque"));
 
-  const executeAction = () => {
+  const executeAction = async () => {
     setActionDialogOpen(false);
+    setActionError("");
+    setActionSuccess("");
+
+    try {
+      if (mode === "Estoque") {
+        const increaseStock = selectedEntries
+          .filter(({ qty }) => qty > 0)
+          .map(({ product, qty }) => ({ id: product.id, qty }));
+        const decreaseStock = selectedEntries
+          .filter(({ qty }) => qty < 0)
+          .map(({ product, qty }) => ({ id: product.id, qty }));
+
+        if (increaseStock.length === 0 && decreaseStock.length === 0) return;
+        const { error } = await supabase.rpc("update_product_stock", {
+          increase_stock: increaseStock,
+          decrease_stock: decreaseStock,
+        });
+        if (error) throw error;
+      } else {
+        const salePayload = {
+          user: "local",
+          total_price: total,
+          progress: { preparation: "local", payment: "local" },
+          products: selectedEntries.map(({ product, qty }) => ({
+            qty,
+            price_unit: product.price,
+            price_total: product.price * qty,
+            product_name: product.name,
+          })),
+        };
+        const { error } = await supabase.rpc("register_sale", { payload: salePayload });
+        if (error) throw error;
+      }
+
+      setSelections((previous) => ({ ...previous, [mode]: {} }));
+      await fetchProducts();
+      setActionSuccess(mode === "Estoque"
+        ? "Estoque atualizado com sucesso!"
+        : "Venda registrada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao concluir ação do estoque:", error);
+      setActionError(`Não foi possível concluir a ação. Erro: ${error?.code ?? error?.message ?? "UNKNOWN"}`);
+    }
   };
+
+  const openProductDialog = (dialogName) => setDialog(dialogName);
 
   if (parsedUser?.type !== "admin") {
     return <h4 className="text-center text-danger">A página de administração é reservada apenas para administradores!</h4>;
@@ -184,7 +244,7 @@ export default function Estoque() {
   return (
     <div className={`stock-admin-shell ${sideBarOn ? "sideBarOn" : "sideBarOff"} stock-mode-${mode.toLowerCase()}`}>
       <aside className="stock-sidebar">
-        <AdmSideBar tools={adminLinks} navigationGroups={navigationGroups} />
+        <AdmSideBar tools={adminLinks} navigationGroups={navigationGroups} onClose={() => setSideBarOn(false)} />
       </aside>
       <main className="stock-main">
         <header className="stock-navbar">
@@ -227,11 +287,11 @@ export default function Estoque() {
             ) : (
               <div className="stock-selection-list">
                 {selectedEntries.map(({ product, qty }) => (
-                  <div className={`stock-selected-item ${qty > 0 ? "selected-add" : "selected-remove"}`} key={product.id}>
+                  <div className={`stock-selected-item ${mode === "Estoque" && qty < 0 ? "selected-remove" : "selected-add"}`} key={product.id}>
                     <button type="button" className="stock-remove-all" onClick={() => removeAllProduct(product.id)} aria-label={`Remover ${product.name}`}>X</button>
                     <span>
                       {mode === "Estoque"
-                        ? `${qty >= 0 ? "+" : ""}${qty} ${shortenProductName(product.name)}`
+                        ? `${qty > 0 ? "+" : ""}${qty} ${shortenProductName(product.name)}`
                         : `x${qty} ${shortenProductName(product.name)}`}
                     </span>
                     <b>R${formatPrice(product.price * qty)}</b>
@@ -257,9 +317,9 @@ export default function Estoque() {
 
           {mode === "Estoque" && (
             <div className="stock-db-actions">
-              <button type="button" className="stock-add-db" aria-label="Adicionar produto">+</button>
-              <button type="button" className="stock-edit-db" aria-label="Editar produto">✎</button>
-              <button type="button" className="stock-delete-db" aria-label="Excluir produto">⌫</button>
+              <button type="button" className="stock-add-db" onClick={() => openProductDialog("addDialog")} aria-label="Adicionar produto">+</button>
+              <button type="button" className="stock-edit-db" onClick={() => openProductDialog("editDialog")} aria-label="Editar produto">✎</button>
+              <button type="button" className="stock-delete-db" onClick={() => openProductDialog("removeDialog")} aria-label="Excluir produto">⌫</button>
             </div>
           )}
 
@@ -278,7 +338,7 @@ export default function Estoque() {
                     <div className="stock-category-list">
                       {categoryProducts.map((product) => {
                         const qty = currentSelection[product.id] ?? 0;
-                        const minusDisabled = mode === "Vendas" ? qty <= 0 : qty <= 0;
+                        const minusDisabled = mode === "Vendas" ? qty <= 0 : false;
                         const plusDisabled = mode === "Vendas" ? qty >= product.stock : false;
                         const unavailable = mode === "Vendas" && product.stock <= 0;
                         return (
@@ -309,6 +369,16 @@ export default function Estoque() {
         </section>
       </main>
 
+      <div className={`admDialogScreen ${dialog !== "none" ? "isOpen" : ""}`}>
+        <AdmDialog
+          dialog={dialog}
+          setDialog={setDialog}
+          produtos={products ?? []}
+          setProdutos={setProducts}
+          fetchAll={fetchProducts}
+        />
+      </div>
+
       <Dialog open={clearDialogOpen} onClose={() => setClearDialogOpen(false)}>
         <DialogTitle>Atenção</DialogTitle>
         <DialogContent>Você realmente deseja limpar a seleção de produtos?</DialogContent>
@@ -326,6 +396,22 @@ export default function Estoque() {
         <DialogActions>
           <Button onClick={executeAction} variant="contained" sx={{ background: "green", color: "white" }}>Sim</Button>
           <Button onClick={() => setActionDialogOpen(false)} variant="contained" color="error">Não</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={Boolean(actionError)} onClose={() => setActionError("")}>
+        <DialogTitle>Erro!</DialogTitle>
+        <DialogContent>{actionError}</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setActionError("")} variant="contained" sx={{ background: "black", color: "white" }}>OK</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={Boolean(actionSuccess)} onClose={() => setActionSuccess("")}>
+        <DialogTitle>Sucesso</DialogTitle>
+        <DialogContent>{actionSuccess}</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setActionSuccess("")} variant="contained" sx={{ background: "green", color: "white" }}>OK</Button>
         </DialogActions>
       </Dialog>
 
