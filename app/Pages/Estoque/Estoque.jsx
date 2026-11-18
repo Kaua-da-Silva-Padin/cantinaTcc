@@ -247,15 +247,23 @@ export default function Estoque() {
         const { error } = await supabase.rpc("register_sale", { payload: salePayload });
         if (error) throw error;
       }
+    } catch (error) {
+      console.error("Erro ao concluir ação do estoque:", error);
+      setActionError(`Não foi possível concluir a ação. Erro: ${error?.code ?? error?.message ?? "UNKNOWN"}`);
+      return;
+    }
 
-      setSelections((previous) => ({ ...previous, [mode]: {} }));
+    setSelections((previous) => ({ ...previous, [mode]: {} }));
+    try {
       await fetchProducts();
       setActionSuccess(mode === "Estoque"
         ? "Estoque atualizado com sucesso!"
         : "Venda registrada com sucesso!");
     } catch (error) {
-      console.error("Erro ao concluir ação do estoque:", error);
-      setActionError(`Não foi possível concluir a ação. Erro: ${error?.code ?? error?.message ?? "UNKNOWN"}`);
+      console.error("A ação foi concluída, mas não foi possível atualizar o estoque:", error);
+      setActionError(
+        `A ação foi concluída, mas não foi possível atualizar os produtos exibidos. Erro: ${error?.code ?? error?.message ?? "UNKNOWN"}`
+      );
     }
   };
 
