@@ -307,7 +307,7 @@ export default function Estoque() {
             </div>
             <div className="stock-suggestions">
               <b>Sugestões:</b>
-              {["Pastel", "Pão de Queijo", "Copo de Refri", "Coxinha"].map((suggestion) => (
+              {["Pastel", "Pão de Queijo", "Copo de Guaraná", "Coxinha"].map((suggestion) => (
                 <button type="button" key={suggestion} onClick={() => setSearchText(suggestion)}>{suggestion}</button>
               ))}
             </div>
@@ -321,12 +321,13 @@ export default function Estoque() {
                 {selectedEntries.map(({ product, qty }) => (
                   <div className={`stock-selected-item ${mode === "Estoque" && qty < 0 ? "selected-remove" : "selected-add"}`} key={product.id}>
                     <button type="button" className="stock-remove-all" onClick={() => removeAllProduct(product.id)} aria-label={`Remover ${product.name}`}>X</button>
-                    <span>
+                    <b className="stock-selected-name">{shortenProductName(product.name)}</b>
+                    <span className="stock-selected-quantity">
                       {mode === "Estoque"
-                        ? `${qty > 0 ? "+" : ""}${qty} ${shortenProductName(product.name)}`
-                        : `x${qty} ${shortenProductName(product.name)}`}
+                        ? `${qty > 0 ? "+" : ""}${qty}`
+                        : `x${qty}`}
                     </span>
-                    <b>R${formatPrice(product.price * (mode === "Estoque" ? Math.abs(qty) : qty))}</b>
+                    <b className="stock-selected-price">R${formatPrice(product.price * (mode === "Estoque" ? Math.abs(qty) : qty))}</b>
                   </div>
                 ))}
               </div>
