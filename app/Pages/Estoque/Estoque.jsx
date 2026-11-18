@@ -138,7 +138,7 @@ export default function Estoque() {
   );
 
   const total = selectedEntries.reduce(
-    (sum, { product, qty }) => sum + Number(product.price) * qty,
+    (sum, { product, qty }) => sum + Number(product.price) * (mode === "Estoque" ? Math.abs(qty) : qty),
     0
   );
 
@@ -165,7 +165,8 @@ export default function Estoque() {
       if (mode === "Vendas") {
         nextQty = Math.max(0, Math.min(product.stock, nextQty));
       } else {
-        nextQty = nextQty === 0 ? 0 : nextQty;
+        nextQty = Math.max(-Number(product.stock), nextQty);
+        if (delta > 0) nextQty = Math.min(Number.MAX_SAFE_INTEGER, nextQty);
       }
       if (nextQty === 0) delete modeSelection[product.id];
       else modeSelection[product.id] = nextQty;
@@ -294,7 +295,7 @@ export default function Estoque() {
                         ? `${qty > 0 ? "+" : ""}${qty} ${shortenProductName(product.name)}`
                         : `x${qty} ${shortenProductName(product.name)}`}
                     </span>
-                    <b>R${formatPrice(product.price * qty)}</b>
+                    <b>R${formatPrice(product.price * (mode === "Estoque" ? Math.abs(qty) : qty))}</b>
                   </div>
                 ))}
               </div>
@@ -338,7 +339,9 @@ export default function Estoque() {
                     <div className="stock-category-list">
                       {categoryProducts.map((product) => {
                         const qty = currentSelection[product.id] ?? 0;
-                        const minusDisabled = mode === "Vendas" ? qty <= 0 : false;
+                        const minusDisabled = mode === "Vendas"
+                          ? qty <= 0
+                          : qty <= -Number(product.stock);
                         const plusDisabled = mode === "Vendas" ? qty >= product.stock : false;
                         const unavailable = mode === "Vendas" && product.stock <= 0;
                         return (
