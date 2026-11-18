@@ -95,7 +95,7 @@
 }
 .stock-selection-empty { color: #777; }
 .stock-selection-list { min-width: 0; height: 5.8rem; display: flex; align-items: center; gap: .5rem; overflow-x: auto; }
-.stock-selected-item { position: relative; flex: 0 0 auto; min-width: 10rem; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: .2rem; padding: .75rem 2rem .45rem .55rem; border: 1px solid #ddd; border-radius: .7rem; }
+.stock-selected-item { position: relative; flex: 0 0 auto; min-width: 10rem; display: grid; grid-template-columns: auto auto; justify-content: start; align-items: end; gap: .2rem; column-gap: .75rem; padding: .75rem 2rem .45rem .55rem; border: 1px solid #ddd; border-radius: .7rem; }
 .stock-selected-name { grid-column: 1 / -1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .stock-selected-price { white-space: nowrap; }
 .selected-add { background: #dcffd9; }
@@ -165,12 +165,11 @@
   .stock-selection-controls .stock-db-actions { grid-column: 1 / -1; margin: 0; }
   .stock-categories { grid-column: 1; grid-row: 4; display: block; height: auto; overflow: visible; padding: 0; }
   .stock-category { min-height: 4.2rem; margin-bottom: .6rem; }
-  .stock-category:not(.expanded) .stock-category-header b { display: block; }
-  .stock-category.expanded { height: 18rem; }
-  .stock-category-header { position: relative; justify-content: center; padding: 0 2.5rem; text-align: center; }
-  .stock-category-header b { position: absolute; right: 1.1rem; display: block; }
+  .stock-category.expanded { height: 27rem; }
+  .stock-category-header { width: 100%; box-sizing: border-box; justify-content: space-between; padding: 0 .75rem; text-align: left; }
+  .stock-category-header b { position: static; display: block; }
   .stock-category-list { grid-auto-flow: row; }
-  .stock-category:not(.expanded) { display: block; height: auto; }
+  .stock-category:not(.expanded) { display: flex; height: auto; align-items: stretch; }
 }
 
 @media (max-width: 600px) {
@@ -204,7 +203,7 @@
   .stock-selection-controls .stock-db-actions { justify-content: flex-end; }
   .stock-db-actions button { flex: 1; }
   .stock-categories { grid-row: 4; }
-  .stock-category.expanded { height: 20rem; }
+  .stock-category.expanded { height: 30rem; }
   .stock-product { width: 100%; grid-template-columns: 3rem minmax(0, 1fr) auto; gap: .3rem; padding: .3rem; }
   .stock-product img { width: 3rem; height: 3rem; }
   .stock-product-controls { grid-template-columns: 2rem 1.5rem 2rem; gap: .1rem; }
