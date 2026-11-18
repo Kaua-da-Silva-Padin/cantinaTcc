@@ -1,11 +1,24 @@
 .stock-admin-shell {
   --stock-orange: #ff751f;
+  position: relative;
+  isolation: isolate;
   min-height: 100dvh;
+  width: 100%;
   display: grid;
   grid-template-columns: 0 minmax(0, 1fr);
   background: #f5f5f5;
   color: #111;
   font-family: Poppins, sans-serif;
+}
+
+.stock-admin-shell.sideBarOn::before {
+  content: "";
+  position: fixed;
+  inset: 5.2rem 0 0;
+  z-index: 18;
+  pointer-events: none;
+  background: rgb(0 0 0 / 12%);
+  backdrop-filter: blur(4px);
 }
 
 .stock-admin-shell.sideBarOff { grid-template-columns: 0 minmax(0, 1fr); }
@@ -17,22 +30,8 @@
   transform: translateX(-100%);
   transition: transform .2s ease;
 }
-.stock-sidebar #admPageSideBarHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.stock-sidebar .admPageSideBarClose {
-  border: 0;
-  background: transparent;
-  color: white;
-  font-size: 1.45rem;
-  font-weight: 800;
-  cursor: pointer;
-}
 .stock-admin-shell.sideBarOn .stock-sidebar {
   transform: translateX(0);
-  box-shadow: 0 0 0 100vmax rgb(0 0 0 / 35%);
 }
 .stock-main {
   grid-column: 2;
@@ -43,7 +42,8 @@
 }
 
 .stock-navbar {
-  z-index: 4;
+  position: relative;
+  z-index: 25;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -151,7 +151,7 @@
   .stock-admin-shell { grid-template-columns: 0 minmax(0, 1fr); }
   .stock-main { grid-template-rows: 5.2rem minmax(0, 1fr); }
   .stock-sidebar { position: fixed; z-index: 20; width: 17.5rem; height: 100dvh; transform: translateX(-100%); }
-  .stock-admin-shell.sideBarOn .stock-sidebar { transform: translateX(0); box-shadow: 0 0 0 100vmax rgb(0 0 0 / 35%); }
+  .stock-admin-shell.sideBarOn .stock-sidebar { transform: translateX(0); }
   .stock-navbar-status > span:not(.stock-system-status) { display: none; }
   .stock-workspace { grid-template-columns: 1fr; grid-template-rows: auto auto auto minmax(0, 1fr); overflow-y: auto; }
   .stock-search-area { grid-column: 1; grid-row: 1; }
@@ -159,17 +159,32 @@
   .stock-selection-controls { grid-column: 1; grid-row: 3; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stock-selection-controls > * { flex: 1; }
   .stock-selection-controls .stock-db-actions { grid-column: 1 / -1; margin: 0; }
-  .stock-categories { grid-column: 1; grid-row: 5; display: block; overflow: visible; padding: 0; }
+  .stock-categories { grid-column: 1; grid-row: 4; display: block; overflow: visible; padding: 0; }
   .stock-category { min-height: 4.2rem; margin-bottom: .6rem; }
   .stock-category:not(.expanded) .stock-category-header b { display: block; }
   .stock-category.expanded { height: 18rem; }
-  .stock-category-header { justify-content: space-between; padding: 0 1.1rem; }
-  .stock-category-header b { display: block; }
+  .stock-category-header { position: relative; justify-content: center; padding: 0 2.5rem; text-align: center; }
+  .stock-category-header b { position: absolute; right: 1.1rem; display: block; }
   .stock-category-list { grid-auto-flow: row; }
   .stock-category:not(.expanded) { display: block; height: auto; }
 }
 
 @media (max-width: 600px) {
+  .stock-admin-shell,
+  .stock-main,
+  .stock-workspace,
+  .stock-categories,
+  .stock-category,
+  .stock-category-list {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .stock-admin-shell,
+  .stock-main,
+  .stock-workspace {
+    overflow-x: clip;
+  }
   .stock-main { grid-template-rows: 4.6rem minmax(0, 1fr); }
   .stock-navbar { min-height: 4.6rem; padding: 0 .6rem; }
   .stock-user-link b { display: none; }
@@ -186,9 +201,9 @@
   .stock-db-actions button { flex: 1; }
   .stock-categories { grid-row: 4; }
   .stock-category.expanded { height: 20rem; }
-  .stock-product { grid-template-columns: 3.6rem minmax(0, 1fr) auto; }
-  .stock-product img { width: 3.6rem; height: 3.6rem; }
-  .stock-product-controls { grid-template-columns: 2.3rem 1.5rem 2.3rem; }
-  .stock-product-controls button { width: 2.3rem; height: 2.3rem; }
-  .stock-product-controls input { width: 1.5rem; font-size: .85rem; }
+  .stock-product { width: 100%; grid-template-columns: 3rem minmax(0, 1fr) auto; gap: .3rem; padding: .3rem; }
+  .stock-product img { width: 3rem; height: 3rem; }
+  .stock-product-controls { grid-template-columns: 2rem 1.5rem 2rem; gap: .1rem; }
+  .stock-product-controls button { width: 2rem; height: 2rem; }
+  .stock-product-controls input { width: 1.5rem; font-size: .8rem; }
 }

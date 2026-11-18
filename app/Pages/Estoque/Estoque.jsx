@@ -268,7 +268,7 @@ export default function Estoque() {
   return (
     <div className={`stock-admin-shell ${sideBarOn ? "sideBarOn" : "sideBarOff"} stock-mode-${mode.toLowerCase()}`}>
       <aside className="stock-sidebar">
-        <AdmSideBar tools={adminLinks} navigationGroups={navigationGroups} onClose={() => setSideBarOn(false)} />
+        <AdmSideBar tools={adminLinks} navigationGroups={navigationGroups} />
       </aside>
       <main className="stock-main">
         <header className="stock-navbar">
@@ -350,9 +350,9 @@ export default function Estoque() {
             {Object.entries(categoryNames).map(([kind, title]) => {
               const categoryProducts = visibleProducts(kind);
               if (activeSearch && categoryProducts.length === 0) return null;
-              const isExpanded = activeSearch
+              const isExpanded = !isMobileLayout || (activeSearch
                 ? Boolean(expandedCategories[kind])
-                : expandedCategories[kind] ?? !isMobileLayout;
+                : Boolean(expandedCategories[kind]));
               return (
                 <section className={`stock-category ${isExpanded ? "expanded" : ""}`} key={kind}>
                   <button type="button" className="stock-category-header" onClick={() => setExpandedCategories((previous) => ({ ...previous, [kind]: !isExpanded }))}>

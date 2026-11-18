@@ -2,7 +2,6 @@ import { NavLink } from 'react-router';
 
 export default function AdmSideBar(props){
     const tools = props.tools;
-    const closeSidebar = props.onClose;
     const renderLinks = (links) => links.map((item) => (
       <NavLink to={item.link} key={item.link} end={item.link === "/"}>
         <span>{item.text}</span>
@@ -13,9 +12,6 @@ export default function AdmSideBar(props){
          <div id="admPageSideBar">
             <div id="admPageSideBarHeader">
               <b>ADMIN</b>
-              {closeSidebar && (
-                <button type="button" className="admPageSideBarClose" onClick={closeSidebar} aria-label="Fechar menu">X</button>
-              )}
             </div>
 
             {props.navigationGroups ? (
