@@ -7,6 +7,7 @@ export default [
     route("adm", "Pages/AdmPage/AdmPage.jsx"),
     route("profile", "Pages/Profile/Profile.jsx"),
     route("orders", "Pages/Orders/Orders.jsx"),
+    route("stock", "Pages/Estoque/Estoque.jsx"),
     route("afterPurchase", "Pages/SuccessPurchase/SuccessPurchase.jsx"),
     route("login", "Pages/Login/Login.jsx")
 ];
