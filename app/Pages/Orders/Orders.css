@@ -283,6 +283,14 @@
   background-color: #36a915;
 }
 
+.order-info-actions .order-action-finish.Mui-disabled {
+  background-color: #d6d6d6;
+  color: #777;
+  box-shadow: none;
+  filter: none;
+  opacity: 1;
+}
+
 .order-info-actions .order-action-close {
   background-color: #286716;
   color: white;

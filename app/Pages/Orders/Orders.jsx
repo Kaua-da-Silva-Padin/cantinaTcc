@@ -64,6 +64,7 @@ function OrdersContent() {
   const [failedRefreshes, setFailedRefreshes] = useState(0);
   const [pendingOrderAction, setPendingOrderAction] = useState(false);
   const [orderActionError, setOrderActionError] = useState("");
+  const [orderActionSuccess, setOrderActionSuccess] = useState("");
   const [sideBarOn, setSideBarOn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const cooldownTimer = useRef(null);
@@ -209,11 +210,17 @@ function OrdersContent() {
 
     setPendingOrderAction(true);
     setOrderActionError("");
+    setOrderActionSuccess("");
     const actionOrderId = orderInfo.id;
     try {
       const { error } = await supabase.rpc(action, parameters);
       if (error) throw error;
 
+      const actionDescription = action === "cancel_sale"
+        ? "cancelado"
+        : parameters.ac_finalidade === "Fechar"
+          ? "fechado"
+          : "finalizado";
       if (action === "cancel_sale") {
         setOrderInfo(null);
         setSelectedOrderId(null);
@@ -227,15 +234,15 @@ function OrdersContent() {
           : currentOrder);
       }
 
+      let refreshWarning = "";
       try {
         await fetchOrders();
       } catch (error) {
         console.error("A ação foi concluída, mas não foi possível atualizar a lista:", error);
-        setOrderActionError(
-          `A ação foi concluída, mas não foi possível atualizar a lista. Erro: ${getErrorCode(error)}`
-        );
+        refreshWarning = ` A lista não foi atualizada; erro: ${getErrorCode(error)}.`;
       }
 
+      setOrderActionSuccess(`Pedido #${actionOrderId} ${actionDescription} com sucesso.${refreshWarning}`);
       return true;
     } catch (error) {
       console.error(`Erro ao executar ${action}:`, error);
@@ -343,6 +350,24 @@ function OrdersContent() {
             onClick={() => setOrderActionError("")}
             variant="contained"
             sx={{ backgroundColor: "black", color: "white", "&:hover": { backgroundColor: "#333" } }}
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={Boolean(orderActionSuccess)}
+        onClose={() => setOrderActionSuccess("")}
+        aria-labelledby="orders-action-success-title"
+      >
+        <DialogTitle id="orders-action-success-title">Sucesso!</DialogTitle>
+        <DialogContent>{orderActionSuccess}</DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOrderActionSuccess("")}
+            variant="contained"
+            sx={{ backgroundColor: "#2e7d32", color: "white", "&:hover": { backgroundColor: "#1b5e20" } }}
           >
             OK
           </Button>
