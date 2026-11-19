@@ -274,7 +274,8 @@ export default function OrderInfo({
 
   const items = parseItems(order.items);
   const preparation = order.progress?.preparation;
-  const orderClosed = ["received", "canceled"].includes(preparation);
+  const isFinalized = preparation === "received";
+  const isClosed = ["ready", "canceled"].includes(preparation);
   const isInProgress = preparation === "in progress";
 
   return (
@@ -319,7 +320,7 @@ export default function OrderInfo({
             variant="contained"
             color="error"
             onClick={() => setCancellationOpen(true)}
-            disabled={orderClosed || actionLoading}
+            disabled={isClosed || actionLoading}
           >
             CANCELAR
           </Button>
@@ -327,7 +328,7 @@ export default function OrderInfo({
             variant="contained"
             className="order-action-finish"
             onClick={() => setProgressAction("finish")}
-            disabled={orderClosed || actionLoading}
+            disabled={isFinalized || isClosed || actionLoading}
           >
             FINALIZAR
           </Button>
@@ -335,7 +336,7 @@ export default function OrderInfo({
             variant="contained"
             className={`order-action-close ${progressAction === "close" ? "is-confirming" : ""}`}
             onClick={() => setProgressAction("close")}
-            disabled={isInProgress || orderClosed || actionLoading}
+            disabled={isInProgress || isClosed || actionLoading}
           >
             FECHAR PEDIDO
           </Button>

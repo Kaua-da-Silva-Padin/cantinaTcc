@@ -209,12 +209,24 @@ function OrdersContent() {
 
     setPendingOrderAction(true);
     setOrderActionError("");
+    const actionOrderId = orderInfo.id;
     try {
       const { error } = await supabase.rpc(action, parameters);
       if (error) throw error;
 
-      setOrderInfo(null);
-      setSelectedOrderId(null);
+      if (action === "cancel_sale") {
+        setOrderInfo(null);
+        setSelectedOrderId(null);
+      } else {
+        const preparation = parameters.ac_finalidade === "Fechar" ? "ready" : "received";
+        setOrderInfo((currentOrder) => currentOrder?.id === actionOrderId
+          ? {
+            ...currentOrder,
+            progress: { ...currentOrder.progress, preparation },
+          }
+          : currentOrder);
+      }
+
       try {
         await fetchOrders();
       } catch (error) {
