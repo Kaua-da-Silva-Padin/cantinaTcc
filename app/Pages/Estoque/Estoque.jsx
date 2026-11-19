@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { FaTrash } from "react-icons/fa6";
+import AdminRouteGuard from "../../Components/AdminRouteGuard/AdminRouteGuard";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
 import AdmDialog from "../../Components/AdmDialog/AdmDialog";
 import { createCloudinaryImage } from "../../utils/cloudinaryImage";
@@ -34,6 +35,7 @@ const navigationGroups = {
     { text: "Cantina", link: "/buy" },
     { text: "Administrar", link: "/adm" },
     { text: "Pedidos", link: "/orders" },
+    { text: "Estoque", link: "/stock" },
     { text: "Login", link: "/login" },
     { text: "Registrar", link: "/" },
     { text: "Perfil", link: "/profile" },
@@ -47,6 +49,14 @@ function formatPrice(value) {
   return Number(value).toFixed(2).replace(".", ",");
 }
 
+export default function Estoque() {
+  return (
+    <AdminRouteGuard>
+      <EstoqueContent />
+    </AdminRouteGuard>
+  );
+}
+
 function shortenProductName(name) {
   const words = String(name).trim().split(/\s+/).filter(Boolean);
   let shortName = words.length > 2 ? `${words[0]} ${words.at(-1)}` : words.join(" ");
@@ -54,7 +64,7 @@ function shortenProductName(name) {
   return shortName;
 }
 
-export default function Estoque() {
+function EstoqueContent() {
   const [products, setProducts] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [activeSearch, setActiveSearch] = useState("");

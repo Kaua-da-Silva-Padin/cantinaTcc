@@ -59,6 +59,7 @@ export default function AdmPage() {
       { text: "Cantina", link: "/buy" },
       { text: "Administrar", link: "/adm" },
       { text: "Pedidos", link: "/orders" },
+      { text: "Estoque", link: "/stock" },
       { text: "Login", link: "/login" },
       { text: "Registrar", link: "/" },
       { text: "Perfil", link: "/profile" },

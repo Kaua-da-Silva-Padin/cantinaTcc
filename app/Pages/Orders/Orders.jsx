@@ -9,6 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import { Link } from "react-router";
+import AdminRouteGuard from "../../Components/AdminRouteGuard/AdminRouteGuard";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
 import OrdersList from "../../Components/OrdersList/OrdersList";
 import OrderInfo from "../../Components/OrdersInfo/OrdersInfo";
@@ -36,6 +37,7 @@ const ordersNavigationGroups = {
     { text: "Cantina", link: "/buy" },
     { text: "Administrar", link: "/adm" },
     { text: "Pedidos", link: "/orders" },
+    { text: "Estoque", link: "/stock" },
     { text: "Login", link: "/login" },
     { text: "Registrar", link: "/" },
     { text: "Perfil", link: "/profile" },
@@ -47,7 +49,7 @@ function getErrorCode(error) {
   return error?.code ?? error?.message ?? "UNKNOWN";
 }
 
-export default function Orders() {
+function OrdersContent() {
   const [orders, setOrders] = useState(null);
   const [orderInfo, setOrderInfo] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
@@ -221,6 +223,7 @@ export default function Orders() {
           `A ação foi concluída, mas não foi possível atualizar a lista. Erro: ${getErrorCode(error)}`
         );
       }
+
       return true;
     } catch (error) {
       console.error(`Erro ao executar ${action}:`, error);
@@ -341,5 +344,13 @@ export default function Orders() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function Orders() {
+  return (
+    <AdminRouteGuard>
+      <OrdersContent />
+    </AdminRouteGuard>
   );
 }
