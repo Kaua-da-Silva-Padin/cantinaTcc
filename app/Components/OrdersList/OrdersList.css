@@ -342,9 +342,20 @@
 
 @media (max-width: 600px) {
   .orders-list-panel {
-    height: 31dvh;
-    min-height: 10rem;
-    max-height: 22rem;
+    align-self: start;
+    height: 51.15dvh;
+    min-height: 16.5rem;
+    max-height: 36.3rem;
+  }
+
+  .orders-list-panel.has-expanded-last-archive {
+    height: 75dvh;
+    max-height: calc(100dvh - 5.6rem);
+  }
+
+  .orders-list-panel.has-expanded-last-archive .orders-table-container {
+    flex: 0 0 var(--orders-table-height);
+    height: var(--orders-table-height);
   }
 
   .orders-list-toolbar h1 {

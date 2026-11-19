@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { FaArrowsRotate } from "react-icons/fa6";
 import { RiArrowDownSLine } from "react-icons/ri";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { paymentMessage } from "./paymentMessage";
 import "./OrdersList.css";
 
@@ -120,12 +120,23 @@ export default function OrdersList({
   hasNewOrders,
 }) {
   const [expandedArchives, setExpandedArchives] = useState({});
+  const [expandedTableHeight, setExpandedTableHeight] = useState(null);
+  const ordersTableRef = useRef(null);
   const toggleArchive = (group) => (_event, expanded) => {
+    if (group === "canceled") {
+      setExpandedTableHeight(
+        expanded ? ordersTableRef.current?.getBoundingClientRect().height ?? null : null
+      );
+    }
     setExpandedArchives((previous) => ({ ...previous, [group]: expanded }));
   };
+  const isLastArchiveExpanded = Boolean(expandedArchives.canceled);
 
   return (
-    <section className="orders-list-panel" aria-label="Lista de pedidos">
+    <section
+      className={`orders-list-panel ${isLastArchiveExpanded ? "has-expanded-last-archive" : ""}`}
+      aria-label="Lista de pedidos"
+    >
       <div className="orders-list-toolbar">
         <h1>Pedidos</h1>
         <TextField
@@ -158,7 +169,13 @@ export default function OrdersList({
         </Tooltip>
       </div>
 
-      <TableContainer className="orders-table-container">
+      <TableContainer
+        ref={ordersTableRef}
+        className="orders-table-container"
+        style={isLastArchiveExpanded && expandedTableHeight !== null
+          ? { "--orders-table-height": `${expandedTableHeight}px` }
+          : undefined}
+      >
         <Table size="small" stickyHeader aria-label="Pedidos em andamento">
           <TableHead>
             <TableRow>
