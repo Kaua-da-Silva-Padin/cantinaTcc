@@ -9,6 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import { Link } from "react-router";
+import { RiCloseLine, RiMenuLine } from "react-icons/ri";
 import AdminRouteGuard from "../../Components/AdminRouteGuard/AdminRouteGuard";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
 import OrdersList from "../../Components/OrdersList/OrdersList";
@@ -64,8 +65,8 @@ function OrdersContent() {
   const [isCoolingDown, setIsCoolingDown] = useState(false);
   const [isLockedOut, setIsLockedOut] = useState(false);
   const [refreshIndicator, setRefreshIndicator] = useState(null);
+  const [hasNewOrders, setHasNewOrders] = useState(null);
   const [refreshErrorCode, setRefreshErrorCode] = useState("");
-  const [failedRefreshes, setFailedRefreshes] = useState(0);
   const [pendingOrderAction, setPendingOrderAction] = useState(false);
   const [orderActionError, setOrderActionError] = useState("");
   const [orderActionSuccess, setOrderActionSuccess] = useState("");
@@ -75,6 +76,7 @@ function OrdersContent() {
   const indicatorTimer = useRef(null);
   const lockoutTimer = useRef(null);
   const failedRefreshesRef = useRef(0);
+  const knownOrderIdsRef = useRef(null);
 
   const loggedInUser = typeof sessionStorage !== "undefined"
     ? sessionStorage.getItem("loggedInUser")
@@ -97,6 +99,17 @@ function OrdersContent() {
     if (error) throw error;
 
     const sales = data ?? [];
+    const knownOrderIds = knownOrderIdsRef.current;
+    if (knownOrderIds === null) {
+      setHasNewOrders(false);
+    } else {
+      setHasNewOrders(sales.some((order) => !knownOrderIds.has(order.id)));
+    }
+    knownOrderIdsRef.current = new Set([
+      ...(knownOrderIds ?? []),
+      ...sales.map((order) => order.id),
+    ]);
+
     setOrders(sales.filter((order) => order.progress?.preparation === "in progress"));
     setFinishedOrders(sales.filter((order) => order.progress?.preparation === "received"));
     setClosedOrders(sales.filter((order) => order.progress?.preparation === "ready"));
@@ -155,40 +168,36 @@ function OrdersContent() {
       await fetchOrders();
       succeeded = true;
       failedRefreshesRef.current = 0;
-      setFailedRefreshes(0);
     } catch (error) {
       console.error("Erro ao atualizar pedidos:", error);
       errorCode = getErrorCode(error);
       setRefreshErrorCode(errorCode);
-      setRefreshIndicator("error");
       const attempts = failedRefreshesRef.current + 1;
       failedRefreshesRef.current = attempts;
-      setFailedRefreshes(attempts);
     } finally {
       setIsRefreshing(false);
       if (succeeded) {
         setRefreshIndicator("success");
         setIsCoolingDown(true);
-        window.clearTimeout(indicatorTimer.current);
-        indicatorTimer.current = window.setTimeout(() => setRefreshIndicator(null), REFRESH_COOLDOWN_MS);
         window.clearTimeout(cooldownTimer.current);
         cooldownTimer.current = window.setTimeout(() => setIsCoolingDown(false), REFRESH_COOLDOWN_MS);
       } else if (failedRefreshesRef.current >= MAX_FAILED_REFRESHES) {
+        setRefreshIndicator("error");
         setIsLockedOut(true);
         window.clearTimeout(lockoutTimer.current);
         lockoutTimer.current = window.setTimeout(() => {
           failedRefreshesRef.current = 0;
-          setFailedRefreshes(0);
           setIsLockedOut(false);
         }, REFRESH_LOCKOUT_MS);
       } else {
+        setRefreshIndicator("error");
         setIsCoolingDown(true);
         window.clearTimeout(cooldownTimer.current);
         cooldownTimer.current = window.setTimeout(() => setIsCoolingDown(false), REFRESH_COOLDOWN_MS);
       }
+      window.clearTimeout(indicatorTimer.current);
+      indicatorTimer.current = window.setTimeout(() => setRefreshIndicator(null), REFRESH_COOLDOWN_MS);
     }
-
-    if (errorCode) setRefreshErrorCode(errorCode);
   };
 
   const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
@@ -289,7 +298,7 @@ function OrdersContent() {
             aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"}
             onClick={() => setSideBarOn((current) => !current)}
           >
-            <img src={sideBarOn ? "/imgs/closeicon.png" : "/imgs/more.png"} alt="" />
+            {sideBarOn ? <RiCloseLine aria-hidden="true" /> : <RiMenuLine aria-hidden="true" />}
           </button>
           <div className="orders-navbar-status">
             <span>
@@ -320,7 +329,7 @@ function OrdersContent() {
             refreshDisabled={isRefreshing || isCoolingDown || isLockedOut}
             refreshLoading={isRefreshing}
             refreshIndicator={refreshIndicator}
-            failedRefreshes={failedRefreshes}
+            hasNewOrders={hasNewOrders}
           />
           <OrderInfo
             order={orderInfo}

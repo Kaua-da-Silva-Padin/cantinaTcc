@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 import { Link } from "react-router";
+import { RiCloseLine, RiMenuLine } from "react-icons/ri";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { FaTrash } from "react-icons/fa6";
@@ -291,7 +292,7 @@ function EstoqueContent() {
       <main className="stock-main">
         <header className="stock-navbar">
           <button type="button" aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"} onClick={() => setSideBarOn((current) => !current)}>
-            <img src={sideBarOn ? "/imgs/closeicon.png" : "/imgs/more.png"} alt="" />
+            {sideBarOn ? <RiCloseLine aria-hidden="true" /> : <RiMenuLine aria-hidden="true" />}
           </button>
           <div className="stock-navbar-status">
             <span>{`${currentTime.getDate()} de ${currentTime.toLocaleDateString("pt-BR", { month: "long" })} de ${currentTime.getFullYear()} ${currentTime.toLocaleTimeString("pt-BR")}`}</span>

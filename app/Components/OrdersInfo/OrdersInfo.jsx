@@ -70,6 +70,7 @@ function getCustomerId(order) {
 function OrderHeader({ order, payment }) {
   const [paymentLabel, paymentColor] = paymentMessage(payment);
   const [isVerificationVisible, setVerificationVisible] = useState(true);
+  const verificationColor = "#36a900";
 
   return (
     <div className="order-info-header">
@@ -106,9 +107,9 @@ function OrderHeader({ order, payment }) {
         <div
           className="order-info-verification"
           style={{
-            color: paymentColor,
-            borderColor: paymentColor,
-            backgroundColor: `color-mix(in srgb, ${paymentColor} 24%, white)`,
+            color: verificationColor,
+            borderColor: verificationColor,
+            backgroundColor: `color-mix(in srgb, ${verificationColor} 24%, white)`,
           }}
         >
           <strong>{isVerificationVisible ? order.verification_code || "—" : "*****"}</strong>

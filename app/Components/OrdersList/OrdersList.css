@@ -56,6 +56,23 @@
   width: 2rem;
   height: 2rem;
   color: #111;
+  transition: background-color .2s ease;
+}
+
+.orders-refresh-button.MuiIconButton-root.has-refresh-success {
+  background-color: rgb(38 184 74 / 16%);
+}
+
+.orders-refresh-button.MuiIconButton-root.has-refresh-success:hover {
+  background-color: rgb(38 184 74 / 26%);
+}
+
+.orders-refresh-button.MuiIconButton-root.has-refresh-error {
+  background-color: rgb(255 117 31 / 16%);
+}
+
+.orders-refresh-button.MuiIconButton-root.has-refresh-error:hover {
+  background-color: rgb(255 117 31 / 26%);
 }
 
 .orders-refresh-button.Mui-disabled {
@@ -63,7 +80,7 @@
   opacity: .7;
 }
 
-.orders-refresh-indicator {
+.orders-new-orders-indicator {
   position: absolute;
   top: .05rem;
   right: .05rem;
@@ -73,17 +90,12 @@
   border-radius: 50%;
 }
 
-.orders-refresh-indicator.is-success {
+.orders-new-orders-indicator.has-new-orders {
   background: #26b84a;
 }
 
-.orders-refresh-indicator.is-error {
+.orders-new-orders-indicator.no-new-orders {
   background: #ff751f;
-  animation: orders-refresh-blink 1.4s steps(2, start) infinite;
-}
-
-@keyframes orders-refresh-blink {
-  to { visibility: hidden; }
 }
 
 .orders-table-container {

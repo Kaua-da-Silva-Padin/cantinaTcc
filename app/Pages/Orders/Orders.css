@@ -52,10 +52,10 @@
   cursor: pointer;
 }
 
-.orders-navbar > button img {
-  width: 2rem;
-  height: 2rem;
-  filter: invert(1);
+.orders-navbar > button svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: white;
 }
 
 .orders-navbar-status {

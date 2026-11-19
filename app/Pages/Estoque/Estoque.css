@@ -53,8 +53,8 @@
   color: white;
 }
 
-.stock-navbar > button { width: 3rem; height: 3rem; border: 0; background: transparent; cursor: pointer; }
-.stock-navbar > button img { width: 2rem; filter: invert(1); }
+.stock-navbar > button { display: grid; place-items: center; width: 3rem; height: 3rem; border: 0; background: transparent; cursor: pointer; }
+.stock-navbar > button svg { width: 1.6rem; height: 1.6rem; color: white; }
 .stock-navbar-status { display: flex; align-items: center; gap: .45rem; }
 .stock-navbar-status > span { padding: .25rem .55rem; color: #111; background: #fff4aa; border: 1px solid #8f7e00; border-radius: .5rem; }
 .stock-navbar-status > .stock-system-status { background: #caffc0; border-color: #55a54d; }

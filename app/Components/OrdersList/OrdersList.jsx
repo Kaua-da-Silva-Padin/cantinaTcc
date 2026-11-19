@@ -117,7 +117,7 @@ export default function OrdersList({
   refreshDisabled,
   refreshLoading,
   refreshIndicator,
-  failedRefreshes,
+  hasNewOrders,
 }) {
   const [expandedArchives, setExpandedArchives] = useState({});
   const toggleArchive = (group) => (_event, expanded) => {
@@ -139,20 +139,18 @@ export default function OrdersList({
         <Tooltip title={refreshLoading ? "Buscando pedidos..." : "Atualizar pedidos"}>
           <span className="orders-refresh-wrap">
             <IconButton
-              className="orders-refresh-button"
-              aria-label="Atualizar pedidos"
+              className={`orders-refresh-button ${refreshIndicator ? `has-refresh-${refreshIndicator}` : ""}`}
+              aria-label={`Atualizar pedidos. ${hasNewOrders === null ? "Estado de novos pedidos indisponível." : hasNewOrders ? "Há pedidos novos." : "Nenhum pedido novo."}`}
               onClick={onRefresh}
               disabled={refreshDisabled}
             >
               {refreshLoading
                 ? <CircularProgress size={19} color="inherit" />
                 : <FaArrowsRotate aria-hidden="true" />}
-              {!refreshLoading && refreshIndicator && (
+              {!refreshLoading && hasNewOrders !== null && (
                 <span
-                  className={`orders-refresh-indicator ${refreshIndicator === "error" ? "is-error" : "is-success"}`}
-                  aria-label={refreshIndicator === "error"
-                    ? `Falha na atualização. ${failedRefreshes} tentativas`
-                    : "Atualização concluída"}
+                  className={`orders-new-orders-indicator ${hasNewOrders ? "has-new-orders" : "no-new-orders"}`}
+                  aria-hidden="true"
                 />
               )}
             </IconButton>
