@@ -257,6 +257,7 @@ function ProgressDialog({ order, action, open, loading, onClose, onConfirm }) {
 
 export default function OrderInfo({
   order,
+  readOnly = false,
   actionLoading = false,
   onCancelOrder,
   onUpdateProgress,
@@ -320,7 +321,7 @@ export default function OrderInfo({
             variant="contained"
             color="error"
             onClick={() => setCancellationOpen(true)}
-            disabled={isClosed || actionLoading}
+            disabled={readOnly || isClosed || actionLoading}
           >
             CANCELAR
           </Button>
@@ -328,7 +329,7 @@ export default function OrderInfo({
             variant="contained"
             className="order-action-finish"
             onClick={() => setProgressAction("finish")}
-            disabled={isFinalized || isClosed || actionLoading}
+            disabled={readOnly || isFinalized || isClosed || actionLoading}
           >
             FINALIZAR
           </Button>
@@ -336,7 +337,7 @@ export default function OrderInfo({
             variant="contained"
             className={`order-action-close ${progressAction === "close" ? "is-confirming" : ""}`}
             onClick={() => setProgressAction("close")}
-            disabled={isInProgress || isClosed || actionLoading}
+            disabled={readOnly || isInProgress || isClosed || actionLoading}
           >
             FECHAR PEDIDO
           </Button>

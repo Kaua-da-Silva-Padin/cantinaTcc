@@ -51,8 +51,12 @@ function getErrorCode(error) {
 
 function OrdersContent() {
   const [orders, setOrders] = useState(null);
+  const [finishedOrders, setFinishedOrders] = useState([]);
+  const [closedOrders, setClosedOrders] = useState([]);
+  const [canceledOrders, setCanceledOrders] = useState([]);
   const [orderInfo, setOrderInfo] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [selectedOrderReadOnly, setSelectedOrderReadOnly] = useState(false);
   const [initialError, setInitialError] = useState("");
   const [searchText, setSearchText] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
@@ -92,10 +96,11 @@ function OrdersContent() {
 
     if (error) throw error;
 
-    const visibleOrders = (data ?? []).filter((order) => (
-      ["in progress", "ready"].includes(order.progress?.preparation)
-    ));
-    setOrders(visibleOrders);
+    const sales = data ?? [];
+    setOrders(sales.filter((order) => order.progress?.preparation === "in progress"));
+    setFinishedOrders(sales.filter((order) => order.progress?.preparation === "received"));
+    setClosedOrders(sales.filter((order) => order.progress?.preparation === "ready"));
+    setCanceledOrders(sales.filter((order) => order.progress?.preparation === "canceled"));
     setInitialError("");
   }, []);
 
@@ -108,6 +113,9 @@ function OrdersContent() {
         console.error("Erro ao buscar pedidos:", error);
         if (active) {
           setOrders([]);
+          setFinishedOrders([]);
+          setClosedOrders([]);
+          setCanceledOrders([]);
           setInitialError(`Não foi possível carregar os pedidos. Erro: ${getErrorCode(error)}`);
         }
       }
@@ -184,7 +192,7 @@ function OrdersContent() {
   };
 
   const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
-  const visibleOrders = (orders ?? []).filter((order) => {
+  const matchesActiveSearch = (order) => {
     if (!activeSearch) return true;
     if (activeSearch.startsWith("##")) {
       const customerId = order.user_id
@@ -198,11 +206,16 @@ function OrdersContent() {
       return String(order.id) === activeSearch.slice(1);
     }
     return false;
-  });
+  };
+  const visibleOrders = (orders ?? []).filter(matchesActiveSearch);
+  const visibleFinishedOrders = finishedOrders.filter(matchesActiveSearch);
+  const visibleClosedOrders = closedOrders.filter(matchesActiveSearch);
+  const visibleCanceledOrders = canceledOrders.filter(matchesActiveSearch);
 
-  const handleSelectOrder = (order) => {
+  const handleSelectOrder = (order, readOnly = false) => {
     setSelectedOrderId(order.id);
     setOrderInfo(order);
+    setSelectedOrderReadOnly(readOnly);
   };
 
   const runOrderAction = async (action, parameters) => {
@@ -224,6 +237,7 @@ function OrdersContent() {
       if (action === "cancel_sale") {
         setOrderInfo(null);
         setSelectedOrderId(null);
+        setSelectedOrderReadOnly(false);
       } else {
         const preparation = parameters.ac_finalidade === "Fechar" ? "ready" : "received";
         setOrderInfo((currentOrder) => currentOrder?.id === actionOrderId
@@ -299,6 +313,9 @@ function OrdersContent() {
             searchText={searchText}
             onSearchTextChange={setSearchText}
             onSelectOrder={handleSelectOrder}
+            finishedOrders={visibleFinishedOrders}
+            closedOrders={visibleClosedOrders}
+            canceledOrders={visibleCanceledOrders}
             onRefresh={handleRefresh}
             refreshDisabled={isRefreshing || isCoolingDown || isLockedOut}
             refreshLoading={isRefreshing}
@@ -307,6 +324,7 @@ function OrdersContent() {
           />
           <OrderInfo
             order={orderInfo}
+            readOnly={selectedOrderReadOnly}
             actionLoading={pendingOrderAction}
             onCancelOrder={handleCancelOrder}
             onUpdateProgress={handleUpdateProgress}
