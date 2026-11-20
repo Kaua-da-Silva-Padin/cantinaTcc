@@ -11,6 +11,7 @@ import {
 import { Link } from "react-router";
 import { RiCloseLine, RiMenuLine } from "react-icons/ri";
 import AdminRouteGuard from "../../Components/AdminRouteGuard/AdminRouteGuard";
+import AdminNotifications from "../../Components/AdminNotifications/AdminNotifications";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
 import OrdersList from "../../Components/OrdersList/OrdersList";
 import OrderInfo from "../../Components/OrdersInfo/OrdersInfo";
@@ -305,6 +306,7 @@ function OrdersContent() {
             </span>
             <span>Versão: {packageJson.version}</span>
             <span className="orders-system-status">Status do Sistema: Ativo</span>
+            <AdminNotifications />
             <Link to="/profile" className="orders-user-link">
               <b>{loggedInUserName}</b>
               <Avatar {...stringAvatar(loggedInUserName || "User")} />

@@ -90,6 +90,7 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
 }
 
 .admPageStatus .systemStatus { background: #caffc0; border-color: #55a54d; }
+.admPageStatus .admin-notifications-count { padding: 0 .2rem; color: white; background: #d32f2f; border: 2px solid #ff8b08; }
 .admPageStatus b { margin-left: 1rem; }
 .admPageStatus img { width: 2rem; height: 2rem; filter: brightness(0) invert(1); }
 
@@ -162,18 +163,6 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
 .admPageSideBarSpeedDialGroup .admPageSideBarLinks a:hover span,
 .admPageSideBarSpeedDialGroup .admPageSideBarLinks a:focus-visible span,
 .admPageSideBarSpeedDialGroup .admPageSideBarLinks a.active span { border-bottom-color: white; }
-
-#admPageSideBarNotifications {
-    display: grid;
-    gap: .6rem;
-    margin-top: 1.2rem;
-    padding: .8rem;
-    background: white;
-    border-radius: .45rem;
-}
-#admPageSideBarNotifications h5 { margin: 0; font-size: 1.15rem; }
-.admPageNotificationItem { padding: .7rem; border: 1px solid #e6e6e6; border-radius: .45rem; color: #555; font-size: .85rem; }
-.admNotificationsTexts { display: grid; gap: .2rem; font-size: .78rem; line-height: 1.05; }
 
 .admDialogScreen {
     position: absolute;
@@ -293,6 +282,7 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
     .sideBarOn #subGroupAdmGeneralOne::after { content: ''; position: fixed; inset: 0 0 0 min(19rem, 78vw); z-index: -1; background: #0005; backdrop-filter: blur(4px); }
     #admPageNavBar { position: relative; z-index: 9; }
     .admPageStatus span, .admPageStatus b { display: none; }
+    .admPageStatus .admin-notifications-count { display: grid; }
     .admPageStatus img { display: block; }
 }
 

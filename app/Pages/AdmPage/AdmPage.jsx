@@ -2,6 +2,7 @@ import WeeklySales from "../../Components/WeeklySales/WeeklySales"
 import AdmQuickButton from "../../Components/AdmQuickButton/AdmQuickButton"
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar"
 import AdmDialog from "../../Components/AdmDialog/AdmDialog"
+import AdminNotifications from "../../Components/AdminNotifications/AdminNotifications"
 import supabase from "../../supabaseClient";
 import packageJson from "../../../package.json";
 import '/./index.css';
@@ -114,6 +115,7 @@ export default function AdmPage() {
               </span>
               <span>Versão: {packageJson.version}</span>
               <span className="systemStatus">Status do Sistema: Ativo</span>
+              <AdminNotifications />
               <Link to={'/profile'} className="text-decoration-none d-flex align-items-center gap-2 text-light fs-5">
                 {/* <img src="/imgs/user.png" alt="" /> */}
                 <b>

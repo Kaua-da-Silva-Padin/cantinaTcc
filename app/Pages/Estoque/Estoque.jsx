@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 import { Link } from "react-router";
+import { useSearchParams } from "react-router";
 import { RiCloseLine, RiMenuLine } from "react-icons/ri";
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { FaTrash } from "react-icons/fa6";
 import AdminRouteGuard from "../../Components/AdminRouteGuard/AdminRouteGuard";
+import AdminNotifications from "../../Components/AdminNotifications/AdminNotifications";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
 import AdmDialog from "../../Components/AdmDialog/AdmDialog";
 import { createCloudinaryImage } from "../../utils/cloudinaryImage";
@@ -65,9 +67,11 @@ function shortenProductName(name) {
 }
 
 function EstoqueContent() {
+  const [searchParams] = useSearchParams();
+  const restockSearch = searchParams.get("search") ?? "";
   const [products, setProducts] = useState(null);
-  const [searchText, setSearchText] = useState("");
-  const [activeSearch, setActiveSearch] = useState("");
+  const [searchText, setSearchText] = useState(restockSearch);
+  const [activeSearch, setActiveSearch] = useState(restockSearch.trim());
   const [mode, setMode] = useState("Estoque");
   const [selections, setSelections] = useState({ Estoque: {}, Vendas: {} });
   const [expandedCategories, setExpandedCategories] = useState({});
@@ -122,6 +126,11 @@ function EstoqueContent() {
     const timer = window.setTimeout(() => setActiveSearch(searchText.trim()), 1000);
     return () => window.clearTimeout(timer);
   }, [searchText]);
+
+  useEffect(() => {
+    setSearchText(restockSearch);
+    setActiveSearch(restockSearch.trim());
+  }, [restockSearch]);
 
   useEffect(() => {
     const handleModeShortcut = (event) => {
@@ -297,6 +306,7 @@ function EstoqueContent() {
             <span>{`${currentTime.getDate()} de ${currentTime.toLocaleDateString("pt-BR", { month: "long" })} de ${currentTime.getFullYear()} ${currentTime.toLocaleTimeString("pt-BR")}`}</span>
             <span>Versão: {packageJson.version}</span>
             <span className="stock-system-status">Status do Sistema: Ativo</span>
+            <AdminNotifications />
             <Link to="/profile" className="stock-user-link">
               <b>{loggedInUserName}</b>
               <Avatar sx={{ width: 34, height: 34 }}>{loggedInUserName.charAt(0).toUpperCase()}</Avatar>

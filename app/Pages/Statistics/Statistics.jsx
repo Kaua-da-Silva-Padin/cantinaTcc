@@ -15,6 +15,7 @@ import {
   RiTimeLine,
 } from "react-icons/ri";
 import AdminRouteGuard from "../../Components/AdminRouteGuard/AdminRouteGuard";
+import AdminNotifications from "../../Components/AdminNotifications/AdminNotifications";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
 import { stringAvatar } from "../../Components/MenuPageLinks/MenuPageLinks";
 import packageJson from "../../../package.json";
@@ -390,6 +391,7 @@ function StatisticsContent() {
             </span>
             <span>Versão: {packageJson.version}</span>
             <span className="statistics-system-status">Status do Sistema: Ativo</span>
+            <AdminNotifications />
             <Link to="/profile" className="statistics-user-link">
               <b>{loggedInUserName}</b>
               <Avatar {...stringAvatar(loggedInUserName || "User")} />

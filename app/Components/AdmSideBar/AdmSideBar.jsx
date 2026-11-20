@@ -31,15 +31,6 @@ export default function AdmSideBar(props){
                   {renderLinks(tools)}
                 </nav>
               )}
-
-              <div id="admPageSideBarNotifications">
-                <h5>Notificações</h5>
-                <div className="admPageNotificationItem">
-                  <div className="admNotificationsTexts">
-                    <span>Nenhuma notificação nova.</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
     )

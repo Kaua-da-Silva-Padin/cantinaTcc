@@ -1,0 +1,204 @@
+.admin-notifications-trigger {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2.6rem;
+  height: 2.6rem;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 12%);
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.admin-notifications-trigger:hover,
+.admin-notifications-trigger:focus-visible {
+  background: rgb(255 255 255 / 25%);
+}
+
+.admin-notifications-count {
+  position: absolute;
+  top: -.35rem;
+  right: -.35rem;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  display: grid;
+  place-items: center;
+  padding: 0 .2rem;
+  border: 2px solid #ff8b08;
+  border-radius: 1rem;
+  background: #d32f2f;
+  color: white;
+  font-size: .68rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.admin-notifications-content,
+.admin-justifications-content {
+  display: grid;
+  gap: .85rem;
+}
+
+.admin-notifications-loading {
+  display: grid;
+  place-items: center;
+  min-height: 5rem;
+}
+
+.admin-notifications-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  color: #b3261e;
+}
+
+.admin-notification-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e6d3bd;
+  border-left: .35rem solid #ff8b08;
+  border-radius: .75rem;
+  background: #fffaf3;
+}
+
+.admin-notification-card h3 {
+  margin: 0 0 .35rem;
+  color: #422b16;
+  font-size: 1rem;
+}
+
+.admin-notification-card p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #51463b;
+}
+
+.admin-notification-action.MuiButton-root,
+.admin-justification-send.MuiButton-root {
+  flex: 0 0 auto;
+  background: #ff8b08;
+  color: white;
+}
+
+.admin-notification-action.MuiButton-root:hover,
+.admin-justification-send.MuiButton-root:hover {
+  background: #e87900;
+}
+
+.admin-justification-send.MuiButton-root.Mui-disabled {
+  background: #e0e0e0;
+  color: #888;
+}
+
+.admin-justification-item {
+  display: grid;
+  gap: .7rem;
+  padding: 1rem;
+  border: 1px solid #e2d4c5;
+  border-radius: .8rem;
+  background: #fffdfb;
+}
+
+.admin-justification-summary {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr) auto;
+  align-items: center;
+  gap: .5rem;
+  padding: .65rem .75rem;
+  border-radius: .55rem;
+  background: #fff2df;
+  color: #3d2c1b;
+}
+
+.admin-justification-summary > span {
+  overflow-wrap: anywhere;
+}
+
+.admin-justification-summary time {
+  white-space: nowrap;
+}
+
+.admin-justification-options .MuiFormGroup-root {
+  gap: 0 .45rem;
+}
+
+.admin-justification-options .MuiFormControlLabel-root {
+  margin-right: .25rem;
+}
+
+.admin-justification-expand.MuiButton-root {
+  justify-self: start;
+  padding-left: 0;
+  color: #a65300;
+  text-transform: none;
+}
+
+.admin-justification-details {
+  padding: .75rem;
+  border-radius: .55rem;
+  background: #f7f4f0;
+}
+
+.admin-justification-details p {
+  margin: 0 0 .35rem;
+}
+
+.admin-justification-details ul {
+  margin: .35rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.admin-justification-empty {
+  margin: .5rem 0;
+}
+
+.admin-justification-error {
+  margin: 0;
+  color: #b3261e;
+}
+
+.admin-justifications-actions {
+  position: sticky;
+  bottom: 0;
+  padding: .9rem 1.5rem;
+  border-top: 1px solid #e8e0d8;
+  background: white;
+}
+
+.admin-justification-cancel.MuiButton-root {
+  background: #d84343;
+  color: white;
+}
+
+.admin-justification-cancel.MuiButton-root:hover {
+  background: #b83232;
+}
+
+@media (max-width: 600px) {
+  .admin-notification-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-justification-summary {
+    grid-template-columns: 1fr auto;
+  }
+
+  .admin-justification-summary > span {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .admin-justifications-actions {
+    flex-wrap: wrap;
+  }
+}
