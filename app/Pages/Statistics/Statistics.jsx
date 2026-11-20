@@ -1,0 +1,439 @@
+import { useEffect, useMemo, useState } from "react";
+import { Avatar, CircularProgress } from "@mui/material";
+import { Link } from "react-router";
+import {
+  RiArrowDownSLine,
+  RiArrowUpSLine,
+  RiBarChart2Line,
+  RiCalendar2Line,
+  RiCalendarEventLine,
+  RiCalendarTodoLine,
+  RiCloseLine,
+  RiMedalLine,
+  RiMenuLine,
+  RiRefreshLine,
+  RiShoppingBag3Line,
+  RiSunLine,
+  RiTimeLine,
+} from "react-icons/ri";
+import AdminRouteGuard from "../../Components/AdminRouteGuard/AdminRouteGuard";
+import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
+import { stringAvatar } from "../../Components/MenuPageLinks/MenuPageLinks";
+import packageJson from "../../../package.json";
+import supabase from "../../supabaseClient";
+import "../../../index.css";
+import "./Statistics.css";
+
+const PAGE_SIZE = 1000;
+
+const adminLinks = [
+  { text: "Estoque", link: "/stock" },
+  { text: "Finanças", link: "/finance" },
+  { text: "Estatísticas", link: "/statistics" },
+  { text: "Funcionários", link: "/employees" },
+  { text: "Configurações", link: "/settings" },
+];
+
+const navigationGroups = {
+  speedDial: [
+    { text: "Home", link: "/home" },
+    { text: "Cantina", link: "/buy" },
+    { text: "Administrar", link: "/adm" },
+    { text: "Pedidos", link: "/orders" },
+    { text: "Estoque", link: "/stock" },
+    { text: "Login", link: "/login" },
+    { text: "Registrar", link: "/" },
+    { text: "Perfil", link: "/profile" },
+  ],
+  admin: adminLinks,
+};
+
+const weekdays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+const hourRanges = Array.from({ length: 12 }, (_, index) => ({
+  start: index * 2,
+  end: index * 2 + 2,
+}));
+
+function getErrorCode(error) {
+  return error?.code ?? error?.message ?? "UNKNOWN";
+}
+
+function isCanceled(sale) {
+  return JSON.stringify(sale.progress ?? "").toLowerCase().includes("cancel");
+}
+
+function parseItems(items) {
+  if (typeof items === "string") {
+    try {
+      items = JSON.parse(items);
+    } catch {
+      return [];
+    }
+  }
+  return Array.isArray(items) ? items : [];
+}
+
+function getWeekStart(date) {
+  const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+  return start;
+}
+
+function dateKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function formatCurrency(value) {
+  return Number(value ?? 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
+function getStatistics(sales, now) {
+  const periods = {
+    today: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+    week: getWeekStart(now),
+    month: new Date(now.getFullYear(), now.getMonth(), 1),
+    year: new Date(now.getFullYear(), 0, 1),
+  };
+  const totals = Object.fromEntries(
+    Object.keys(periods).map((period) => [period, { sales: 0, revenue: 0 }])
+  );
+  const dailyChart = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (6 - index));
+    return {
+      date,
+      key: dateKey(date),
+      label: date.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", ""),
+      sales: 0,
+      revenue: 0,
+    };
+  });
+  const traffic = Array.from({ length: 7 }, () => Array(12).fill(0));
+  const products = new Map();
+  const monthStart = periods.month;
+  const yearStart = periods.year;
+
+  sales.forEach((sale) => {
+    if (isCanceled(sale)) return;
+    const boughtAt = new Date(sale.bought_at);
+    if (Number.isNaN(boughtAt.getTime())) return;
+    const revenue = Number(sale.total_price) || 0;
+
+    Object.entries(periods).forEach(([period, start]) => {
+      if (boughtAt >= start && boughtAt <= now) {
+        totals[period].sales += 1;
+        totals[period].revenue += revenue;
+      }
+    });
+
+    const day = dailyChart.find((item) => item.key === dateKey(boughtAt));
+    if (day) {
+      day.sales += 1;
+      day.revenue += revenue;
+    }
+
+    if (boughtAt >= yearStart && boughtAt <= now) {
+      const weekday = (boughtAt.getDay() + 6) % 7;
+      traffic[weekday][Math.floor(boughtAt.getHours() / 2)] += 1;
+    }
+
+    if (boughtAt >= monthStart && boughtAt <= now) {
+      parseItems(sale.items ?? sale.products).forEach((item) => {
+        const name = String(item.product_name ?? item.name ?? item.title ?? "").trim();
+        const quantity = Number(item.qty ?? item.quantity) || 0;
+        if (!name || quantity <= 0) return;
+        products.set(name, (products.get(name) ?? 0) + quantity);
+      });
+    }
+  });
+
+  return {
+    totals,
+    dailyChart,
+    traffic,
+    topProducts: [...products.entries()]
+      .map(([name, quantity]) => ({ name, quantity }))
+      .sort((a, b) => b.quantity - a.quantity || a.name.localeCompare(b.name, "pt-BR"))
+      .slice(0, 10),
+  };
+}
+
+function StatisticsContent() {
+  const [sales, setSales] = useState(null);
+  const [loadError, setLoadError] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [expandedRanking, setExpandedRanking] = useState(false);
+  const [sideBarOn, setSideBarOn] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const loggedInUser = typeof sessionStorage !== "undefined"
+    ? sessionStorage.getItem("loggedInUser")
+    : null;
+  let parsedUser = null;
+  try {
+    parsedUser = loggedInUser ? JSON.parse(loggedInUser) : null;
+  } catch {
+    parsedUser = null;
+  }
+  const loggedInUserName = parsedUser?.name ?? parsedUser?.nome ?? loggedInUser ?? "Funcionário";
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setCurrentTime(new Date()), 60_000);
+    setSideBarOn(window.innerWidth > 1024);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const loadSales = async () => {
+      setSales(null);
+      setLoadError("");
+      const now = new Date();
+      const yearStart = new Date(now.getFullYear(), 0, 1).toISOString();
+      const allSales = [];
+
+      try {
+        for (let offset = 0; ; offset += PAGE_SIZE) {
+          const { data, error } = await supabase
+            .from("sales")
+            .select("id,bought_at,total_price,progress,items")
+            .gte("bought_at", yearStart)
+            .lte("bought_at", now.toISOString())
+            .order("bought_at", { ascending: true })
+            .range(offset, offset + PAGE_SIZE - 1);
+          if (error) throw error;
+          allSales.push(...(data ?? []));
+          if (!data || data.length < PAGE_SIZE) break;
+        }
+        if (active) {
+          setSales(allSales);
+          setCurrentTime(new Date());
+        }
+      } catch (error) {
+        console.error("Erro ao buscar estatísticas de vendas:", error);
+        if (active) setLoadError(getErrorCode(error));
+      }
+    };
+
+    loadSales();
+    return () => { active = false; };
+  }, [refreshKey]);
+
+  const statistics = useMemo(
+    () => sales ? getStatistics(sales, currentTime) : null,
+    [sales, currentTime]
+  );
+  const maxTraffic = Math.max(1, ...(statistics?.traffic.flat() ?? []));
+  const maxRevenue = Math.max(1, ...(statistics?.dailyChart.map((day) => day.revenue) ?? []));
+  const visibleProducts = statistics?.topProducts.slice(0, expandedRanking ? 10 : 3) ?? [];
+  const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
+  const periodCards = [
+    { key: "today", label: "Hoje", icon: <RiSunLine aria-hidden="true" /> },
+    { key: "week", label: "Esta semana", icon: <RiCalendar2Line aria-hidden="true" /> },
+    { key: "month", label: "Este mês", icon: <RiCalendarEventLine aria-hidden="true" /> },
+    { key: "year", label: "Este ano", icon: <RiCalendarTodoLine aria-hidden="true" /> },
+  ];
+
+  return (
+    <div className={`statistics-admin-shell ${sideBarOn ? "sideBarOn" : "sideBarOff"}`}>
+      <aside className="statistics-sidebar">
+        <AdmSideBar tools={adminLinks} navigationGroups={navigationGroups} />
+      </aside>
+      <main className="statistics-main">
+        <header className="statistics-navbar">
+          <button
+            type="button"
+            aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"}
+            onClick={() => setSideBarOn((current) => !current)}
+          >
+            {sideBarOn ? <RiCloseLine aria-hidden="true" /> : <RiMenuLine aria-hidden="true" />}
+          </button>
+          <div className="statistics-navbar-status">
+            <span>
+              {`${currentTime.getDate()} de ${capitalize(currentTime.toLocaleDateString("pt-BR", { month: "long" }))} de ${currentTime.getFullYear()}`}
+            </span>
+            <span>Versão: {packageJson.version}</span>
+            <span className="statistics-system-status">Status do Sistema: Ativo</span>
+            <Link to="/profile" className="statistics-user-link">
+              <b>{loggedInUserName}</b>
+              <Avatar {...stringAvatar(loggedInUserName || "User")} />
+            </Link>
+          </div>
+        </header>
+
+        <section className="statistics-workspace" aria-label="Estatísticas de vendas">
+          <div className="statistics-heading">
+            <div>
+              <h1><RiBarChart2Line aria-hidden="true" /> Estatísticas</h1>
+              <p>Vendas, faturamento e fluxo de atendimentos</p>
+            </div>
+            <button type="button" onClick={() => setRefreshKey((key) => key + 1)}>
+              <RiRefreshLine aria-hidden="true" />
+              Atualizar dados
+            </button>
+          </div>
+
+          {loadError ? (
+            <div className="statistics-error" role="alert">
+              <b>Não foi possível carregar as estatísticas.</b>
+              <span>Erro: {loadError}</span>
+              <button type="button" onClick={() => setRefreshKey((key) => key + 1)}>Tentar novamente</button>
+            </div>
+          ) : !statistics ? (
+            <div className="statistics-loading" role="status">
+              <CircularProgress />
+              <span>Carregando estatísticas...</span>
+            </div>
+          ) : (
+            <>
+              <div className="statistics-period-grid">
+                {periodCards.map(({ key, label, icon }) => (
+                  <article className="statistics-period-card" data-period={key} key={key}>
+                    <div className="statistics-period-heading">
+                      {icon}
+                      <h2>{label}</h2>
+                    </div>
+                    <strong>{formatCurrency(statistics.totals[key].revenue)}</strong>
+                    <span><RiShoppingBag3Line aria-hidden="true" /> {statistics.totals[key].sales} vendas</span>
+                  </article>
+                ))}
+              </div>
+
+              <div className="statistics-content-grid">
+                <article className="statistics-card statistics-chart-card">
+                  <div className="statistics-card-heading">
+                    <div>
+                      <h2><RiBarChart2Line aria-hidden="true" /> Faturamento diário</h2>
+                      <p>Últimos 7 dias · vendas não canceladas</p>
+                    </div>
+                  </div>
+                  <svg
+                    className="statistics-chart"
+                    viewBox="0 0 700 220"
+                    role="img"
+                    aria-label="Gráfico de faturamento dos últimos sete dias"
+                  >
+                    {[0, 1, 2, 3].map((line) => {
+                      const y = 18 + line * 48;
+                      return <line key={line} x1="48" x2="680" y1={y} y2={y} className="statistics-chart-gridline" />;
+                    })}
+                    {statistics.dailyChart.map((day, index) => {
+                      const x = 58 + index * 92;
+                      const height = (day.revenue / maxRevenue) * 138;
+                      const y = 162 - height;
+                      return (
+                        <g key={day.key}>
+                          <title>{`${day.date.toLocaleDateString("pt-BR")}: ${formatCurrency(day.revenue)}, ${day.sales} vendas`}</title>
+                          <rect x={x} y={y} width="46" height={Math.max(height, 1)} rx="5" className="statistics-chart-bar" />
+                          <text x={x + 23} y="190" textAnchor="middle" className="statistics-chart-label">
+                            {day.label}
+                          </text>
+                        </g>
+                      );
+                    })}
+                  </svg>
+                  <div className="statistics-chart-summary">
+                    {statistics.dailyChart.map((day) => (
+                      <span key={day.key}>{day.sales} {day.sales === 1 ? "venda" : "vendas"}</span>
+                    ))}
+                  </div>
+                </article>
+
+                <article className="statistics-card statistics-ranking-card">
+                  <div className="statistics-card-heading">
+                    <div>
+                      <h2><RiMedalLine aria-hidden="true" /> Mais vendidos do mês</h2>
+                      <p>Ranking por unidades compradas</p>
+                    </div>
+                  </div>
+                  {visibleProducts.length ? (
+                    <ol className="statistics-ranking">
+                      {visibleProducts.map((product, index) => (
+                        <li key={product.name}>
+                          <span className="statistics-rank-number">{index + 1}</span>
+                          <strong>{product.name}</strong>
+                          <span className="statistics-product-count">
+                            <RiShoppingBag3Line aria-hidden="true" />
+                            {product.quantity} {product.quantity === 1 ? "unidade" : "unidades"}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <p className="statistics-empty">Nenhum produto vendido neste mês.</p>
+                  )}
+                  {statistics.topProducts.length > 3 && (
+                    <button
+                      type="button"
+                      className="statistics-expand-button"
+                      onClick={() => setExpandedRanking((expanded) => !expanded)}
+                      aria-expanded={expandedRanking}
+                    >
+                      {expandedRanking ? "Mostrar menos" : "Ver top 10"}
+                      {expandedRanking ? <RiArrowUpSLine aria-hidden="true" /> : <RiArrowDownSLine aria-hidden="true" />}
+                    </button>
+                  )}
+                </article>
+
+                <article className="statistics-card statistics-traffic-card">
+                  <div className="statistics-card-heading">
+                    <div>
+                      <h2><RiTimeLine aria-hidden="true" /> Fluxo por dia e horário</h2>
+                      <p>Atendimentos registrados neste ano, agrupados em faixas de 2 horas</p>
+                    </div>
+                  </div>
+                  <div className="statistics-traffic-scroll">
+                    <table className="statistics-traffic-table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Dia</th>
+                          {hourRanges.map(({ start, end }) => (
+                            <th scope="col" key={start}>{`${String(start).padStart(2, "0")}–${String(end).padStart(2, "0")}h`}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {weekdays.map((weekday, rowIndex) => (
+                          <tr key={weekday}>
+                            <th scope="row">{weekday}</th>
+                            {statistics.traffic[rowIndex].map((count, columnIndex) => {
+                              const intensity = count ? 0.12 + (count / maxTraffic) * 0.76 : 0.04;
+                              return (
+                                <td
+                                  key={`${weekday}-${columnIndex}`}
+                                  style={{
+                                    backgroundColor: `rgba(48, 132, 190, ${intensity})`,
+                                    color: intensity > 0.58 ? "#fff" : "#222",
+                                  }}
+                                  aria-label={`${weekday}, ${hourRanges[columnIndex].start} às ${hourRanges[columnIndex].end} horas: ${count} atendimentos`}
+                                >
+                                  {count || "—"}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="statistics-note">
+                    Cada venda conta como um atendimento; clientes recorrentes podem aparecer mais de uma vez.
+                  </p>
+                </article>
+              </div>
+            </>
+          )}
+        </section>
+      </main>
+    </div>
+  );
+}
+
+export default function Statistics() {
+  return (
+    <AdminRouteGuard>
+      <StatisticsContent />
+    </AdminRouteGuard>
+  );
+}

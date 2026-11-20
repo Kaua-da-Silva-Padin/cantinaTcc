@@ -1,0 +1,188 @@
+.statistics-admin-shell {
+  height: 100dvh;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 17.5rem minmax(0, 1fr);
+  overflow: hidden;
+  color: #111;
+  background: #f7f7f7;
+  font-family: Poppins, sans-serif;
+}
+
+.statistics-admin-shell.sideBarOff { grid-template-columns: 0 minmax(0, 1fr); }
+.statistics-sidebar { min-width: 0; overflow: hidden; }
+.sideBarOff .statistics-sidebar { width: 0; }
+
+.statistics-main {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 5.2rem minmax(0, 1fr);
+}
+
+.statistics-navbar {
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  color: white;
+  background: linear-gradient(100deg, #ff8b08, #ff990b);
+}
+
+.statistics-navbar > button {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.statistics-navbar > button svg { width: 1.6rem; height: 1.6rem; color: white; }
+.statistics-navbar-status { display: flex; align-items: center; gap: .45rem; font-size: .9rem; }
+.statistics-navbar-status > span { padding: .25rem .55rem; color: #111; background: #fff4aa; border: 1px solid #8f7e00; border-radius: .5rem; }
+.statistics-navbar-status > .statistics-system-status { background: #caffc0; border-color: #55a54d; }
+.statistics-user-link { display: flex; align-items: center; gap: .5rem; margin-left: .5rem; color: white; text-decoration: none; }
+
+.statistics-workspace {
+  min-height: 0;
+  overflow: auto;
+  padding: 1.2rem;
+}
+
+.statistics-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.statistics-heading h1 { display: flex; align-items: center; gap: .45rem; margin: 0; font-size: 1.8rem; font-weight: 700; }
+.statistics-heading h1 svg { color: #2681b8; }
+.statistics-heading p { margin: .15rem 0 0; color: #666; }
+.statistics-heading > button,
+.statistics-error button {
+  min-height: 2.6rem;
+  padding: .45rem .9rem;
+  border: 0;
+  border-radius: .55rem;
+  background: #ff8b08;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.statistics-heading > button { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; }
+.statistics-heading > button svg { width: 1.1rem; height: 1.1rem; }
+
+.statistics-period-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .8rem;
+  margin-bottom: .8rem;
+}
+
+.statistics-period-card,
+.statistics-card {
+  min-width: 0;
+  border: 1px solid #e8e8e8;
+  border-radius: .9rem;
+  background: white;
+  box-shadow: 0 4px 14px #0000000a;
+}
+
+.statistics-period-card { display: grid; gap: .3rem; padding: 1rem; }
+.statistics-period-card[data-period="today"] { border-color: #b9dfbf; background: #e9f6eb; --period-accent: #38834a; }
+.statistics-period-card[data-period="week"] { border-color: #c4deef; background: #e8f4fc; --period-accent: #2679b5; }
+.statistics-period-card[data-period="month"] { border-color: #f1d59d; background: #fff3dc; --period-accent: #a9680d; }
+.statistics-period-card[data-period="year"] { border-color: #edc0c0; background: #fff0ef; --period-accent: #c34f4f; }
+.statistics-period-heading { display: flex; align-items: center; gap: .45rem; }
+.statistics-period-heading > svg { width: 1.2rem; height: 1.2rem; color: var(--period-accent); }
+.statistics-period-card h2 { margin: 0; color: #666; font-size: .95rem; font-weight: 600; }
+.statistics-period-card strong { color: #212121; font-size: 1.55rem; }
+.statistics-period-card > span { display: flex; align-items: center; gap: .3rem; color: #666; font-size: .9rem; }
+.statistics-period-card > span svg { width: 1rem; height: 1rem; color: var(--period-accent); }
+
+.statistics-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(17rem, .9fr);
+  gap: .8rem;
+}
+
+.statistics-card { padding: 1rem; }
+.statistics-card-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
+.statistics-card-heading h2 { display: flex; align-items: center; gap: .4rem; margin: 0; font-size: 1.1rem; font-weight: 700; }
+.statistics-card-heading h2 svg { width: 1.2rem; height: 1.2rem; color: #3184be; }
+.statistics-card-heading p { margin: .2rem 0 0; color: #777; font-size: .82rem; }
+
+.statistics-chart { display: block; width: 100%; height: 12rem; margin-top: .5rem; overflow: visible; }
+.statistics-chart-gridline { stroke: #ececec; stroke-width: 1; }
+.statistics-chart-bar { fill: #3184be; }
+.statistics-chart-label { fill: #666; font-family: Poppins, sans-serif; font-size: 13px; }
+.statistics-chart-summary { display: grid; grid-template-columns: repeat(7, 1fr); color: #777; font-size: .7rem; text-align: center; }
+
+.statistics-ranking { display: grid; gap: .45rem; margin: .8rem 0; padding: 0; list-style: none; }
+.statistics-ranking li { min-width: 0; display: grid; grid-template-columns: 1.8rem minmax(0, 1fr) auto; align-items: center; gap: .5rem; padding: .55rem .35rem; border-bottom: 1px solid #eee; }
+.statistics-ranking li strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .9rem; }
+.statistics-product-count { display: inline-flex; align-items: center; gap: .25rem; color: #666; font-size: .78rem; white-space: nowrap; }
+.statistics-product-count svg { width: .9rem; height: .9rem; color: #3184be; }
+.statistics-rank-number { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: #f1f1f1; color: #555; font-size: .8rem; font-weight: 800; }
+.statistics-ranking li:nth-child(1) .statistics-rank-number { background: #dff2e2; color: #2f7b3d; }
+.statistics-ranking li:nth-child(2) .statistics-rank-number { background: #e1f1fc; color: #2679b5; }
+.statistics-ranking li:nth-child(3) .statistics-rank-number { background: #fde7e7; color: #bc4b4b; }
+.statistics-expand-button { display: flex; align-items: center; gap: .2rem; padding: .4rem 0; border: 0; background: transparent; color: #b85b00; font: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; }
+.statistics-expand-button svg { width: 1.2rem; height: 1.2rem; }
+.statistics-empty { margin: 1rem 0; color: #777; }
+
+.statistics-traffic-card { grid-column: 1 / -1; }
+.statistics-traffic-scroll { width: 100%; overflow-x: auto; margin-top: .85rem; }
+.statistics-traffic-table { width: 100%; min-width: 820px; border-collapse: separate; border-spacing: 3px; font-size: .76rem; text-align: center; }
+.statistics-traffic-table th { padding: .35rem .2rem; color: #555; font-weight: 600; white-space: nowrap; }
+.statistics-traffic-table th[scope="row"] { text-align: left; }
+.statistics-traffic-table td { min-width: 2.7rem; height: 2.1rem; border-radius: .25rem; }
+.statistics-note { margin: .55rem 0 0; color: #777; font-size: .78rem; }
+
+.statistics-loading,
+.statistics-error {
+  min-height: 14rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .8rem;
+  border: 1px solid #e8e8e8;
+  border-radius: .9rem;
+  background: white;
+}
+
+.statistics-error { flex-direction: column; padding: 1rem; color: #8b1d1d; text-align: center; }
+
+@media (max-width: 1024px) {
+  .statistics-admin-shell,
+  .statistics-admin-shell.sideBarOff { display: block; }
+  .statistics-sidebar { position: absolute; z-index: 8; width: 0; height: 0; }
+  .sideBarOn .statistics-sidebar { width: min(19rem, 78vw); height: auto; }
+  .sideBarOn .statistics-sidebar::after { content: ""; position: fixed; inset: 0 0 0 min(19rem, 78vw); z-index: -1; background: #0005; backdrop-filter: blur(4px); }
+  .statistics-navbar { position: relative; z-index: 10; padding: 0 .75rem; }
+  .statistics-navbar-status > span:not(.statistics-system-status) { display: none; }
+  .statistics-period-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .statistics-main { grid-template-rows: 4.6rem minmax(0, 1fr); }
+  .statistics-workspace { padding: .75rem; }
+  .statistics-content-grid { grid-template-columns: minmax(0, 1fr); }
+  .statistics-traffic-card { grid-column: 1; }
+  .statistics-heading h1 { font-size: 1.5rem; }
+  .statistics-heading p { font-size: .82rem; }
+  .statistics-heading > button { padding: .4rem .6rem; font-size: .82rem; white-space: nowrap; }
+}
+
+@media (max-width: 450px) {
+  .statistics-period-card { padding: .75rem; }
+  .statistics-period-card strong { font-size: 1.3rem; }
+  .statistics-user-link b { display: none; }
+  .statistics-chart-summary { font-size: .62rem; }
+}
