@@ -47,6 +47,7 @@ function ArchiveGroup({
   title,
   orders,
   canceled = false,
+  readOnly = true,
   selectedOrderId,
   expanded,
   onToggle,
@@ -78,7 +79,7 @@ function ArchiveGroup({
                   type="button"
                   key={order.id}
                   className={`orders-archive-item ${canceled ? "is-canceled" : ""} ${isSelected ? "is-selected" : ""}`}
-                  onClick={() => onSelectOrder(order, true)}
+                  onClick={() => onSelectOrder(order, readOnly)}
                   aria-label={`Pedido ${order.id}, ${order.user_name || "cliente desconhecido"}, ${formatCurrency(order.total_price)}${canceled ? `, motivo: ${order.cancellation_msg || "não informado"}` : ""}`}
                   aria-pressed={isSelected}
                 >
@@ -240,6 +241,7 @@ export default function OrdersList({
           groupId="orders-finished"
           title="Pedidos Finalizados"
           orders={finishedOrders}
+          readOnly={false}
           selectedOrderId={selectedOrderId}
           expanded={Boolean(expandedArchives.finished)}
           onToggle={toggleArchive("finished")}

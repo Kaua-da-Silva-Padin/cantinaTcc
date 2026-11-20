@@ -276,8 +276,8 @@ export default function OrderInfo({
 
   const items = parseItems(order.items);
   const preparation = order.progress?.preparation;
-  const isFinalized = preparation === "received";
-  const isClosed = ["ready", "canceled"].includes(preparation);
+  const isFinalized = preparation === "ready";
+  const isClosed = ["received", "canceled"].includes(preparation);
   const isInProgress = preparation === "in progress";
 
   return (

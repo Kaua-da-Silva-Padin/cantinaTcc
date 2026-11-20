@@ -245,7 +245,7 @@ function OrdersContent() {
         setSelectedOrderId(null);
         setSelectedOrderReadOnly(false);
       } else {
-        const preparation = parameters.ac_finalidade === "Fechar" ? "ready" : "received";
+        const preparation = parameters.ac_finalidade === "Fechar" ? "received" : "ready";
         setOrderInfo((currentOrder) => currentOrder?.id === actionOrderId
           ? {
             ...currentOrder,
