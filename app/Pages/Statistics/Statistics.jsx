@@ -8,9 +8,7 @@ import {
   RiCalendar2Line,
   RiCalendarEventLine,
   RiCalendarTodoLine,
-  RiCloseLine,
   RiMedalLine,
-  RiMenuLine,
   RiRefreshLine,
   RiShoppingBag3Line,
   RiSunLine,
@@ -311,7 +309,6 @@ function StatisticsContent() {
 
   useEffect(() => {
     const timer = window.setInterval(() => setCurrentTime(new Date()), 60_000);
-    setSideBarOn(window.innerWidth > 1024);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -382,7 +379,11 @@ function StatisticsContent() {
             aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"}
             onClick={() => setSideBarOn((current) => !current)}
           >
-            {sideBarOn ? <RiCloseLine aria-hidden="true" /> : <RiMenuLine aria-hidden="true" />}
+            <img
+              src={sideBarOn ? "/imgs/closeicon.png" : "/imgs/more.png"}
+              alt=""
+              aria-hidden="true"
+            />
           </button>
           <div className="statistics-navbar-status">
             <span>
