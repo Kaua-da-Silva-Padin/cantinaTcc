@@ -1,4 +1,4 @@
-import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiTableView, RiUserFill, RiUserAddFill, RiSettings3Fill, RiArchiveDrawerFill } from 'react-icons/ri';
+import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiUserFill, RiUserAddFill, RiSettings3Fill } from 'react-icons/ri';
 import { Avatar, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop, ScopedCssBaseline } from '@mui/material';
 import { loadLoggedInUser } from '../../Pages/Login/Login';
 import { useState, useEffect } from 'react';
@@ -67,8 +67,6 @@ export default function MenuPageLinks() {
     const cantinaAction = { icon: <RiShoppingCart2Fill />, name: 'Cantina', link: '/buy' };
     const adminActions = [
         { icon: <RiSettings3Fill />, name: 'Administrar', link: '/adm' },
-        { icon: <RiTableView />, name: 'Pedidos', link: '/orders' },
-        { icon: <RiArchiveDrawerFill />, name: 'Estoque', link: '/stock' },
     ];
     const loginAction = { icon: <RiUserFill />, name: 'Login', link: '/login' };
     const registerAction = { icon: <RiUserAddFill />, name: 'Registrar', link: '/' };
