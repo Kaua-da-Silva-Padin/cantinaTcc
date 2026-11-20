@@ -38,7 +38,6 @@ const navigationGroups = {
     { text: "Home", link: "/home" },
     { text: "Cantina", link: "/buy" },
     { text: "Administrar", link: "/adm" },
-    { text: "Login", link: "/login" },
     { text: "Registrar", link: "/" },
     { text: "Perfil", link: "/profile" },
   ],

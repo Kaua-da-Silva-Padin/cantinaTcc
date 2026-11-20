@@ -1,4 +1,4 @@
-import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiUserFill, RiUserAddFill, RiSettings3Fill } from 'react-icons/ri';
+import { RiShoppingCart2Fill, RiMenuFill, RiCloseFill, RiHomeFill, RiUserAddFill, RiSettings3Fill } from 'react-icons/ri';
 import { Avatar, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop, ScopedCssBaseline } from '@mui/material';
 import { loadLoggedInUser } from '../../Pages/Login/Login';
 import { useState, useEffect } from 'react';
@@ -68,17 +68,16 @@ export default function MenuPageLinks() {
     const adminActions = [
         { icon: <RiSettings3Fill />, name: 'Administrar', link: '/adm' },
     ];
-    const loginAction = { icon: <RiUserFill />, name: 'Login', link: '/login' };
     const registerAction = { icon: <RiUserAddFill />, name: 'Registrar', link: '/' };
     const profileAction = user
         ? { icon: <Avatar {...stringAvatar(user.name || 'User')} />, name: 'Perfil', link: '/profile' }
         : null;
 
     const actions = user?.type === 'admin'
-        ? [homeAction, cantinaAction, ...adminActions, loginAction, registerAction, profileAction]
+        ? [homeAction, cantinaAction, ...adminActions, registerAction, profileAction]
         : user
             ? [homeAction, cantinaAction, profileAction]
-            : [homeAction, loginAction, registerAction];
+            : [homeAction, registerAction];
 
     return(
         <ScopedCssBaseline>
