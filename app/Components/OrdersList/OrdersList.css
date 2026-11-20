@@ -94,10 +94,6 @@
   background: #26b84a;
 }
 
-.orders-new-orders-indicator.no-new-orders {
-  background: #ff751f;
-}
-
 .orders-table-container {
   min-height: 0;
   flex: 1;

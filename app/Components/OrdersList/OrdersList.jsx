@@ -158,9 +158,9 @@ export default function OrdersList({
               {refreshLoading
                 ? <CircularProgress size={19} color="inherit" />
                 : <FaArrowsRotate aria-hidden="true" />}
-              {!refreshLoading && hasNewOrders !== null && (
+              {!refreshLoading && hasNewOrders && (
                 <span
-                  className={`orders-new-orders-indicator ${hasNewOrders ? "has-new-orders" : "no-new-orders"}`}
+                  className="orders-new-orders-indicator has-new-orders"
                   aria-hidden="true"
                 />
               )}
