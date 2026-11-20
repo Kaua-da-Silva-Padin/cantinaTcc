@@ -25,10 +25,9 @@ const categoryNames = {
 };
 
 const adminLinks = [
+  { text: "Pedidos", link: "/orders" },
   { text: "Estoque", link: "/stock" },
   { text: "Estatísticas", link: "/statistics" },
-  { text: "Funcionários", link: "/employees" },
-  { text: "Configurações", link: "/settings" },
 ];
 
 const navigationGroups = {
@@ -36,8 +35,6 @@ const navigationGroups = {
     { text: "Home", link: "/home" },
     { text: "Cantina", link: "/buy" },
     { text: "Administrar", link: "/adm" },
-    { text: "Pedidos", link: "/orders" },
-    { text: "Estoque", link: "/stock" },
     { text: "Login", link: "/login" },
     { text: "Registrar", link: "/" },
     { text: "Perfil", link: "/profile" },
