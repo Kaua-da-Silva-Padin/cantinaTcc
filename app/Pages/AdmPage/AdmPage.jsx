@@ -8,6 +8,7 @@ import '/./index.css';
 import { Link } from 'react-router';
 import { useState, useEffect, useCallback } from "react";
 import { Avatar } from '@mui/material';
+import { RiCloseLine, RiMenuLine } from "react-icons/ri";
 import { stringAvatar } from '../../Components/MenuPageLinks/MenuPageLinks';
 
 export default function AdmPage() {
@@ -104,8 +105,8 @@ export default function AdmPage() {
         <main id="subGroupAdmGeneralTwo">
 
           <div id="admPageNavBar" className="gap-4">
-            <button aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"} onClick={() => setSideBarOn(current => !current)}>
-              <img src={sideBarOn ? '/imgs/closeicon.png' : '/imgs/more.png'} alt="" />
+            <button type="button" aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"} onClick={() => setSideBarOn(current => !current)}>
+              {sideBarOn ? <RiCloseLine aria-hidden="true" /> : <RiMenuLine aria-hidden="true" />}
             </button>
             <div className="admPageStatus">
               <span>
