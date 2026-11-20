@@ -172,11 +172,10 @@ function getPeriodAnalytics(statistics, period, now) {
     return {
       chart: statistics.dailyChart,
       chartTitle: "Faturamento diário",
-      chartDescription: "Últimos 7 dias · vendas não canceladas",
+      chartDescription: "Últimos 7 dias",
       topProducts: statistics.topProducts,
       rankingTitle: "Mais vendidos do mês",
       traffic: statistics.traffic,
-      trafficDescription: "Atendimentos registrados neste ano, agrupados em faixas de 2 horas",
     };
   }
 
@@ -221,11 +220,10 @@ function getPeriodAnalytics(statistics, period, now) {
   return {
     chart,
     chartTitle,
-    chartDescription: `${periodDescription} · vendas não canceladas`,
+    chartDescription: periodDescription,
     topProducts: getTopProducts(filteredSales),
     rankingTitle: `Mais vendidos ${periodLabels[period]}`,
     traffic,
-    trafficDescription: `Atendimentos ${periodLabels[period]}, agrupados em faixas de 2 horas`,
   };
 }
 
@@ -401,10 +399,6 @@ function StatisticsContent() {
 
         <section className="statistics-workspace" aria-label="Estatísticas de vendas">
           <div className="statistics-heading">
-            <div>
-              <h1><RiBarChart2Line aria-hidden="true" /> Estatísticas</h1>
-              <p>Vendas, faturamento e fluxo de atendimentos</p>
-            </div>
             <button type="button" onClick={() => setRefreshKey((key) => key + 1)}>
               <RiRefreshLine aria-hidden="true" />
               Atualizar dados
@@ -543,7 +537,6 @@ function StatisticsContent() {
                   <div className="statistics-card-heading">
                     <div>
                       <h2><RiTimeLine aria-hidden="true" /> Fluxo por dia e horário</h2>
-                      <p>{periodAnalytics.trafficDescription}</p>
                     </div>
                   </div>
                   <div className="statistics-traffic-scroll">
@@ -580,9 +573,6 @@ function StatisticsContent() {
                       </tbody>
                     </table>
                   </div>
-                  <p className="statistics-note">
-                    Cada venda conta como um atendimento; clientes recorrentes podem aparecer mais de uma vez.
-                  </p>
                 </article>
               </div>
             </>
