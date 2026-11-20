@@ -108,8 +108,8 @@ function OrdersContent() {
     ]);
 
     setOrders(sales.filter((order) => order.progress?.preparation === "in progress"));
-    setFinishedOrders(sales.filter((order) => order.progress?.preparation === "received"));
-    setClosedOrders(sales.filter((order) => order.progress?.preparation === "ready"));
+    setFinishedOrders(sales.filter((order) => order.progress?.preparation === "ready"));
+    setClosedOrders(sales.filter((order) => order.progress?.preparation === "received"));
     setCanceledOrders(sales.filter((order) => order.progress?.preparation === "canceled"));
     setInitialError("");
   }, []);
