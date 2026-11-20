@@ -94,11 +94,23 @@
   box-shadow: 0 4px 14px #0000000a;
 }
 
-.statistics-period-card { display: grid; gap: .3rem; padding: 1rem; }
+.statistics-period-card {
+  appearance: none;
+  display: grid;
+  gap: .3rem;
+  padding: 1rem;
+  color: #111;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
 .statistics-period-card[data-period="today"] { border-color: #b9dfbf; background: #e9f6eb; --period-accent: #38834a; }
 .statistics-period-card[data-period="week"] { border-color: #c4deef; background: #e8f4fc; --period-accent: #2679b5; }
 .statistics-period-card[data-period="month"] { border-color: #f1d59d; background: #fff3dc; --period-accent: #a9680d; }
 .statistics-period-card[data-period="year"] { border-color: #edc0c0; background: #fff0ef; --period-accent: #c34f4f; }
+.statistics-period-card[data-selected="false"] { border-color: #e8e8e8; background: white; --period-accent: #777; }
+.statistics-period-card:focus-visible { outline: 3px solid #3184be; outline-offset: 2px; }
+.statistics-period-card:hover { border-color: var(--period-accent); }
 .statistics-period-heading { display: flex; align-items: center; gap: .45rem; }
 .statistics-period-heading > svg { width: 1.2rem; height: 1.2rem; color: var(--period-accent); }
 .statistics-period-card h2 { margin: 0; color: #666; font-size: .95rem; font-weight: 600; }

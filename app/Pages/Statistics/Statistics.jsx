@@ -49,6 +49,12 @@ const navigationGroups = {
 };
 
 const weekdays = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+const periodLabels = {
+  today: "hoje",
+  week: "esta semana",
+  month: "este mês",
+  year: "este ano",
+};
 const hourRanges = Array.from({ length: 12 }, (_, index) => ({
   start: index * 2,
   end: index * 2 + 2,
@@ -83,11 +89,144 @@ function dateKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function isWithinPeriod(date, period, now) {
+  if (date > now) return false;
+  if (period === "today") return dateKey(date) === dateKey(now);
+  if (period === "week") return date >= getWeekStart(now);
+  if (period === "month") {
+    return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+  }
+  return date.getFullYear() === now.getFullYear();
+}
+
+function getChartBuckets(period, now) {
+  if (period === "today") {
+    return hourRanges.map(({ start, end }, index) => ({
+      key: String(index),
+      label: `${String(start).padStart(2, "0")}–${String(end).padStart(2, "0")}`,
+      sales: 0,
+      revenue: 0,
+    }));
+  }
+
+  if (period === "week") {
+    const weekStart = getWeekStart(now);
+    return Array.from({ length: 7 }, (_, index) => {
+      const date = new Date(weekStart);
+      date.setDate(date.getDate() + index);
+      return {
+        key: dateKey(date),
+        label: date.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", ""),
+        sales: 0,
+        revenue: 0,
+      };
+    });
+  }
+
+  if (period === "month") {
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    return Array.from({ length: daysInMonth }, (_, index) => ({
+      key: String(index + 1),
+      label: String(index + 1),
+      sales: 0,
+      revenue: 0,
+    }));
+  }
+
+  return Array.from({ length: 12 }, (_, index) => ({
+    key: String(index),
+    label: new Date(now.getFullYear(), index, 1)
+      .toLocaleDateString("pt-BR", { month: "short" })
+      .replace(".", ""),
+    sales: 0,
+    revenue: 0,
+  }));
+}
+
 function formatCurrency(value) {
   return Number(value ?? 0).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
+}
+
+function getTopProducts(sales) {
+  const products = new Map();
+  sales.forEach(({ sale }) => {
+    parseItems(sale.items ?? sale.products).forEach((item) => {
+      const name = String(item.product_name ?? item.name ?? item.title ?? "").trim();
+      const quantity = Number(item.qty ?? item.quantity) || 0;
+      if (!name || quantity <= 0) return;
+      products.set(name, (products.get(name) ?? 0) + quantity);
+    });
+  });
+
+  return [...products.entries()]
+    .map(([name, quantity]) => ({ name, quantity }))
+    .sort((a, b) => b.quantity - a.quantity || a.name.localeCompare(b.name, "pt-BR"))
+    .slice(0, 10);
+}
+
+function getPeriodAnalytics(statistics, period, now) {
+  if (!period) {
+    return {
+      chart: statistics.dailyChart,
+      chartTitle: "Faturamento diário",
+      chartDescription: "Últimos 7 dias · vendas não canceladas",
+      topProducts: statistics.topProducts,
+      rankingTitle: "Mais vendidos do mês",
+      traffic: statistics.traffic,
+      trafficDescription: "Atendimentos registrados neste ano, agrupados em faixas de 2 horas",
+    };
+  }
+
+  const filteredSales = statistics.activeSales.filter(({ boughtAt }) =>
+    isWithinPeriod(boughtAt, period, now)
+  );
+  const chart = getChartBuckets(period, now);
+  const chartBuckets = new Map(chart.map((bucket) => [bucket.key, bucket]));
+  const traffic = Array.from({ length: 7 }, () => Array(12).fill(0));
+
+  filteredSales.forEach(({ boughtAt, revenue }) => {
+    const chartKey = period === "today"
+      ? String(Math.floor(boughtAt.getHours() / 2))
+      : period === "week"
+        ? dateKey(boughtAt)
+        : period === "month"
+          ? String(boughtAt.getDate())
+          : String(boughtAt.getMonth());
+    const bucket = chartBuckets.get(chartKey);
+    if (bucket) {
+      bucket.sales += 1;
+      bucket.revenue += revenue;
+    }
+
+    traffic[(boughtAt.getDay() + 6) % 7][Math.floor(boughtAt.getHours() / 2)] += 1;
+  });
+
+  const periodDescription = {
+    today: "Hoje",
+    week: "Semana atual até hoje",
+    month: "Mês atual até hoje",
+    year: "Ano atual até hoje",
+  }[period];
+  const chartTitle = period === "today"
+    ? "Faturamento por horário"
+    : period === "week"
+      ? "Faturamento da semana"
+      : period === "month"
+        ? "Faturamento do mês"
+        : "Faturamento do ano";
+
+  return {
+    chart,
+    chartTitle,
+    chartDescription: `${periodDescription} · vendas não canceladas`,
+    topProducts: getTopProducts(filteredSales),
+    rankingTitle: `Mais vendidos ${periodLabels[period]}`,
+    traffic,
+    trafficDescription: `Atendimentos ${periodLabels[period]}, agrupados em faixas de 2 horas`,
+  };
 }
 
 function getStatistics(sales, now) {
@@ -111,7 +250,7 @@ function getStatistics(sales, now) {
     };
   });
   const traffic = Array.from({ length: 7 }, () => Array(12).fill(0));
-  const products = new Map();
+  const activeSales = [];
   const monthStart = periods.month;
   const yearStart = periods.year;
 
@@ -120,6 +259,7 @@ function getStatistics(sales, now) {
     const boughtAt = new Date(sale.bought_at);
     if (Number.isNaN(boughtAt.getTime())) return;
     const revenue = Number(sale.total_price) || 0;
+    activeSales.push({ sale, boughtAt, revenue });
 
     Object.entries(periods).forEach(([period, start]) => {
       if (boughtAt >= start && boughtAt <= now) {
@@ -139,24 +279,16 @@ function getStatistics(sales, now) {
       traffic[weekday][Math.floor(boughtAt.getHours() / 2)] += 1;
     }
 
-    if (boughtAt >= monthStart && boughtAt <= now) {
-      parseItems(sale.items ?? sale.products).forEach((item) => {
-        const name = String(item.product_name ?? item.name ?? item.title ?? "").trim();
-        const quantity = Number(item.qty ?? item.quantity) || 0;
-        if (!name || quantity <= 0) return;
-        products.set(name, (products.get(name) ?? 0) + quantity);
-      });
-    }
   });
 
   return {
     totals,
     dailyChart,
     traffic,
-    topProducts: [...products.entries()]
-      .map(([name, quantity]) => ({ name, quantity }))
-      .sort((a, b) => b.quantity - a.quantity || a.name.localeCompare(b.name, "pt-BR"))
-      .slice(0, 10),
+    activeSales,
+    topProducts: getTopProducts(activeSales.filter(({ boughtAt }) =>
+      boughtAt >= monthStart && boughtAt <= now
+    )),
   };
 }
 
@@ -165,6 +297,7 @@ function StatisticsContent() {
   const [loadError, setLoadError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [expandedRanking, setExpandedRanking] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState(null);
   const [sideBarOn, setSideBarOn] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const loggedInUser = typeof sessionStorage !== "undefined"
@@ -224,9 +357,13 @@ function StatisticsContent() {
     () => sales ? getStatistics(sales, currentTime) : null,
     [sales, currentTime]
   );
-  const maxTraffic = Math.max(1, ...(statistics?.traffic.flat() ?? []));
-  const maxRevenue = Math.max(1, ...(statistics?.dailyChart.map((day) => day.revenue) ?? []));
-  const visibleProducts = statistics?.topProducts.slice(0, expandedRanking ? 10 : 3) ?? [];
+  const periodAnalytics = useMemo(
+    () => statistics ? getPeriodAnalytics(statistics, selectedPeriod, currentTime) : null,
+    [statistics, selectedPeriod, currentTime]
+  );
+  const maxTraffic = Math.max(1, ...(periodAnalytics?.traffic.flat() ?? []));
+  const maxRevenue = Math.max(1, ...(periodAnalytics?.chart.map((day) => day.revenue) ?? []));
+  const visibleProducts = periodAnalytics?.topProducts.slice(0, expandedRanking ? 10 : 3) ?? [];
   const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
   const periodCards = [
     { key: "today", label: "Hoje", icon: <RiSunLine aria-hidden="true" /> },
@@ -289,14 +426,26 @@ function StatisticsContent() {
             <>
               <div className="statistics-period-grid">
                 {periodCards.map(({ key, label, icon }) => (
-                  <article className="statistics-period-card" data-period={key} key={key}>
+                  <button
+                    type="button"
+                    className="statistics-period-card"
+                    data-period={key}
+                    data-selected={selectedPeriod === null || selectedPeriod === key}
+                    aria-pressed={selectedPeriod === key}
+                    aria-label={`${label}: ${formatCurrency(statistics.totals[key].revenue)} de faturamento e ${statistics.totals[key].sales} vendas. Filtrar os gráficos por período.`}
+                    key={key}
+                    onClick={() => {
+                      setSelectedPeriod((current) => current === key ? null : key);
+                      setExpandedRanking(false);
+                    }}
+                  >
                     <div className="statistics-period-heading">
                       {icon}
                       <h2>{label}</h2>
                     </div>
                     <strong>{formatCurrency(statistics.totals[key].revenue)}</strong>
                     <span><RiShoppingBag3Line aria-hidden="true" /> {statistics.totals[key].sales} vendas</span>
-                  </article>
+                  </button>
                 ))}
               </div>
 
@@ -304,46 +453,56 @@ function StatisticsContent() {
                 <article className="statistics-card statistics-chart-card">
                   <div className="statistics-card-heading">
                     <div>
-                      <h2><RiBarChart2Line aria-hidden="true" /> Faturamento diário</h2>
-                      <p>Últimos 7 dias · vendas não canceladas</p>
+                      <h2><RiBarChart2Line aria-hidden="true" /> {periodAnalytics.chartTitle}</h2>
+                      <p>{periodAnalytics.chartDescription}</p>
                     </div>
                   </div>
                   <svg
                     className="statistics-chart"
                     viewBox="0 0 700 220"
                     role="img"
-                    aria-label="Gráfico de faturamento dos últimos sete dias"
+                    aria-label={`Gráfico de ${periodAnalytics.chartTitle.toLowerCase()}`}
                   >
                     {[0, 1, 2, 3].map((line) => {
                       const y = 18 + line * 48;
                       return <line key={line} x1="48" x2="680" y1={y} y2={y} className="statistics-chart-gridline" />;
                     })}
-                    {statistics.dailyChart.map((day, index) => {
-                      const x = 58 + index * 92;
+                    {periodAnalytics.chart.map((day, index) => {
+                      const chartStep = 632 / periodAnalytics.chart.length;
+                      const barWidth = Math.min(46, chartStep * 0.56);
+                      const x = 48 + chartStep * index + (chartStep - barWidth) / 2;
                       const height = (day.revenue / maxRevenue) * 138;
                       const y = 162 - height;
                       return (
                         <g key={day.key}>
-                          <title>{`${day.date.toLocaleDateString("pt-BR")}: ${formatCurrency(day.revenue)}, ${day.sales} vendas`}</title>
-                          <rect x={x} y={y} width="46" height={Math.max(height, 1)} rx="5" className="statistics-chart-bar" />
-                          <text x={x + 23} y="190" textAnchor="middle" className="statistics-chart-label">
+                          <title>{`${day.date?.toLocaleDateString("pt-BR") ?? day.label}: ${formatCurrency(day.revenue)}, ${day.sales} vendas`}</title>
+                          <rect x={x} y={y} width={barWidth} height={Math.max(height, 1)} rx="3" className="statistics-chart-bar" />
+                          <text
+                            x={x + barWidth / 2}
+                            y="190"
+                            textAnchor="middle"
+                            className="statistics-chart-label"
+                            style={{ fontSize: `${Math.max(8, Math.min(13, chartStep * 0.42))}px` }}
+                          >
                             {day.label}
                           </text>
                         </g>
                       );
                     })}
                   </svg>
-                  <div className="statistics-chart-summary">
-                    {statistics.dailyChart.map((day) => (
-                      <span key={day.key}>{day.sales} {day.sales === 1 ? "venda" : "vendas"}</span>
-                    ))}
-                  </div>
+                  {periodAnalytics.chart.length <= 12 && (
+                    <div className="statistics-chart-summary">
+                      {periodAnalytics.chart.map((day) => (
+                        <span key={day.key}>{day.sales} {day.sales === 1 ? "venda" : "vendas"}</span>
+                      ))}
+                    </div>
+                  )}
                 </article>
 
                 <article className="statistics-card statistics-ranking-card">
                   <div className="statistics-card-heading">
                     <div>
-                      <h2><RiMedalLine aria-hidden="true" /> Mais vendidos do mês</h2>
+                      <h2><RiMedalLine aria-hidden="true" /> {periodAnalytics.rankingTitle}</h2>
                       <p>Ranking por unidades compradas</p>
                     </div>
                   </div>
@@ -361,7 +520,9 @@ function StatisticsContent() {
                       ))}
                     </ol>
                   ) : (
-                    <p className="statistics-empty">Nenhum produto vendido neste mês.</p>
+                    <p className="statistics-empty">
+                      Nenhum produto vendido {selectedPeriod ? periodLabels[selectedPeriod] : "neste mês"}.
+                    </p>
                   )}
                   {statistics.topProducts.length > 3 && (
                     <button
@@ -380,7 +541,7 @@ function StatisticsContent() {
                   <div className="statistics-card-heading">
                     <div>
                       <h2><RiTimeLine aria-hidden="true" /> Fluxo por dia e horário</h2>
-                      <p>Atendimentos registrados neste ano, agrupados em faixas de 2 horas</p>
+                      <p>{periodAnalytics.trafficDescription}</p>
                     </div>
                   </div>
                   <div className="statistics-traffic-scroll">
@@ -397,7 +558,7 @@ function StatisticsContent() {
                         {weekdays.map((weekday, rowIndex) => (
                           <tr key={weekday}>
                             <th scope="row">{weekday}</th>
-                            {statistics.traffic[rowIndex].map((count, columnIndex) => {
+                            {periodAnalytics.traffic[rowIndex].map((count, columnIndex) => {
                               const intensity = count ? 0.12 + (count / maxTraffic) * 0.76 : 0.04;
                               return (
                                 <td
