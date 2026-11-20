@@ -465,12 +465,12 @@ function StatisticsContent() {
                   >
                     {[0, 1, 2, 3].map((line) => {
                       const y = 18 + line * 48;
-                      return <line key={line} x1="48" x2="680" y1={y} y2={y} className="statistics-chart-gridline" />;
+                      return <line key={line} x1="15" x2="685" y1={y} y2={y} className="statistics-chart-gridline" />;
                     })}
                     {periodAnalytics.chart.map((day, index) => {
-                      const chartStep = 632 / periodAnalytics.chart.length;
-                      const barWidth = Math.min(46, chartStep * 0.56);
-                      const x = 48 + chartStep * index + (chartStep - barWidth) / 2;
+                      const chartStep = 670 / periodAnalytics.chart.length;
+                      const barWidth = Math.min(72, chartStep * 0.82);
+                      const x = 15 + chartStep * index + (chartStep - barWidth) / 2;
                       const height = (day.revenue / maxRevenue) * 138;
                       const y = 162 - height;
                       return (
