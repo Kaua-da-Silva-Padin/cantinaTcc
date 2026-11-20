@@ -8,7 +8,9 @@ import {
   RiCalendar2Line,
   RiCalendarEventLine,
   RiCalendarTodoLine,
+  RiCloseLine,
   RiMedalLine,
+  RiMenuLine,
   RiRefreshLine,
   RiShoppingBag3Line,
   RiSunLine,
@@ -376,21 +378,21 @@ function StatisticsContent() {
         <header className="statistics-navbar">
           <button
             type="button"
+            className="statistics-menu-button"
             aria-label={sideBarOn ? "Fechar menu" : "Abrir menu"}
             onClick={() => setSideBarOn((current) => !current)}
           >
-            <img
-              src={sideBarOn ? "/imgs/closeicon.png" : "/imgs/more.png"}
-              alt=""
-              aria-hidden="true"
-            />
+            {sideBarOn ? <RiCloseLine aria-hidden="true" /> : <RiMenuLine aria-hidden="true" />}
           </button>
           <div className="statistics-navbar-status">
             <span>
-              {`${currentTime.getDate()} de ${capitalize(currentTime.toLocaleDateString("pt-BR", { month: "long" }))} de ${currentTime.getFullYear()}`}
+              {`${currentTime.getDate()} de ${capitalize(currentTime.toLocaleDateString("pt-BR", { month: "long" }))} de ${currentTime.getFullYear()} ${currentTime.toLocaleTimeString("pt-BR")}`}
             </span>
             <span>Versão: {packageJson.version}</span>
-            <span className="statistics-system-status">Status do Sistema: Ativo</span>
+            <span className="statistics-system-status">
+              <span className="statistics-status-full">Status do Sistema: Ativo</span>
+              <span className="statistics-status-mobile">Ativo</span>
+            </span>
             <AdminNotifications />
             <Link to="/profile" className="statistics-user-link">
               <b>{loggedInUserName}</b>

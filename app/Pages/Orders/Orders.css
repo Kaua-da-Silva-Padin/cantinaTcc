@@ -80,6 +80,10 @@
   border-color: #55a54d;
 }
 
+.orders-status-mobile {
+  display: none;
+}
+
 .orders-user-link {
   display: flex;
   align-items: center;
@@ -370,9 +374,17 @@
     padding: 0 .75rem;
   }
 
-  .orders-navbar-status > span,
+  .orders-navbar-status > span:not(.orders-system-status),
   .orders-navbar-status > b {
     display: none;
+  }
+
+  .orders-status-full {
+    display: none;
+  }
+
+  .orders-status-mobile {
+    display: inline;
   }
 
   .orders-workspace {

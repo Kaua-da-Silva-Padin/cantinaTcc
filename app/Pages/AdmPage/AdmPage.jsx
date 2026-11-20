@@ -114,7 +114,10 @@ export default function AdmPage() {
                 {`${currentDay} de ${capitalize(currentMonth)} de ${currentYear} ${currentTime.toLocaleTimeString("pt-BR")}`}
               </span>
               <span>Versão: {packageJson.version}</span>
-              <span className="systemStatus">Status do Sistema: Ativo</span>
+              <span className="systemStatus">
+                <span className="systemStatusFull">Status do Sistema: Ativo</span>
+                <span className="systemStatusMobile">Ativo</span>
+              </span>
               <AdminNotifications />
               <Link to={'/profile'} className="text-decoration-none d-flex align-items-center gap-2 text-light fs-5">
                 {/* <img src="/imgs/user.png" alt="" /> */}

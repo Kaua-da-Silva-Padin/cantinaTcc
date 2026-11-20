@@ -305,7 +305,10 @@ function OrdersContent() {
               {`${currentTime.getDate()} de ${capitalize(currentTime.toLocaleDateString("pt-BR", { month: "long" }))} de ${currentTime.getFullYear()} ${currentTime.toLocaleTimeString("pt-BR")}`}
             </span>
             <span>Versão: {packageJson.version}</span>
-            <span className="orders-system-status">Status do Sistema: Ativo</span>
+            <span className="orders-system-status">
+              <span className="orders-status-full">Status do Sistema: Ativo</span>
+              <span className="orders-status-mobile">Ativo</span>
+            </span>
             <AdminNotifications />
             <Link to="/profile" className="orders-user-link">
               <b>{loggedInUserName}</b>

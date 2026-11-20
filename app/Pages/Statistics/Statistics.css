@@ -20,9 +20,11 @@
 
 .statistics-main {
   min-width: 0;
+  height: 100dvh;
   min-height: 0;
   display: grid;
   grid-template-rows: 5.2rem minmax(0, 1fr);
+  overflow: hidden;
 }
 
 .statistics-navbar {
@@ -45,16 +47,18 @@
   cursor: pointer;
 }
 
-.statistics-navbar > button img { width: 2rem; height: 2rem; filter: invert(1); }
+.statistics-navbar > button svg { width: 1.6rem; height: 1.6rem; color: white; }
 .statistics-navbar-status { display: flex; align-items: center; gap: .45rem; font-size: .9rem; }
 .statistics-navbar-status > span { padding: .25rem .55rem; color: #111; background: #fff4aa; border: 1px solid #8f7e00; border-radius: .5rem; }
 .statistics-navbar-status > .statistics-system-status { background: #caffc0; border-color: #55a54d; }
+.statistics-status-mobile { display: none; }
 .statistics-user-link { display: flex; align-items: center; gap: .5rem; margin-left: .5rem; color: white; text-decoration: none; }
 
 .statistics-workspace {
   min-height: 0;
   overflow: auto;
   padding: 1.2rem;
+  overscroll-behavior: contain;
 }
 
 .statistics-heading {
@@ -181,6 +185,9 @@
   .sideBarOn .statistics-sidebar::after { content: ""; position: fixed; inset: 0 0 0 min(19rem, 78vw); z-index: -1; background: #0005; backdrop-filter: blur(4px); }
   .statistics-navbar { position: relative; z-index: 10; padding: 0 .75rem; }
   .statistics-navbar-status > span:not(.statistics-system-status) { display: none; }
+  .statistics-status-full { display: none; }
+  .statistics-status-mobile { display: inline; }
+  .statistics-user-link b { display: none; }
   .statistics-period-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -195,5 +202,4 @@
 @media (max-width: 450px) {
   .statistics-period-card { padding: .75rem; }
   .statistics-period-card strong { font-size: 1.3rem; }
-  .statistics-user-link b { display: none; }
 }

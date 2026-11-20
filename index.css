@@ -81,7 +81,7 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
     font-size: .9rem;
 }
 
-.admPageStatus span {
+.admPageStatus > span {
     padding: .25rem .55rem;
     color: #111;
     background: #fff4aa;
@@ -90,6 +90,7 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
 }
 
 .admPageStatus .systemStatus { background: #caffc0; border-color: #55a54d; }
+.admPageStatus .systemStatusMobile { display: none; }
 .admPageStatus .admin-notifications-count { padding: 0 .2rem; color: white; background: #d32f2f; border: 2px solid #ff8b08; }
 .admPageStatus b { margin-left: 1rem; }
 .admPageStatus img { width: 2rem; height: 2rem; filter: brightness(0) invert(1); }
@@ -281,7 +282,9 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
     .sideBarOn #subGroupAdmGeneralOne { width: min(19rem, 78vw); height: 100dvh; }
     .sideBarOn #subGroupAdmGeneralOne::after { content: ''; position: fixed; inset: 0 0 0 min(19rem, 78vw); z-index: -1; background: #0005; backdrop-filter: blur(4px); }
     #admPageNavBar { position: relative; z-index: 9; }
-    .admPageStatus span, .admPageStatus b { display: none; }
+    .admPageStatus > span:not(.systemStatus), .admPageStatus b { display: none; }
+    .admPageStatus .systemStatusFull { display: none; }
+    .admPageStatus .systemStatusMobile { display: inline; }
     .admPageStatus .admin-notifications-count { display: grid; }
     .admPageStatus img { display: block; }
 }

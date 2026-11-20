@@ -305,7 +305,10 @@ function EstoqueContent() {
           <div className="stock-navbar-status">
             <span>{`${currentTime.getDate()} de ${currentTime.toLocaleDateString("pt-BR", { month: "long" })} de ${currentTime.getFullYear()} ${currentTime.toLocaleTimeString("pt-BR")}`}</span>
             <span>Versão: {packageJson.version}</span>
-            <span className="stock-system-status">Status do Sistema: Ativo</span>
+            <span className="stock-system-status">
+              <span className="stock-status-full">Status do Sistema: Ativo</span>
+              <span className="stock-status-mobile">Ativo</span>
+            </span>
             <AdminNotifications />
             <Link to="/profile" className="stock-user-link">
               <b>{loggedInUserName}</b>
