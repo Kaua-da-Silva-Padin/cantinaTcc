@@ -520,14 +520,14 @@ function StatisticsContent() {
                       Nenhum produto vendido {selectedPeriod ? periodLabels[selectedPeriod] : "neste mês"}.
                     </p>
                   )}
-                  {statistics.topProducts.length > 3 && (
+                  {periodAnalytics.topProducts.length > 3 && (
                     <button
                       type="button"
                       className="statistics-expand-button"
                       onClick={() => setExpandedRanking((expanded) => !expanded)}
                       aria-expanded={expandedRanking}
                     >
-                      {expandedRanking ? "Mostrar menos" : "Ver top 10"}
+                      {expandedRanking ? "Mostrar menos" : `Ver top ${periodAnalytics.topProducts.length}`}
                       {expandedRanking ? <RiArrowUpSLine aria-hidden="true" /> : <RiArrowDownSLine aria-hidden="true" />}
                     </button>
                   )}
