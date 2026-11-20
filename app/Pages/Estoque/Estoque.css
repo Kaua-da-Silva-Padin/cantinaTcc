@@ -2,37 +2,32 @@
   --stock-orange: #ff751f;
   position: relative;
   isolation: isolate;
-  min-height: 100dvh;
+  height: 100dvh;
+  min-height: 0;
   width: 100%;
   display: grid;
   grid-template-columns: 0 minmax(0, 1fr);
+  overflow: hidden;
   background: #f5f5f5;
   color: #111;
   font-family: Poppins, sans-serif;
 }
 
-.stock-admin-shell.sideBarOn::before {
-  content: "";
-  position: fixed;
-  inset: 5.2rem 0 0;
-  z-index: 18;
-  pointer-events: none;
-  background: rgb(0 0 0 / 12%);
-  backdrop-filter: blur(4px);
-}
-
+.stock-admin-shell.sideBarOn { grid-template-columns: 17.5rem minmax(0, 1fr); }
 .stock-admin-shell.sideBarOff { grid-template-columns: 0 minmax(0, 1fr); }
 .stock-sidebar {
-  position: fixed;
+  position: sticky;
+  top: 0;
+  grid-column: 1;
+  align-self: start;
   z-index: 20;
   width: 17.5rem;
   height: 100dvh;
-  transform: translateX(-100%);
-  transition: transform .2s ease;
+  overflow: hidden;
+  transition: width .2s ease;
+  background: linear-gradient(160deg, #ff990b, #ff8b08);
 }
-.stock-admin-shell.sideBarOn .stock-sidebar {
-  transform: translateX(0);
-}
+.stock-admin-shell.sideBarOff .stock-sidebar { width: 0; }
 .stock-main {
   grid-column: 2;
   min-width: 0;
@@ -69,8 +64,12 @@
   gap: .7rem;
   box-sizing: border-box;
   padding: .9rem .9rem 2.5vh;
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: filter .2s ease;
 }
+
+.stock-admin-shell.sideBarOn .stock-workspace { filter: blur(4px); }
 
 .stock-search-area { grid-column: 1; grid-row: 1 / 3; }
 .stock-search-field { height: 3.5rem; display: flex; align-items: center; padding: 0 .8rem; background: white; border: 1px solid #ddd; border-radius: .9rem; }
@@ -152,10 +151,22 @@
 .stock-admin-shell.sideBarOn .admDialogScreen { left: 18.5rem; }
 
 @media (max-width: 1024px) {
-  .stock-admin-shell { grid-template-columns: 0 minmax(0, 1fr); }
+  .stock-admin-shell,
+  .stock-admin-shell.sideBarOn,
+  .stock-admin-shell.sideBarOff {
+    display: block;
+  }
   .stock-main { grid-template-rows: 5.2rem minmax(0, 1fr); }
-  .stock-sidebar { position: fixed; z-index: 20; width: 17.5rem; height: 100dvh; transform: translateX(-100%); }
-  .stock-admin-shell.sideBarOn .stock-sidebar { transform: translateX(0); }
+  .stock-sidebar { position: absolute; z-index: 8; width: 0; height: 0; }
+  .stock-admin-shell.sideBarOn .stock-sidebar { width: min(19rem, 78vw); height: 100dvh; }
+  .stock-admin-shell.sideBarOn .stock-sidebar::after {
+    content: "";
+    position: fixed;
+    inset: 0 0 0 min(19rem, 78vw);
+    z-index: -1;
+    background: #0005;
+  }
+  .stock-navbar { position: relative; z-index: 9; }
   .stock-navbar-status > span:not(.stock-system-status) { display: none; }
   .stock-workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto minmax(0, 1fr); overflow-x: hidden; overflow-y: auto; padding-bottom: .9rem; }
   .stock-search-area { grid-column: 1; grid-row: 1; }

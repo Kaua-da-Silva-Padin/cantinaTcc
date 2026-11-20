@@ -23,9 +23,14 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
 }
 
 #subGroupAdmGeneralOne {
+    position: sticky;
+    top: 0;
+    align-self: start;
     min-width: 0;
+    height: 100dvh;
     overflow: hidden;
     transition: width .2s ease;
+    background: linear-gradient(160deg, #ff990b, var(--admin-orange));
 }
 
 .sideBarOff #subGroupAdmGeneralOne {
@@ -118,8 +123,10 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
 .admContent > div, .admContent iframe { width: 100%; height: 100%; margin: 0 !important; border: 0 !important; }
 
 #admPageSideBar {
-    height: 100%;
-    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100dvh;
+    min-height: 0;
     padding: 1.25rem 1rem;
     box-sizing: border-box;
     background: linear-gradient(160deg, #ff990b, var(--admin-orange));
@@ -135,6 +142,13 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
 }
 
 #admPageSideBarHeader b { color: white; font-size: 2.1rem; }
+.admPageSideBarScrollArea {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #ffffff80 transparent;
+}
 .admPageSideBarNavigation { display: grid; gap: .75rem; }
 .admPageSideBarLinks { display: grid; gap: .2rem; font-size: 1.35rem; }
 .admPageSideBarLinks a { width: max-content; color: white; text-decoration: none; }
@@ -274,7 +288,7 @@ body:has(.groupAdmGeneral) > .MuiScopedCssBaseline-root {
         height: 0;
     }
 
-    .sideBarOn #subGroupAdmGeneralOne { width: min(19rem, 78vw); height: auto; }
+    .sideBarOn #subGroupAdmGeneralOne { width: min(19rem, 78vw); height: 100dvh; }
     .sideBarOn #subGroupAdmGeneralOne::after { content: ''; position: fixed; inset: 0 0 0 min(19rem, 78vw); z-index: -1; background: #0005; backdrop-filter: blur(4px); }
     #admPageNavBar { position: relative; z-index: 9; }
     .admPageStatus span, .admPageStatus b { display: none; }

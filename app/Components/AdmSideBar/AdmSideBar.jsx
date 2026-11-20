@@ -14,28 +14,30 @@ export default function AdmSideBar(props){
               <b>ADMIN</b>
             </div>
 
-            {props.navigationGroups ? (
-              <nav className="admPageSideBarNavigation" aria-label="Navegação administrativa">
-                <div className="admPageSideBarSpeedDialGroup">
-                  <div className="admPageSideBarLinks">
-                    {renderLinks(props.navigationGroups.speedDial)}
+            <div className="admPageSideBarScrollArea">
+              {props.navigationGroups ? (
+                <nav className="admPageSideBarNavigation" aria-label="Navegação administrativa">
+                  <div className="admPageSideBarSpeedDialGroup">
+                    <div className="admPageSideBarLinks">
+                      {renderLinks(props.navigationGroups.speedDial)}
+                    </div>
                   </div>
-                </div>
-                <div className="admPageSideBarLinks admPageSideBarAdminLinks">
-                  {renderLinks(props.navigationGroups.admin)}
-                </div>
-              </nav>
-            ) : (
-              <nav className="admPageSideBarLinks" aria-label="Navegação administrativa">
-                {renderLinks(tools)}
-              </nav>
-            )}
+                  <div className="admPageSideBarLinks admPageSideBarAdminLinks">
+                    {renderLinks(props.navigationGroups.admin)}
+                  </div>
+                </nav>
+              ) : (
+                <nav className="admPageSideBarLinks" aria-label="Navegação administrativa">
+                  {renderLinks(tools)}
+                </nav>
+              )}
 
-            <div id="admPageSideBarNotifications">
-              <h5>Notificações</h5>
-              <div className="admPageNotificationItem">
-                <div className="admNotificationsTexts">
-                  <span>Nenhuma notificação nova.</span>
+              <div id="admPageSideBarNotifications">
+                <h5>Notificações</h5>
+                <div className="admPageNotificationItem">
+                  <div className="admNotificationsTexts">
+                    <span>Nenhuma notificação nova.</span>
+                  </div>
                 </div>
               </div>
             </div>

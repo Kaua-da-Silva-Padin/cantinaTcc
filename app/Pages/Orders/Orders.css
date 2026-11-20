@@ -16,7 +16,9 @@
 
 .orders-sidebar {
   min-width: 0;
+  height: 100dvh;
   overflow: hidden;
+  background: linear-gradient(160deg, #ff990b, #ff8b08);
 }
 
 .sideBarOff .orders-sidebar {
@@ -346,12 +348,11 @@
     position: absolute;
     z-index: 8;
     width: 0;
-    height: 0;
+    height: 100dvh;
   }
 
   .sideBarOn .orders-sidebar {
     width: min(19rem, 78vw);
-    height: auto;
   }
 
   .sideBarOn .orders-sidebar::after {
