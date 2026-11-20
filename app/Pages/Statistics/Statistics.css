@@ -134,7 +134,7 @@
 .statistics-chart-gridline { stroke: #ececec; stroke-width: 1; }
 .statistics-chart-bar { fill: #3184be; }
 .statistics-chart-label { fill: #666; font-family: Poppins, sans-serif; font-size: 13px; }
-.statistics-chart-summary { display: grid; grid-template-columns: repeat(7, 1fr); color: #777; font-size: .7rem; text-align: center; }
+.statistics-chart-count { fill: #555; font-family: Poppins, sans-serif; font-size: 12px; font-weight: 600; }
 
 .statistics-ranking { display: grid; gap: .45rem; margin: .8rem 0; padding: 0; list-style: none; }
 .statistics-ranking li { min-width: 0; display: grid; grid-template-columns: 1.8rem minmax(0, 1fr) auto; align-items: center; gap: .5rem; padding: .55rem .35rem; border-bottom: 1px solid #eee; }
@@ -196,5 +196,4 @@
   .statistics-period-card { padding: .75rem; }
   .statistics-period-card strong { font-size: 1.3rem; }
   .statistics-user-link b { display: none; }
-  .statistics-chart-summary { font-size: .62rem; }
 }

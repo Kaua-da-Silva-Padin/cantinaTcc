@@ -103,7 +103,7 @@ function getChartBuckets(period, now) {
   if (period === "today") {
     return hourRanges.map(({ start, end }, index) => ({
       key: String(index),
-      label: `${String(start).padStart(2, "0")}–${String(end).padStart(2, "0")}`,
+      label: `h${String(start).padStart(2, "0")}–h${String(end).padStart(2, "0")}`,
       sales: 0,
       revenue: 0,
     }));
@@ -476,6 +476,15 @@ function StatisticsContent() {
                       return (
                         <g key={day.key}>
                           <title>{`${day.date?.toLocaleDateString("pt-BR") ?? day.label}: ${formatCurrency(day.revenue)}, ${day.sales} vendas`}</title>
+                          <text
+                            x={x + barWidth / 2}
+                            y={Math.max(14, y - 8)}
+                            textAnchor="middle"
+                            className="statistics-chart-count"
+                            style={{ fontSize: `${Math.max(8, Math.min(13, chartStep * 0.42))}px` }}
+                          >
+                            {day.sales}
+                          </text>
                           <rect x={x} y={y} width={barWidth} height={Math.max(height, 1)} rx="3" className="statistics-chart-bar" />
                           <text
                             x={x + barWidth / 2}
@@ -490,13 +499,6 @@ function StatisticsContent() {
                       );
                     })}
                   </svg>
-                  {periodAnalytics.chart.length <= 12 && (
-                    <div className="statistics-chart-summary">
-                      {periodAnalytics.chart.map((day) => (
-                        <span key={day.key}>{day.sales} {day.sales === 1 ? "venda" : "vendas"}</span>
-                      ))}
-                    </div>
-                  )}
                 </article>
 
                 <article className="statistics-card statistics-ranking-card">
