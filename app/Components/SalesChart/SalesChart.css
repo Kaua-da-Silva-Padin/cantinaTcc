@@ -1,0 +1,31 @@
+.sales-chart-card {
+  min-width: 0;
+  padding: 1rem;
+  border-radius: .9rem;
+  background: white;
+  box-shadow: 0 4px 14px #0000000a;
+}
+
+.sales-chart-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.sales-chart-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.sales-chart-heading h2 svg { width: 1.2rem; height: 1.2rem; color: #3184be; }
+.sales-chart-heading p { margin: .2rem 0 0; color: #777; font-size: .82rem; }
+.sales-chart { display: block; width: 100%; height: 12rem; margin-top: .5rem; overflow: visible; }
+.sales-chart-gridline { stroke: #ececec; stroke-width: 1; }
+.sales-chart-bar { fill: #3184be; }
+.sales-chart-label { fill: #666; font-family: Poppins, sans-serif; font-size: 13px; }
+.sales-chart-count { fill: #555; font-family: Poppins, sans-serif; font-size: 12px; font-weight: 600; }

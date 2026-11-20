@@ -1,0 +1,61 @@
+.today-sales-chart-layout {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  min-height: 100%;
+  padding: 1rem;
+  overflow: auto;
+  font-family: Poppins, sans-serif;
+}
+
+.today-sales-chart-actions { display: flex; justify-content: flex-end; }
+.today-sales-chart-layout .sales-chart-card { width: 100%; }
+.today-sales-chart-layout .sales-chart {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 700 / 220;
+}
+.today-sales-chart-layout .sales-chart-scroll { min-width: 0; }
+.today-sales-chart-actions button,
+.today-sales-chart-state button {
+  min-height: 2.6rem;
+  padding: .45rem .9rem;
+  border: 0;
+  border-radius: .55rem;
+  background: #ff8b08;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.today-sales-chart-state {
+  min-height: 14rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .8rem;
+  padding: 1rem;
+  border-radius: .9rem;
+  background: white;
+  text-align: center;
+}
+
+.today-sales-chart-state[role="alert"] { color: #8b1d1d; }
+
+@media (max-width: 600px) {
+  .today-sales-chart-layout { gap: .65rem; padding: .65rem; }
+  .sales-chart-card { padding: .75rem; }
+  .today-sales-chart-layout .sales-chart-scroll-mobile {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+  .today-sales-chart-layout .sales-chart-expanded {
+    width: 135%;
+    max-width: none;
+    aspect-ratio: 700 / 440;
+  }
+}

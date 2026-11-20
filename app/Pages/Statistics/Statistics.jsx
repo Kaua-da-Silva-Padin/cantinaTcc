@@ -4,7 +4,6 @@ import { Link } from "react-router";
 import {
   RiArrowDownSLine,
   RiArrowUpSLine,
-  RiBarChart2Line,
   RiCalendar2Line,
   RiCalendarEventLine,
   RiCalendarTodoLine,
@@ -19,6 +18,7 @@ import {
 import AdminRouteGuard from "../../Components/AdminRouteGuard/AdminRouteGuard";
 import AdminNotifications from "../../Components/AdminNotifications/AdminNotifications";
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar";
+import SalesChart from "../../Components/SalesChart/SalesChart";
 import { stringAvatar } from "../../Components/MenuPageLinks/MenuPageLinks";
 import packageJson from "../../../package.json";
 import supabase from "../../supabaseClient";
@@ -356,7 +356,6 @@ function StatisticsContent() {
     [statistics, selectedPeriod, currentTime]
   );
   const maxTraffic = Math.max(1, ...(periodAnalytics?.traffic.flat() ?? []));
-  const maxRevenue = Math.max(1, ...(periodAnalytics?.chart.map((day) => day.revenue) ?? []));
   const visibleProducts = periodAnalytics?.topProducts.slice(0, expandedRanking ? 10 : 3) ?? [];
   const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
   const periodCards = [
@@ -445,56 +444,11 @@ function StatisticsContent() {
               </div>
 
               <div className="statistics-content-grid">
-                <article className="statistics-card statistics-chart-card">
-                  <div className="statistics-card-heading">
-                    <div>
-                      <h2><RiBarChart2Line aria-hidden="true" /> {periodAnalytics.chartTitle}</h2>
-                      <p>{periodAnalytics.chartDescription}</p>
-                    </div>
-                  </div>
-                  <svg
-                    className="statistics-chart"
-                    viewBox="0 0 700 220"
-                    role="img"
-                    aria-label={`Gráfico de ${periodAnalytics.chartTitle.toLowerCase()}`}
-                  >
-                    {[0, 1, 2, 3].map((line) => {
-                      const y = 18 + line * 48;
-                      return <line key={line} x1="15" x2="685" y1={y} y2={y} className="statistics-chart-gridline" />;
-                    })}
-                    {periodAnalytics.chart.map((day, index) => {
-                      const chartStep = 670 / periodAnalytics.chart.length;
-                      const barWidth = Math.min(72, chartStep * 0.82);
-                      const x = 15 + chartStep * index + (chartStep - barWidth) / 2;
-                      const height = (day.revenue / maxRevenue) * 138;
-                      const y = 162 - height;
-                      return (
-                        <g key={day.key}>
-                          <title>{`${day.date?.toLocaleDateString("pt-BR") ?? day.label}: ${formatCurrency(day.revenue)}, ${day.sales} vendas`}</title>
-                          <text
-                            x={x + barWidth / 2}
-                            y={Math.max(14, y - 8)}
-                            textAnchor="middle"
-                            className="statistics-chart-count"
-                            style={{ fontSize: `${Math.max(8, Math.min(13, chartStep * 0.42))}px` }}
-                          >
-                            {day.sales}
-                          </text>
-                          <rect x={x} y={y} width={barWidth} height={Math.max(height, 1)} rx="3" className="statistics-chart-bar" />
-                          <text
-                            x={x + barWidth / 2}
-                            y="190"
-                            textAnchor="middle"
-                            className="statistics-chart-label"
-                            style={{ fontSize: `${Math.max(8, Math.min(13, chartStep * 0.42))}px` }}
-                          >
-                            {day.label}
-                          </text>
-                        </g>
-                      );
-                    })}
-                  </svg>
-                </article>
+                <SalesChart
+                  chart={periodAnalytics.chart}
+                  chartTitle={periodAnalytics.chartTitle}
+                  chartDescription={periodAnalytics.chartDescription}
+                />
 
                 <article className="statistics-card statistics-ranking-card">
                   <div className="statistics-card-heading">

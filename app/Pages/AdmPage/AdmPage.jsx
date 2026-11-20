@@ -1,4 +1,4 @@
-import WeeklySales from "../../Components/WeeklySales/WeeklySales"
+import TodaySalesChart from "../../Components/TodaySalesChart/TodaySalesChart"
 import AdmQuickButton from "../../Components/AdmQuickButton/AdmQuickButton"
 import AdmSideBar from "../../Components/AdmSideBar/AdmSideBar"
 import AdmDialog from "../../Components/AdmDialog/AdmDialog"
@@ -138,7 +138,7 @@ export default function AdmPage() {
             )
           })}
           <section className="admContent">
-            <WeeklySales />
+            <TodaySalesChart />
           </section>
 
           <div className={`admDialogScreen ${dialog !== "none" ? "isOpen" : ""}`}>
