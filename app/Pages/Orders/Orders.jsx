@@ -26,7 +26,6 @@ const MAX_FAILED_REFRESHES = 5;
 
 const adminLinks = [
   { text: "Estoque", link: "/stock" },
-  { text: "Finanças", link: "/finance" },
   { text: "Estatísticas", link: "/statistics" },
   { text: "Funcionários", link: "/employees" },
   { text: "Configurações", link: "/settings" },
