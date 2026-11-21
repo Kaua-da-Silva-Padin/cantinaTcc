@@ -1,0 +1,242 @@
+.product-popup-shell {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    pointer-events: auto;
+}
+
+.product-purchase-card {
+    position: relative;
+    z-index: 10001;
+    width: min(48rem, calc(100vw - 2rem));
+    min-height: 19.5rem;
+    display: grid;
+    grid-template-columns: 17.5rem minmax(0, 1fr);
+    gap: 0;
+    box-sizing: border-box;
+    padding: 1rem;
+    border: 1px solid #cfcfcf;
+    border-radius: 1rem;
+    background: #fff;
+    color: #111;
+    box-shadow: 0 20px 42px rgba(0, 0, 0, .28);
+    font-family: Poppins, sans-serif;
+    pointer-events: auto;
+}
+
+.product-purchase-image {
+    min-width: 0;
+    min-height: 17.5rem;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 1.35rem;
+    background: #ff7900;
+}
+
+.product-purchase-image img {
+    width: 82%;
+    height: 82%;
+    object-fit: contain;
+}
+
+.product-purchase-details {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-left: 1.25rem;
+}
+
+.product-purchase-heading h1 {
+    margin: 1.15rem 0 0;
+    font-size: 2.35rem;
+    line-height: 1.05;
+}
+
+.product-purchase-heading span {
+    display: block;
+    margin-top: .15rem;
+    color: #626262;
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+.product-purchase-quantity {
+    align-self: center;
+    margin-top: .65rem;
+    border: 1.5px solid #777;
+    border-radius: .8rem;
+    background: #fff;
+}
+
+.product-purchase-message {
+    min-height: 4.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .25rem;
+    padding: .55rem .7rem;
+    color: #555;
+    font-size: .95rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.product-purchase-message input {
+    width: 3.2rem;
+    border: 0;
+    border-bottom: 1.5px solid #aaa;
+    outline: 0;
+    background: transparent;
+    color: #1686d9;
+    font: inherit;
+    font-weight: 800;
+    text-align: center;
+    appearance: textfield;
+}
+
+.product-purchase-message input::-webkit-inner-spin-button,
+.product-purchase-message input::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+}
+
+.product-purchase-slider {
+    height: 3.75rem;
+    display: grid;
+    grid-template-columns: 2.2rem minmax(0, 1fr) 2.2rem;
+    align-items: center;
+    gap: .15rem;
+    padding: 0 .7rem;
+}
+
+.product-purchase-slider button {
+    width: 2.2rem;
+    height: 2.2rem;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.product-purchase-slider button:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+.product-quantity-minus {
+    color: #ef3434;
+}
+
+.product-quantity-plus {
+    color: #5fce45;
+}
+
+.product-purchase-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 1.1rem;
+}
+
+.product-purchase-actions button {
+    height: 2.8rem;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: .45rem;
+    color: #fff;
+    font-size: 1.35rem;
+    cursor: pointer;
+}
+
+.product-purchase-cancel {
+    background: #ed2525;
+}
+
+.product-purchase-confirm {
+    background: #159a8d;
+}
+
+.product-purchase-actions button:active {
+    transform: scale(.97);
+}
+
+@media (max-width: 768px) {
+    .product-popup-shell {
+        padding: .75rem;
+    }
+
+    .product-purchase-card {
+        width: min(19.25rem, calc(100vw - 1.5rem));
+        min-height: 27.75rem;
+        grid-template-columns: 1fr;
+        grid-template-rows: 13.25rem auto;
+        padding: .9rem;
+        border-radius: 1.15rem;
+    }
+
+    .product-purchase-image {
+        min-height: 13.25rem;
+        border-radius: 1.25rem;
+    }
+
+    .product-purchase-image img {
+        width: 74%;
+        height: 74%;
+    }
+
+    .product-purchase-details {
+        grid-template-rows: auto auto auto;
+        padding: 0;
+    }
+
+    .product-purchase-heading {
+        padding-top: .65rem;
+    }
+
+    .product-purchase-heading h1 {
+        margin: 0;
+        font-size: 1.25rem;
+    }
+
+    .product-purchase-heading span {
+        margin-top: .05rem;
+        font-size: .95rem;
+    }
+
+    .product-purchase-quantity {
+        margin-top: .55rem;
+    }
+
+    .product-purchase-message {
+        min-height: 4.35rem;
+        flex-wrap: wrap;
+        align-content: center;
+        column-gap: .25rem;
+        row-gap: 0;
+        padding: .35rem .6rem;
+        font-size: .72rem;
+    }
+
+    .product-purchase-message input {
+        width: 2.4rem;
+    }
+
+    .product-purchase-slider {
+        height: 3.25rem;
+    }
+
+    .product-purchase-actions {
+        gap: .8rem;
+        margin-top: .65rem;
+    }
+
+    .product-purchase-actions button {
+        height: 2.45rem;
+    }
+}

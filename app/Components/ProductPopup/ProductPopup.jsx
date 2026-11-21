@@ -1,13 +1,17 @@
 import { AdvancedImage } from '@cloudinary/react';
-import { Slider, TextField, IconButton, Backdrop, useMediaQuery } from '@mui/material';
-import { useState } from 'react';
-import { RiShoppingCart2Fill, RiCloseFill } from 'react-icons/ri';
-import { FaHotdog, FaCartPlus, FaPlus, FaMinus } from 'react-icons/fa6';
+import { Slider, Backdrop } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { RiCloseFill } from 'react-icons/ri';
+import { FaCartPlus, FaPlus, FaMinus } from 'react-icons/fa6';
+import './ProductPopup.css';
 
 export default function ProductPopup({ productPopup, setProductPopup, setItemAlert, cartPrice, setCartPrice, cartProducts, setCartProducts }) {
     let [value, setValue] = useState(1);
     let product = productPopup.product;
-    const isMobile = useMediaQuery('(max-width: 768px)');
+
+    useEffect(() => {
+        setValue(1);
+    }, [product?.id]);
 
     const handleAddBtn = ()=> {
         value < product.stock && setValue(value+=1);
@@ -34,12 +38,6 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
 
     const formatPrice = (price) => {
         return price.toFixed(2).replace('.', ',');
-    }
-
-    const capitalize = (txt) => {
-        let firstLetter = txt.slice(-1).toUpperCase();
-        let restLetters = txt.slice(1);
-        return firstLetter + restLetters;
     }
 
     const closePopup = () => {
@@ -82,163 +80,69 @@ export default function ProductPopup({ productPopup, setProductPopup, setItemAle
     }
 
 
-    let remainingTxt = product.stock > 1 ? `${product.stock} produtos restantes` : `${product.stock} produto restante`;
-
     return (
-        <div
-            style={{ height: isMobile ? '25dvh' : '35dvh' }}
-            className="d-flex justify-content-center align-items-center m-4">
+        <div className="product-popup-shell">
             <Backdrop
                 open={productPopup.state}
                 sx={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 9999 }}
                 onClick={closePopup} />
 
-            <div
-                style={{
-                    zIndex: 99999,
-                    position: 'fixed'
-                }}
-                className="border-darken rounded-2 w-75 h-90 bg-light text-dark shadow-box overflow-auto d-flex flex-column">
-
-                <div className='bg-new-orange p-2 px-3 mt-2'>
-                    <h1 className={`d-flex justify-content-between ${isMobile ? 'fs-4' : 'fs-2'}`}>
-                        {product.title}
-
-                        <IconButton
-                            className='text-light bg-darken rounded'
-                            style={{
-                                transition: 'all 200ms ease-out',
-                                height: isMobile ? '32px' : '42px',
-                                width: isMobile ? '32px' : '42px'
-                            }}
-                            sx={{
-                                minWidth: '42px',
-                                height: '42px',
-                                ':active ': {
-                                    scale: .9
-                                }
-                            }}
-                            title='Fechar Janela'
-                            onClick={closePopup}>
-                            <RiCloseFill className='fs-1' />
-                        </IconButton>
-                    </h1>
-                </div>
-                <div className="py-2 d-flex flex-column justify-content-center grow" style={{ minHeight: 0 }}>
-                    <AdvancedImage
-                        cldImg={product.img}
-                        loading='lazy'
-                        className='w-100 h-100'
-                        style={{ objectFit: 'contain' }} />
-                </div>
-                <div className="d-flex justify-content-end">
-                    <p
-                        style={{ width: 'fit-content' }}
-                        className={`bg-new-orange px-4 fw-bold text-center ${isMobile ? 'fs-6' : 'fs-4 m-2'} ${product.stock <= 5 ? 'text-danger' : product.stock <= 10 ? 'text-dark' : 'text-success'}`}>
-                        {remainingTxt}
-                    </p>
+            <div className="product-purchase-card" role="dialog" aria-modal="true" aria-label={`Comprar ${product.title}`}>
+                <div className="product-purchase-image">
+                    <AdvancedImage cldImg={product.img} loading="lazy" />
                 </div>
 
-                <h2 className={`p-3 px-4 bg-new-orange ${isMobile && 'fs-4'}`}>
-                    <RiShoppingCart2Fill
-                    className='me-2' />
-                    Comprar
-                    <TextField
-                    type='number'
-                    value={value}
-                    variant='standard'
-                    color='success'
-                    className='mx-2 p-1'
-                    sx={{
-                        '& input':
-                        {
-                            textAlign: 'center',
-                            fontSize: isMobile ? '1.2em' : '1.6em',
-                            fontWeight: 'bold',
-                            color: 'forestgreen'
-                        }
-                    }} 
-                    onChange={handleInputChange}
-                    aria-labelledby="input-slider"
-                    inputProps={{
-                        min: 1,
-                        max: product.stock
-                    }}/>
-                    {product.title} por <b className='text-success'>{formatPrice(product.price * value)}R$</b>
-                </h2>
-                <div
-                className='p-4 d-flex gap-4 my-4'>
-                    <IconButton
-                    className='text-danger rounded'
-                    style={{ transition: 'all 200ms ease-out' }}
-                    sx={{
-                    minWidth: '42px',
-                    height: '42px',
-                        ':active ': {
-                            scale: .9
-                        }
-                    }}
-                    title='Fechar Janela'
-                    onClick={handleSubBtn}>
-                        <FaMinus className={isMobile ? 'fs-4' : 'fs-1'} />
-                    </IconButton>
+                <div className="product-purchase-details">
+                    <div className="product-purchase-heading">
+                        <h1>{product.title}</h1>
+                        <span>R${formatPrice(product.price)}</span>
+                    </div>
 
-                    <Slider
-                    min={1}
-                    max={product.stock}
-                    color='warning'
-                    value={value}
-                    valueLabelDisplay={true}
-                    onChange={handleSliderChange} />
-                    
-                    <IconButton
-                    className='text-success rounded'
-                    style={{ transition: 'all 200ms ease-out' }}
-                    sx={{
-                    minWidth: '42px',
-                    height: '42px',
-                        ':active ': {
-                            scale: .9
-                        }
-                    }}
-                    title='Fechar Janela'
-                    onClick={handleAddBtn}>
-                        <FaPlus className={isMobile ? 'fs-4' : 'fs-1'} />
-                    </IconButton>
+                    <div className="product-purchase-quantity">
+                        <div className="product-purchase-message">
+                            <span>Você está comprando</span>
+                            <input
+                                type="number"
+                                value={value}
+                                min="1"
+                                max={product.stock}
+                                onChange={handleInputChange}
+                                aria-label="Quantidade"
+                            />
+                            <span>unidade(s) deste produto</span>
+                        </div>
+                        <div className="product-purchase-slider">
+                            <button type="button" className="product-quantity-minus" title="Diminuir quantidade" onClick={handleSubBtn} disabled={value <= 1}>
+                                <FaMinus aria-hidden="true" />
+                            </button>
+                            <Slider
+                                min={1}
+                                max={product.stock}
+                                value={Number(value)}
+                                onChange={handleSliderChange}
+                                aria-label="Quantidade"
+                                sx={{
+                                    color: '#1686d9',
+                                    '& .MuiSlider-thumb': { width: 17, height: 17 },
+                                    '& .MuiSlider-rail': { backgroundColor: '#1686d9', opacity: 1 },
+                                    '& .MuiSlider-track': { border: 0 }
+                                }}
+                            />
+                            <button type="button" className="product-quantity-plus" title="Aumentar quantidade" onClick={handleAddBtn} disabled={value >= product.stock}>
+                                <FaPlus aria-hidden="true" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="product-purchase-actions">
+                        <button type="button" className="product-purchase-cancel" title="Cancelar compra" onClick={closePopup} aria-label="Cancelar compra">
+                            <RiCloseFill aria-hidden="true" />
+                        </button>
+                        <button type="button" className="product-purchase-confirm" title={`Adicionar ${product.title} ao carrinho`} onClick={addToCart} aria-label={`Adicionar ${product.title} ao carrinho`}>
+                            <FaCartPlus aria-hidden="true" />
+                        </button>
+                    </div>
                 </div>
-                <div
-                className='d-flex align-items-center bg-new-orange p-2 gap-2'>
-                    <IconButton
-                        className='text-light bg-success rounded p-2 mx-4'
-                        style={{ transition: 'all 200ms ease-out' }}
-                        sx={{
-                            flex: 1,
-                            minWidth: 0,
-                            ':active ': {
-                                scale: .9
-                            }
-                        }}
-                        title={`Adicionar ${product.title} ao carrinho`}
-                        onClick={addToCart}>
-                        <FaCartPlus className='fs-1' />
-                    </IconButton>
-
-                    <IconButton
-                        className='text-light bg-danger rounded p-2 mx-4'
-                        style={{ transition: 'all 200ms ease-out' }}
-                        sx={{
-                            flex: 1,
-                            minWidth: 0,
-                            ':active ': {
-                                scale: .9
-                            }
-                        }}
-                        title='Cancelar Compra'
-                        onClick={closePopup}>
-                        <RiCloseFill className='fs-1' />
-                    </IconButton>
-                </div>
-
             </div>
         </div>
     )
